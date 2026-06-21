@@ -1,0 +1,58 @@
+@layer tcl.components {
+  .tcl-spinner {
+    display: inline-flex;
+  }
+  .tcl-spinner__ring {
+    display: block;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: color-mix(in oklab, currentColor 22%, transparent);
+    border-top-color: currentColor;
+    animation: tcl-spin 0.6s linear infinite;
+  }
+  .tcl-spinner--sm .tcl-spinner__ring {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+  }
+  .tcl-spinner--md .tcl-spinner__ring {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+  }
+  .tcl-spinner--lg .tcl-spinner__ring {
+    width: 24px;
+    height: 24px;
+    border-width: 3px;
+  }
+  .tcl-spinner--xl .tcl-spinner__ring {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+  }
+
+  .tcl-spinner--tone-accent {
+    color: var(--tcl-accent);
+  }
+  .tcl-spinner--tone-neutral {
+    color: var(--tcl-status-neutral);
+  }
+  .tcl-spinner--tone-success {
+    color: var(--tcl-status-success);
+  }
+  .tcl-spinner--tone-info {
+    color: var(--tcl-status-info);
+  }
+  .tcl-spinner--tone-warning {
+    color: var(--tcl-status-warning);
+  }
+  .tcl-spinner--tone-danger {
+    color: var(--tcl-status-danger);
+  }
+
+  @keyframes tcl-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

@@ -70,6 +70,10 @@ any `--tcl-*` token to re-skin, or flip `[data-theme]` for the built-in light/da
 **Reveal-State**
 
 - **Badge** — the color-coded status ontology (success / info / warning / danger / neutral / accent).
+- **Avatar** — image → initials → glyph fallback; sizes, shapes, status tones; `role=img`.
+- **Spinner** — busy indicator (`role=status` + SR label); sizes and tones.
+- **Skeleton** — loading placeholders (text / rect / circle, multi-line, reduced-motion-aware shimmer).
+- **Card** — a raised surface that groups content; compound `Card.Header` / `Card.Body` / `Card.Footer`.
 
 **Acknowledge-Input**
 
@@ -84,6 +88,14 @@ any `--tcl-*` token to re-skin, or flip `[data-theme]` for the built-in light/da
 - **Toast** — `ToastProvider` + `useToast()`: portal viewport, tone-coded, `aria-live`, auto-dismiss with pause-on-hover.
 
 Labeled controls (Input/Textarea/Select) share one internal field shell (`src/internal/field`) — a single source of truth for label/description/error wiring.
+
+**Visualizations** (data-driven; consume Visual Grammar contracts)
+
+- **Hub** — a hex-flower domain map (one center + up to six petals). Consumes the same JSON
+  shape as the Visual Grammar `hub.schema.json` contract, so a hub authored for the static HTML
+  kit renders here unchanged. Tiles are color-coded by `kind` (center / shipped / current /
+  planned); selecting a tile reveals its detail in a live inspector. Supports legacy VG `pos`
+  names, generic slots, or auto-placement.
 
 Primitives (`Box`, `Stack`, `Inline`, `Text`, `Pressable`), hooks (`useAffordanceState`,
 `useFocusTrap`, `useReturnFocus`, `useReducedMotion`, `useDismissable`), and utils

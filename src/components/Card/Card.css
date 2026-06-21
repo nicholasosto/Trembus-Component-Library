@@ -1,0 +1,40 @@
+@layer tcl.components {
+  .tcl-card {
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-lg);
+    box-shadow: var(--tcl-elevation-1);
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+    overflow: hidden;
+  }
+  .tcl-card--interactive {
+    cursor: pointer;
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-card--interactive:hover {
+    box-shadow: var(--tcl-elevation-2);
+    border-color: var(--tcl-border-strong);
+  }
+  .tcl-card__header {
+    padding: var(--tcl-space-5) var(--tcl-space-6);
+    border-bottom: 1px solid var(--tcl-border-soft);
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-card__body {
+    padding: var(--tcl-space-6);
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-card__footer {
+    padding: var(--tcl-space-5) var(--tcl-space-6);
+    border-top: 1px solid var(--tcl-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--tcl-space-3);
+  }
+}

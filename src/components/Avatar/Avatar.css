@@ -1,0 +1,79 @@
+@layer tcl.components {
+  .tcl-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--tcl-surface-sunken);
+    color: var(--tcl-text-dim);
+    font-family: var(--tcl-font-sans);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: 1;
+    user-select: none;
+  }
+  .tcl-avatar--circle {
+    border-radius: var(--tcl-radius-full);
+  }
+  .tcl-avatar--square {
+    border-radius: var(--tcl-radius-md);
+  }
+
+  .tcl-avatar--xs {
+    width: 20px;
+    height: 20px;
+    font-size: 9px;
+  }
+  .tcl-avatar--sm {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  .tcl-avatar--md {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+  .tcl-avatar--lg {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+  }
+  .tcl-avatar--xl {
+    width: 64px;
+    height: 64px;
+    font-size: 22px;
+  }
+
+  .tcl-avatar__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .tcl-avatar__fallback {
+    width: 62%;
+    height: 62%;
+    opacity: 0.7;
+  }
+
+  .tcl-avatar--tone-neutral {
+    background: var(--tcl-status-neutral-bg);
+    color: var(--tcl-status-neutral);
+  }
+  .tcl-avatar--tone-success {
+    background: var(--tcl-status-success-bg);
+    color: var(--tcl-status-success);
+  }
+  .tcl-avatar--tone-info {
+    background: var(--tcl-status-info-bg);
+    color: var(--tcl-status-info);
+  }
+  .tcl-avatar--tone-warning {
+    background: var(--tcl-status-warning-bg);
+    color: var(--tcl-status-warning);
+  }
+  .tcl-avatar--tone-danger {
+    background: var(--tcl-status-danger-bg);
+    color: var(--tcl-status-danger);
+  }
+}

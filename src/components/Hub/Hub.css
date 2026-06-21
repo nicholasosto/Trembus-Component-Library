@@ -1,0 +1,259 @@
+@layer tcl.components {
+  .tcl-hub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--tcl-space-5);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-hub__header {
+    text-align: center;
+    max-width: 640px;
+  }
+  .tcl-hub__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-hub__code {
+    margin: 2px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-hub__tagrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tcl-space-3);
+    margin-top: var(--tcl-space-3);
+    flex-wrap: wrap;
+  }
+  .tcl-hub__pill {
+    padding: 2px 10px;
+    border: 1px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-full);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-accent);
+  }
+  .tcl-hub__tagnote {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-hub__sub {
+    margin: var(--tcl-space-4) 0 0;
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-hub__stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-5);
+    margin-top: var(--tcl-space-4);
+  }
+  .tcl-hub__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tcl-hub__stat-value {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-bold);
+    color: var(--tcl-text);
+  }
+  .tcl-hub__stat-label {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── hex flower ── */
+  .tcl-hub__flower {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .tcl-hub__tile {
+    --tile-border: var(--tcl-border-strong);
+    --tile-bg: var(--tcl-surface-raised);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 0 14%;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    background: var(--tile-border);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    color: var(--tcl-text);
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  /* Border simulation — the inset ::before is the fill; the gap shows --tile-border. */
+  .tcl-hub__tile::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background: var(--tile-bg);
+    z-index: 0;
+  }
+  .tcl-hub__tile > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tcl-hub__tile--center {
+    --tile-border: var(--tcl-accent);
+    --tile-bg: var(--tcl-surface-sunken);
+  }
+  .tcl-hub__tile--shipped {
+    --tile-border: var(--tcl-status-success);
+    --tile-bg: color-mix(in oklab, var(--tcl-status-success) 8%, var(--tcl-surface-raised));
+  }
+  .tcl-hub__tile--current {
+    --tile-border: var(--tcl-status-info);
+    --tile-bg: color-mix(in oklab, var(--tcl-status-info) 9%, var(--tcl-surface-raised));
+  }
+  .tcl-hub__tile--planned {
+    --tile-border: var(--tcl-border-strong);
+    --tile-bg: var(--tcl-surface-raised);
+    opacity: 0.82;
+  }
+
+  /* Selection + focus — expressed as a thicker, recolored border (clip-path
+     hides outlines, so the indicator lives in the ::before inset). */
+  .tcl-hub__tile.is-selected {
+    --tile-border: var(--tcl-accent);
+    transform: scale(1.03);
+    z-index: 5;
+  }
+  .tcl-hub__tile.is-selected::before {
+    inset: 3px;
+  }
+  .tcl-hub__tile:focus-visible {
+    --tile-border: var(--tcl-focus-ring);
+    outline: none;
+  }
+  .tcl-hub__tile:focus-visible::before {
+    inset: 3px;
+  }
+
+  .tcl-hub__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 10px currentColor;
+    color: var(--tcl-text-dim);
+    margin-bottom: 2px;
+  }
+  .tcl-hub__tile--center .tcl-hub__dot {
+    color: var(--tcl-accent);
+  }
+  .tcl-hub__tile--shipped .tcl-hub__dot {
+    color: var(--tcl-status-success);
+  }
+  .tcl-hub__tile--current .tcl-hub__dot {
+    color: var(--tcl-status-info);
+  }
+  .tcl-hub__tag {
+    font-family: var(--tcl-font-mono);
+    font-size: 9px;
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--tcl-accent);
+  }
+  .tcl-hub__name {
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-bold);
+    line-height: 1.1;
+  }
+  .tcl-hub__tile-sub {
+    font-family: var(--tcl-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-hub__status {
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-sunken);
+    font-family: var(--tcl-font-mono);
+    font-size: 8px;
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── inspector ── */
+  .tcl-hub__inspector {
+    width: 100%;
+    max-width: 640px;
+    min-height: 64px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-hub__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-hub__inspector-status {
+    color: var(--tcl-text-dim);
+    font-weight: var(--tcl-weight-regular);
+  }
+  .tcl-hub__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-hub__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-hub__sources {
+    margin: var(--tcl-space-3) 0 0;
+    padding-left: var(--tcl-space-5);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-hub__axis {
+    margin: 0;
+    text-align: center;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+}

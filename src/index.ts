@@ -83,3 +83,23 @@ export type {
   ToastOptions,
   ToastTone,
 } from './components/ToastProvider/ToastProvider';
+export { Avatar } from './components/Avatar/Avatar';
+export type { AvatarProps } from './components/Avatar/Avatar';
+export { Spinner } from './components/Spinner/Spinner';
+export type { SpinnerProps } from './components/Spinner/Spinner';
+export { Skeleton } from './components/Skeleton/Skeleton';
+export type { SkeletonProps } from './components/Skeleton/Skeleton';
+export { Card } from './components/Card/Card';
+export type { CardProps, CardSectionProps } from './components/Card/Card';
+
+// ── visualizations (data-driven; consume Visual Grammar contracts) ──
+export { Hub } from './components/Hub/Hub';
+export type {
+  HubProps,
+  HubContract,
+  HubDomain,
+  HubStat,
+  HubSource,
+  HubDomainKind,
+  HubSlot,
+} from './components/Hub/Hub';
