@@ -54,3 +54,14 @@ export { Input } from './components/Input/Input';
 export type { InputProps } from './components/Input/Input';
 export { Dialog } from './components/Dialog/Dialog';
 export type { DialogProps } from './components/Dialog/Dialog';
+export { IconButton } from './components/IconButton/IconButton';
+export type { IconButtonProps } from './components/IconButton/IconButton';
+export { Tabs } from './components/Tabs/Tabs';
+export type { TabsProps, TabsListProps, TabProps, TabsPanelProps } from './components/Tabs/Tabs';
+export { Menu } from './components/Menu/Menu';
+export type {
+  MenuProps,
+  MenuTriggerProps,
+  MenuContentProps,
+  MenuItemProps,
+} from './components/Menu/Menu';

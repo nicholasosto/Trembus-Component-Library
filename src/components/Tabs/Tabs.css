@@ -1,0 +1,67 @@
+@layer tcl.components {
+  .tcl-tabs {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--tcl-font-sans);
+  }
+  .tcl-tabs--vertical {
+    flex-direction: row;
+    gap: var(--tcl-space-5);
+  }
+
+  .tcl-tabs__list {
+    display: inline-flex;
+    gap: var(--tcl-space-2);
+    border-bottom: 1px solid var(--tcl-border);
+  }
+  .tcl-tabs--vertical .tcl-tabs__list {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 1px solid var(--tcl-border);
+  }
+
+  .tcl-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--tcl-text-base);
+    font-weight: var(--tcl-weight-medium);
+    color: var(--tcl-text-dim);
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition:
+      color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-tab:hover:not(:disabled) {
+    color: var(--tcl-text);
+  }
+  .tcl-tab.is-active {
+    color: var(--tcl-accent);
+    border-bottom-color: var(--tcl-accent);
+  }
+  .tcl-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .tcl-tabs--vertical .tcl-tab {
+    border-bottom: none;
+    border-right: 2px solid transparent;
+    margin-bottom: 0;
+    margin-right: -1px;
+  }
+  .tcl-tabs--vertical .tcl-tab.is-active {
+    border-right-color: var(--tcl-accent);
+    border-bottom-color: transparent;
+  }
+
+  .tcl-tabpanel {
+    padding: var(--tcl-space-5) 0;
+    color: var(--tcl-text);
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+  }
+}

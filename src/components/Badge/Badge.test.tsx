@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { axe } from 'jest-axe';
+import { a11yViolations } from '../../test/a11y';
 import { Badge } from './Badge';
 
 describe('Badge', () => {
@@ -21,7 +21,6 @@ describe('Badge', () => {
 
   it('has no axe violations', async () => {
     const { container } = render(<Badge tone="info">Info</Badge>);
-    const results = await axe(container);
-    expect(results.violations).toEqual([]);
+    expect(await a11yViolations(container)).toEqual([]);
   });
 });

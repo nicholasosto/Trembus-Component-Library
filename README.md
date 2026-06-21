@@ -58,10 +58,21 @@ export function App() {
 No Tailwind, no build-tool config required. Theming is pure CSS custom properties — override
 any `--tcl-*` token to re-skin, or flip `[data-theme]` for the built-in light/dark themes.
 
-## Components (v0.1)
+## Components
+
+**Afford-Action**
 
 - **Button** — solid / outline / ghost × 6 tones, sizes, loading, `asChild`.
+- **IconButton** — square, icon-only; composes Button and requires an `aria-label`.
+- **Tabs** — ARIA tablist with roving tabindex + Arrow/Home/End nav (compound API).
+- **Menu** — dropdown (ARIA menu button): portal, roving focus, Esc/outside/Tab dismiss, return-focus.
+
+**Reveal-State**
+
 - **Badge** — the color-coded status ontology (success / info / warning / danger / neutral / accent).
+
+**Acknowledge-Input**
+
 - **Input** — labeled field with description, validation (`aria-invalid` + announced error).
 - **Dialog** — focus-trapped modal: portal, scroll-lock, Esc/overlay dismiss, return-focus.
 

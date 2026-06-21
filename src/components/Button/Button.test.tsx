@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { axe } from 'jest-axe';
+import { a11yViolations } from '../../test/a11y';
 import { Button } from './Button';
 
 describe('Button', () => {
@@ -41,7 +41,6 @@ describe('Button', () => {
 
   it('has no axe violations', async () => {
     const { container } = render(<Button>Accessible</Button>);
-    const results = await axe(container);
-    expect(results.violations).toEqual([]);
+    expect(await a11yViolations(container)).toEqual([]);
   });
 });

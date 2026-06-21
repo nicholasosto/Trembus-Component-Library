@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { axe } from 'jest-axe';
+import { a11yViolations } from '../../test/a11y';
 import { Input } from './Input';
 
 describe('Input', () => {
@@ -31,7 +31,6 @@ describe('Input', () => {
 
   it('has no axe violations', async () => {
     const { container } = render(<Input label="Email" description="We never share it." />);
-    const results = await axe(container);
-    expect(results.violations).toEqual([]);
+    expect(await a11yViolations(container)).toEqual([]);
   });
 });

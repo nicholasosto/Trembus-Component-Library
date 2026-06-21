@@ -4,7 +4,17 @@ import '../src/styles/index.css';
 const preview: Preview = {
   tags: ['autodocs'],
   parameters: {
-    a11y: { test: 'error' },
+    a11y: {
+      test: 'error',
+      // Stories are component fragments, not full pages — skip page-level rules.
+      config: {
+        rules: [
+          { id: 'region', enabled: false },
+          { id: 'landmark-one-main', enabled: false },
+          { id: 'page-has-heading-one', enabled: false },
+        ],
+      },
+    },
     controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
     backgrounds: { disable: true },
   },

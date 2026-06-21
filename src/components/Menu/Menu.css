@@ -1,0 +1,43 @@
+@layer tcl.components {
+  .tcl-menu {
+    z-index: var(--tcl-z-dropdown);
+    min-width: 180px;
+    padding: var(--tcl-space-2);
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    box-shadow: var(--tcl-elevation-2);
+    font-family: var(--tcl-font-sans);
+    animation: tcl-menu-in var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-menu__item {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-3);
+    border-radius: var(--tcl-radius-sm);
+    font-size: var(--tcl-text-base);
+    color: var(--tcl-text);
+    cursor: pointer;
+    user-select: none;
+  }
+  .tcl-menu__item:hover:not(.is-disabled),
+  .tcl-menu__item:focus-visible {
+    background: var(--tcl-surface-hover);
+  }
+  .tcl-menu__item.is-disabled {
+    color: var(--tcl-text-faint);
+    cursor: not-allowed;
+  }
+
+  @keyframes tcl-menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

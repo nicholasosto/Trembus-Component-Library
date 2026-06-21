@@ -1,0 +1,25 @@
+@layer tcl.components {
+  /* Square overrides — the double-class beats Button's own size rule. */
+  .tcl-button.tcl-icon-button--sm {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+  }
+  .tcl-button.tcl-icon-button--md {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+  .tcl-button.tcl-icon-button--lg {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+  .tcl-icon-button {
+    gap: 0;
+  }
+  .tcl-icon-button .tcl-button__label {
+    display: inline-flex;
+    line-height: 0;
+  }
+}

@@ -1,4 +1,4 @@
-import type { ReactNode, SyntheticEvent } from 'react';
+import type { ReactNode, Ref, SyntheticEvent } from 'react';
 import { Pressable } from '../../primitives/Pressable/Pressable';
 import type { StatusTone } from '../../tokens/tokens.types';
 import { cx } from '../../utils/cx';
@@ -22,6 +22,8 @@ export interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   className?: string;
   children?: ReactNode;
+  /** Forwarded to the underlying <button> (or the asChild element). */
+  ref?: Ref<HTMLButtonElement>;
   'aria-label'?: string;
 }
 
