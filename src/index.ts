@@ -95,6 +95,21 @@ export { Progress } from './components/Progress/Progress';
 export type { ProgressProps } from './components/Progress/Progress';
 export { Meter } from './components/Meter/Meter';
 export type { MeterProps, MeterSegment, MeterThreshold } from './components/Meter/Meter';
+export { Table } from './components/Table/Table';
+export type {
+  TableProps,
+  TableSectionProps,
+  TableRowProps,
+  TableHeaderCellProps,
+  TableCellProps,
+  TableCaptionProps,
+  TableEmptyProps,
+  SortDescriptor,
+  SortDirection,
+  TableDensity,
+  SelectionMode,
+  CellAlign,
+} from './components/Table/Table';
 
 // ── visualizations (data-driven; consume Visual Grammar contracts) ──
 export { Hub } from './components/Hub/Hub';

@@ -1,0 +1,194 @@
+@layer tcl.components {
+  /* Scroll container owns the frame + the density knobs the cells read. */
+  .tcl-table-scroll {
+    --tcl-table-cell-px: var(--tcl-space-5);
+    --tcl-table-cell-py: var(--tcl-space-4);
+    overflow: auto;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-lg);
+    background: var(--tcl-surface-raised);
+  }
+
+  .tcl-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: var(--tcl-font-sans);
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text);
+  }
+
+  .tcl-table--compact {
+    --tcl-table-cell-px: var(--tcl-space-4);
+    --tcl-table-cell-py: var(--tcl-space-2);
+    font-size: var(--tcl-text-sm);
+  }
+
+  /* ── caption ── */
+  .tcl-table__caption {
+    caption-side: top;
+    text-align: start;
+    padding: var(--tcl-table-cell-py) var(--tcl-table-cell-px);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium);
+  }
+
+  /* ── header cells ── */
+  .tcl-table__th {
+    padding: var(--tcl-table-cell-py) var(--tcl-table-cell-px);
+    border-bottom: 1px solid var(--tcl-border-strong);
+    background: var(--tcl-surface);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    text-align: start;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .tcl-table--sticky .tcl-table__th {
+    position: sticky;
+    top: 0;
+    z-index: var(--tcl-z-sticky);
+  }
+
+  /* sort control — a real button inside the <th> */
+  .tcl-table__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    border-radius: var(--tcl-radius-sm);
+    transition: color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-table__sort:hover,
+  .tcl-table__sort[data-active] {
+    color: var(--tcl-text);
+  }
+  .tcl-table__sort:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+  .tcl-table__sort-icon {
+    display: inline-flex;
+    opacity: 0.35;
+    transition:
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm),
+      opacity var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-table__sort[data-active] .tcl-table__sort-icon {
+    opacity: 1;
+    color: var(--tcl-accent);
+  }
+  .tcl-table__sort-icon[data-direction='asc'] {
+    transform: rotate(180deg);
+  }
+
+  /* ── body cells ── */
+  .tcl-table__td {
+    padding: var(--tcl-table-cell-py) var(--tcl-table-cell-px);
+    border-bottom: 1px solid var(--tcl-border-soft);
+    vertical-align: middle;
+  }
+  .tcl-table tbody .tcl-table__row:last-child .tcl-table__td {
+    border-bottom: none;
+  }
+
+  /* alignment + numeric */
+  .tcl-table__cell--center {
+    text-align: center;
+  }
+  .tcl-table__cell--end {
+    text-align: end;
+  }
+  .tcl-table__cell--numeric {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── rows + state backgrounds ──
+     One specificity tier so source order is the tie-breaker:
+     zebra → hover → selected → selected:hover. */
+  .tcl-table__row {
+    position: relative;
+  }
+  .tcl-table--striped tbody .tcl-table__row:nth-of-type(even) {
+    background: var(--tcl-surface-sunken);
+  }
+  .tcl-table tbody .tcl-table__row:hover {
+    background: var(--tcl-surface-hover);
+  }
+  .tcl-table tbody .tcl-table__row[data-selected] {
+    background: color-mix(in srgb, var(--tcl-accent) 14%, var(--tcl-surface-raised));
+  }
+  .tcl-table tbody .tcl-table__row[data-selected]:hover {
+    background: color-mix(in srgb, var(--tcl-accent) 18%, var(--tcl-surface-raised));
+  }
+  .tcl-table__row--interactive {
+    cursor: pointer;
+  }
+
+  /* ── selection column ── */
+  .tcl-table__select {
+    width: 1%;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1; /* keep the checkbox above an interactive row's stretched overlay */
+  }
+
+  /* ── stretched row link/button ── */
+  .tcl-table__rowlink {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+  button.tcl-table__rowlink {
+    appearance: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    text-align: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  .tcl-table__rowlink::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .tcl-table__rowlink:focus-visible::after {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: -2px;
+    border-radius: var(--tcl-radius-sm);
+  }
+
+  /* ── empty state ── */
+  .tcl-table__empty {
+    padding: var(--tcl-space-7) var(--tcl-table-cell-px);
+    text-align: center;
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-table__sort,
+    .tcl-table__sort-icon {
+      transition: none;
+    }
+  }
+}
