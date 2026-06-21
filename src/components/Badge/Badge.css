@@ -1,0 +1,81 @@
+@layer tcl.components {
+  .tcl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    border: 1px solid transparent;
+    border-radius: var(--tcl-radius-full);
+    font-family: var(--tcl-font-sans);
+    font-weight: var(--tcl-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .tcl-badge--sm {
+    height: 18px;
+    padding-inline: var(--tcl-space-3);
+    font-size: var(--tcl-text-xs);
+  }
+  .tcl-badge--md {
+    height: 22px;
+    padding-inline: var(--tcl-space-4);
+    font-size: var(--tcl-text-sm);
+  }
+  .tcl-badge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ── tones ── */
+  .tcl-badge--accent {
+    --bdg: var(--tcl-accent);
+    --bdg-fg: var(--tcl-accent-fg);
+    --bdg-text: var(--tcl-text);
+    --bdg-soft: color-mix(in oklab, var(--tcl-accent) 16%, transparent);
+  }
+  .tcl-badge--neutral {
+    --bdg: var(--tcl-status-neutral);
+    --bdg-fg: var(--tcl-status-neutral-fg);
+    --bdg-text: var(--tcl-status-neutral);
+    --bdg-soft: var(--tcl-status-neutral-bg);
+  }
+  .tcl-badge--success {
+    --bdg: var(--tcl-status-success);
+    --bdg-fg: var(--tcl-status-success-fg);
+    --bdg-text: var(--tcl-status-success);
+    --bdg-soft: var(--tcl-status-success-bg);
+  }
+  .tcl-badge--info {
+    --bdg: var(--tcl-status-info);
+    --bdg-fg: var(--tcl-status-info-fg);
+    --bdg-text: var(--tcl-status-info);
+    --bdg-soft: var(--tcl-status-info-bg);
+  }
+  .tcl-badge--warning {
+    --bdg: var(--tcl-status-warning);
+    --bdg-fg: var(--tcl-status-warning-fg);
+    --bdg-text: var(--tcl-status-warning);
+    --bdg-soft: var(--tcl-status-warning-bg);
+  }
+  .tcl-badge--danger {
+    --bdg: var(--tcl-status-danger);
+    --bdg-fg: var(--tcl-status-danger-fg);
+    --bdg-text: var(--tcl-status-danger);
+    --bdg-soft: var(--tcl-status-danger-bg);
+  }
+
+  /* ── variants ── */
+  .tcl-badge--soft {
+    background: var(--bdg-soft);
+    color: var(--bdg-text);
+  }
+  .tcl-badge--solid {
+    background: var(--bdg);
+    color: var(--bdg-fg);
+  }
+  .tcl-badge--outline {
+    color: var(--bdg-text);
+    border-color: var(--bdg);
+  }
+}

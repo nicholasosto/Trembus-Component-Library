@@ -1,0 +1,8 @@
+/* ════════════════════════════════════════════════════════════
+   @trembus/ui — the single cascade-order declaration.
+   Declaring the order ONCE here means component CSS (which only
+   ever opens `@layer tcl.components { ... }`) can be authored in
+   any file order without specificity fights. A consumer's own
+   *unlayered* app styles always beat any tcl layer by default.
+   ════════════════════════════════════════════════════════════ */
+@layer tcl.reset, tcl.tokens, tcl.base, tcl.components, tcl.utilities;

@@ -1,0 +1,112 @@
+/* ════════════════════════════════════════════════════════════
+   Design tokens — theme-invariant scales + the LIGHT theme.
+   Light is the default (claude.ai-clean: warm-white, near-black
+   text, restrained gold accent). Components reference ONLY these
+   semantic --tcl-* vars; they never hardcode a hex.
+   ════════════════════════════════════════════════════════════ */
+@layer tcl.tokens {
+  /* ── theme-invariant scales (defined once on :root; apply to every theme) ── */
+  :root {
+    /* spacing — 4px base */
+    --tcl-space-0: 0;
+    --tcl-space-1: 2px;
+    --tcl-space-2: 4px;
+    --tcl-space-3: 8px;
+    --tcl-space-4: 12px;
+    --tcl-space-5: 16px;
+    --tcl-space-6: 24px;
+    --tcl-space-7: 32px;
+    --tcl-space-8: 48px;
+
+    /* radius (md 5px matches the Trembus kit button radius) */
+    --tcl-radius-none: 0;
+    --tcl-radius-sm: 4px;
+    --tcl-radius-md: 5px;
+    --tcl-radius-lg: 10px;
+    --tcl-radius-full: 9999px;
+
+    /* typography (fonts = Trembus --vg-sans / --vg-mono) */
+    --tcl-font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui,
+      sans-serif;
+    --tcl-font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+    --tcl-text-xs: 11px;
+    --tcl-text-sm: 12px;
+    --tcl-text-base: 14px;
+    --tcl-text-md: 16px;
+    --tcl-text-lg: 20px;
+    --tcl-text-xl: 28px;
+    --tcl-leading-tight: 1.2;
+    --tcl-leading-normal: 1.5;
+    --tcl-weight-regular: 400;
+    --tcl-weight-medium: 500;
+    --tcl-weight-semibold: 600;
+    --tcl-weight-bold: 700;
+    --tcl-tracking-wide: 0.06em;
+    --tcl-tracking-caps: 0.14em;
+
+    /* motion (ease-calm = Trembus --ease-calm, verbatim) */
+    --tcl-ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --tcl-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+    --tcl-dur-fast: 120ms;
+    --tcl-dur-base: 200ms;
+    --tcl-dur-slow: 320ms;
+
+    /* z-layers */
+    --tcl-z-base: 0;
+    --tcl-z-dropdown: 1000;
+    --tcl-z-sticky: 1100;
+    --tcl-z-overlay: 1200;
+    --tcl-z-modal: 1300;
+    --tcl-z-toast: 1400;
+    --tcl-z-tooltip: 1500;
+  }
+
+  /* ── LIGHT theme colors + elevation (default) ── */
+  :root,
+  [data-theme='light'] {
+    --tcl-bg: #ffffff;
+    --tcl-surface: #f7f7f6;
+    --tcl-surface-raised: #ffffff;
+    --tcl-surface-sunken: #efeeea;
+    --tcl-surface-hover: #f0efec;
+    --tcl-overlay: rgba(20, 20, 18, 0.45);
+
+    --tcl-border: #e6e4df;
+    --tcl-border-soft: #efeeea;
+    --tcl-border-strong: #d4d1c9;
+
+    --tcl-text: #1a1a18;
+    --tcl-text-dim: #6b6b66;
+    --tcl-text-faint: #9a9a94;
+
+    /* brand accent (gold) — shared hue across themes */
+    --tcl-accent: #d4af37;
+    --tcl-accent-hover: #c2a030;
+    --tcl-accent-active: #ab8c24;
+    --tcl-accent-fg: #1a1a18; /* readable on gold */
+    --tcl-focus-ring: #946f1c; /* darkened gold, ≥3:1 on white */
+
+    /* status / intent — the color-coded ontology (AA-tuned for white) */
+    --tcl-status-success: #1a7f37;
+    --tcl-status-success-bg: #e8f5ec;
+    --tcl-status-success-fg: #ffffff;
+    --tcl-status-info: #0969da;
+    --tcl-status-info-bg: #ddf4ff;
+    --tcl-status-info-fg: #ffffff;
+    --tcl-status-warning: #9a6700;
+    --tcl-status-warning-bg: #fff8e6;
+    --tcl-status-warning-fg: #ffffff;
+    --tcl-status-danger: #cf222e;
+    --tcl-status-danger-bg: #ffebe9;
+    --tcl-status-danger-fg: #ffffff;
+    --tcl-status-neutral: #6b6b66;
+    --tcl-status-neutral-bg: #f0efec;
+    --tcl-status-neutral-fg: #ffffff;
+
+    /* elevation */
+    --tcl-elevation-0: none;
+    --tcl-elevation-1: 0 1px 2px rgba(20, 20, 18, 0.06), 0 1px 3px rgba(20, 20, 18, 0.1);
+    --tcl-elevation-2: 0 4px 12px rgba(20, 20, 18, 0.1), 0 2px 4px rgba(20, 20, 18, 0.06);
+    --tcl-elevation-3: 0 12px 32px rgba(20, 20, 18, 0.16), 0 4px 8px rgba(20, 20, 18, 0.08);
+  }
+}

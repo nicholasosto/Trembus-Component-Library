@@ -1,0 +1,11 @@
+/* ════════════════════════════════════════════════════════════
+   Minimal reset — lowest layer, so a consumer's styles override
+   trivially. Only the least-controversial normalization lives here.
+   ════════════════════════════════════════════════════════════ */
+@layer tcl.reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}

@@ -1,0 +1,54 @@
+/* ════════════════════════════════════════════════════════════
+   DARK theme — adopts the Trembus Visual Grammar palette verbatim.
+   Chrome values are --vg-* (vg-tokens.css); status values are the
+   --sc-* Steel City partition. Only color + elevation change; the
+   invariant scales (spacing/radius/type/motion/z) come from :root.
+   Activate with: <html data-theme="dark">
+   ════════════════════════════════════════════════════════════ */
+@layer tcl.tokens {
+  [data-theme='dark'] {
+    --tcl-bg: #0a0d12; /* --vg-page */
+    --tcl-surface: #1c2128; /* --vg-surface */
+    --tcl-surface-raised: #232a32;
+    --tcl-surface-sunken: #14181e;
+    --tcl-surface-hover: #232a32;
+    --tcl-overlay: rgba(5, 7, 10, 0.66);
+
+    --tcl-border: #2a3038; /* --vg-border */
+    --tcl-border-soft: #1f242c; /* --vg-border-soft */
+    --tcl-border-strong: #3a4350;
+
+    --tcl-text: #e6edf3; /* --vg-text */
+    --tcl-text-dim: #8b949e; /* --vg-text-dim */
+    --tcl-text-faint: #5a6371; /* --vg-text-faint */
+
+    --tcl-accent: #d4af37; /* --vg-gold */
+    --tcl-accent-hover: #e2c456;
+    --tcl-accent-active: #c5a230;
+    --tcl-accent-fg: #0a0d12;
+    --tcl-focus-ring: #d4af37;
+
+    /* status / intent — --sc-* partition (bright-on-dark) */
+    --tcl-status-success: #88ff44; /* --sc-scrip */
+    --tcl-status-success-bg: rgba(136, 255, 68, 0.12);
+    --tcl-status-success-fg: #0a0d12;
+    --tcl-status-info: #44ddff; /* --sc-cyan */
+    --tcl-status-info-bg: rgba(68, 221, 255, 0.12);
+    --tcl-status-info-fg: #0a0d12;
+    --tcl-status-warning: #ff8855; /* --sc-warning */
+    --tcl-status-warning-bg: rgba(255, 136, 85, 0.12);
+    --tcl-status-warning-fg: #0a0d12;
+    --tcl-status-danger: #ff4444; /* --sc-critical */
+    --tcl-status-danger-bg: rgba(255, 68, 68, 0.12);
+    --tcl-status-danger-fg: #0a0d12;
+    --tcl-status-neutral: #8b949e;
+    --tcl-status-neutral-bg: rgba(139, 148, 158, 0.12);
+    --tcl-status-neutral-fg: #0a0d12;
+
+    /* elevation — dark leans on shadow + a faint hairline, not heavy drop-shadows */
+    --tcl-elevation-0: none;
+    --tcl-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02);
+    --tcl-elevation-2: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+    --tcl-elevation-3: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+}

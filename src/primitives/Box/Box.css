@@ -1,0 +1,25 @@
+@layer tcl.components {
+  .tcl-box {
+    box-sizing: border-box;
+  }
+  .tcl-box--surface-raised {
+    background: var(--tcl-surface-raised);
+    box-shadow: var(--tcl-elevation-1);
+  }
+  .tcl-box--surface-sunken {
+    background: var(--tcl-surface-sunken);
+  }
+  .tcl-box--surface-overlay {
+    background: var(--tcl-surface-raised);
+    box-shadow: var(--tcl-elevation-2);
+  }
+  .tcl-box--border {
+    border: 1px solid var(--tcl-border);
+  }
+  .tcl-box--border-soft {
+    border: 1px solid var(--tcl-border-soft);
+  }
+  .tcl-box--border-strong {
+    border: 1px solid var(--tcl-border-strong);
+  }
+}

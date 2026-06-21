@@ -1,0 +1,30 @@
+/* ════════════════════════════════════════════════════════════
+   Accessibility defaults — one focus ring for the whole library,
+   and a reduced-motion guard. Job #3 (Acknowledge Input) at the
+   foundation: a visible focus indicator on every tcl- element.
+   ════════════════════════════════════════════════════════════ */
+@layer tcl.base {
+  /* Library-wide focus ring (hardened from the kit's 1px gold). */
+  :where([class^='tcl-'], [class*=' tcl-']):focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+  /* Never expose a focusable element with no visible indicator. */
+  :where([class^='tcl-'], [class*=' tcl-']):focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* Unlayered + !important so it wins over any component animation.
+   Reduced motion swaps motion for an instant state change — it never
+   removes the feedback, only the movement. */
+@media (prefers-reduced-motion: reduce) {
+  :where([class^='tcl-'], [class*=' tcl-']),
+  :where([class^='tcl-'], [class*=' tcl-'])::before,
+  :where([class^='tcl-'], [class*=' tcl-'])::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

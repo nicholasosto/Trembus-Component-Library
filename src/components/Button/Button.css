@@ -1,0 +1,150 @@
+@layer tcl.components {
+  .tcl-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tcl-space-3);
+    border: 1px solid transparent;
+    border-radius: var(--tcl-radius-md);
+    font-family: var(--tcl-font-sans);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    transition:
+      background-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+
+  /* ── sizes ── */
+  .tcl-button--sm {
+    height: 28px;
+    padding-inline: var(--tcl-space-4);
+    font-size: var(--tcl-text-sm);
+  }
+  .tcl-button--md {
+    height: 36px;
+    padding-inline: var(--tcl-space-5);
+    font-size: var(--tcl-text-base);
+  }
+  .tcl-button--lg {
+    height: 44px;
+    padding-inline: var(--tcl-space-6);
+    font-size: var(--tcl-text-md);
+  }
+  .tcl-button--full {
+    width: 100%;
+  }
+
+  /* ── tones → per-button vars (the color-coded ontology) ── */
+  .tcl-button--accent {
+    --btn: var(--tcl-accent);
+    --btn-fg: var(--tcl-accent-fg);
+    --btn-text: var(--tcl-text);
+    --btn-soft: color-mix(in oklab, var(--tcl-accent) 16%, transparent);
+  }
+  .tcl-button--neutral {
+    --btn: var(--tcl-status-neutral);
+    --btn-fg: var(--tcl-status-neutral-fg);
+    --btn-text: var(--tcl-status-neutral);
+    --btn-soft: var(--tcl-status-neutral-bg);
+  }
+  .tcl-button--success {
+    --btn: var(--tcl-status-success);
+    --btn-fg: var(--tcl-status-success-fg);
+    --btn-text: var(--tcl-status-success);
+    --btn-soft: var(--tcl-status-success-bg);
+  }
+  .tcl-button--info {
+    --btn: var(--tcl-status-info);
+    --btn-fg: var(--tcl-status-info-fg);
+    --btn-text: var(--tcl-status-info);
+    --btn-soft: var(--tcl-status-info-bg);
+  }
+  .tcl-button--warning {
+    --btn: var(--tcl-status-warning);
+    --btn-fg: var(--tcl-status-warning-fg);
+    --btn-text: var(--tcl-status-warning);
+    --btn-soft: var(--tcl-status-warning-bg);
+  }
+  .tcl-button--danger {
+    --btn: var(--tcl-status-danger);
+    --btn-fg: var(--tcl-status-danger-fg);
+    --btn-text: var(--tcl-status-danger);
+    --btn-soft: var(--tcl-status-danger-bg);
+  }
+
+  /* ── variants ── */
+  .tcl-button--solid {
+    background: var(--btn);
+    color: var(--btn-fg);
+    border-color: var(--btn);
+  }
+  .tcl-button--solid[data-state='hover'] {
+    background: color-mix(in oklab, var(--btn) 86%, #000);
+    border-color: color-mix(in oklab, var(--btn) 86%, #000);
+  }
+  .tcl-button--solid[data-state='pressed'] {
+    background: color-mix(in oklab, var(--btn) 78%, #000);
+  }
+
+  .tcl-button--outline {
+    background: transparent;
+    color: var(--btn-text);
+    border-color: var(--tcl-border-strong);
+  }
+  .tcl-button--outline[data-state='hover'] {
+    background: var(--btn-soft);
+    border-color: var(--btn);
+  }
+  .tcl-button--outline[data-state='pressed'] {
+    background: var(--btn-soft);
+  }
+
+  .tcl-button--ghost {
+    background: transparent;
+    color: var(--btn-text);
+    border-color: transparent;
+  }
+  .tcl-button--ghost[data-state='hover'] {
+    background: var(--btn-soft);
+  }
+  .tcl-button--ghost[data-state='pressed'] {
+    background: var(--btn-soft);
+  }
+
+  /* ── feedback states ── */
+  .tcl-button[data-state='pressed'] {
+    transform: translateY(0.5px) scale(0.99);
+  }
+  .tcl-button[data-state='disabled'] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .tcl-button.is-loading {
+    cursor: progress;
+  }
+
+  /* ── parts ── */
+  .tcl-button__icon,
+  .tcl-button__label {
+    display: inline-flex;
+    align-items: center;
+  }
+  .tcl-button__spinner {
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: tcl-button-spin 0.6s linear infinite;
+  }
+  @keyframes tcl-button-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

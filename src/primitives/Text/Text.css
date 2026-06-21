@@ -1,0 +1,15 @@
+@layer tcl.components {
+  .tcl-text {
+    margin: 0;
+    font-family: var(--tcl-font-sans);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-text--mono {
+    font-family: var(--tcl-font-mono);
+  }
+  .tcl-text--truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

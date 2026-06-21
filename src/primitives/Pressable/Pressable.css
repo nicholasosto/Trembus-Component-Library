@@ -1,0 +1,11 @@
+@layer tcl.components {
+  .tcl-pressable {
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tcl-pressable[data-state='disabled'],
+  .tcl-pressable:disabled {
+    cursor: not-allowed;
+  }
+}

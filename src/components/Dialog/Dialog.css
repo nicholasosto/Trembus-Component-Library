@@ -1,0 +1,77 @@
+@layer tcl.components {
+  .tcl-dialog__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--tcl-z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--tcl-space-5);
+    background: var(--tcl-overlay);
+    animation: tcl-dialog-fade var(--tcl-dur-base) var(--tcl-ease-calm);
+  }
+  .tcl-dialog {
+    width: 100%;
+    max-height: calc(100vh - var(--tcl-space-8));
+    overflow: auto;
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-lg);
+    box-shadow: var(--tcl-elevation-3);
+    padding: var(--tcl-space-6);
+    font-family: var(--tcl-font-sans);
+    animation: tcl-dialog-pop var(--tcl-dur-slow) var(--tcl-ease-calm);
+  }
+  .tcl-dialog--sm {
+    max-width: 360px;
+  }
+  .tcl-dialog--md {
+    max-width: 480px;
+  }
+  .tcl-dialog--lg {
+    max-width: 640px;
+  }
+  .tcl-dialog__title {
+    margin: 0 0 var(--tcl-space-3);
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+    color: var(--tcl-text);
+  }
+  .tcl-dialog__desc {
+    margin: 0 0 var(--tcl-space-4);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-dialog__body {
+    color: var(--tcl-text);
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--tcl-space-3);
+    margin-top: var(--tcl-space-6);
+  }
+
+  @keyframes tcl-dialog-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes tcl-dialog-pop {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

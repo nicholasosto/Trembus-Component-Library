@@ -1,0 +1,13 @@
+/* ════════════════════════════════════════════════════════════
+   @trembus/ui — style entry. Import this ONCE in a consumer app:
+       import '@trembus/ui/styles.css';
+   Order matters: layers.css declares the cascade order first, then
+   tokens, then base/a11y. Component CSS is bundled separately (each
+   component opens `@layer tcl.components`).
+   ════════════════════════════════════════════════════════════ */
+@import './layers.css';
+@import './reset.css';
+@import './tokens.light.css';
+@import './tokens.dark.css';
+@import './base.css';
+@import './a11y.css';
