@@ -15,6 +15,18 @@ First-principles UX: tokens → primitives → components, each carrying a machi
 - `pnpm dev` — Storybook (docs + playground) on :6006.
 - `pnpm check:contracts` — enforce the 3-jobs contract per component.
 
+## Visual preview — Claude drives Storybook live
+
+Boot Storybook through the **Claude_Preview MCP**, not Bash: `preview_start({name:'storybook'})`
+reads `.claude/launch.json` (`storybook dev -p 6006 --ci`) and serves on :6006; then
+`preview_screenshot` / `preview_snapshot` / `preview_click` / `preview_eval` /
+`preview_console_logs` drive it. Eyeball a component here before the `validate` gate.
+
+- **Theme**: global `theme` (`light|dark`) → `data-theme` on `<html>` (`.storybook/preview.tsx`).
+  Force dark by navigating with `&globals=theme:dark`.
+- **Story ids** slugify the title — `components-button--states`, `visualizations-hub--default`.
+- **Responsive**: `preview_resize` mobile/tablet/desktop presets.
+
 ## Adding a component — the canonical 5-file shape
 
 Fastest path: `node .claude/skills/new-component/scaffold.mjs <Name>` (the `/new-component`
