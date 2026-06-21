@@ -1,0 +1,37 @@
+@layer tcl.components {
+  .tcl-textarea {
+    width: 100%;
+    min-height: 72px;
+    resize: vertical;
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border-strong);
+    border-radius: var(--tcl-radius-md);
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+    transition:
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-textarea::placeholder {
+    color: var(--tcl-text-faint);
+  }
+  .tcl-textarea:focus-visible {
+    outline: none;
+    border-color: var(--tcl-accent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--tcl-focus-ring) 55%, transparent);
+  }
+  .tcl-textarea.is-invalid {
+    border-color: var(--tcl-status-danger);
+  }
+  .tcl-textarea.is-invalid:focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--tcl-status-danger) 45%, transparent);
+  }
+  .tcl-textarea:disabled {
+    opacity: 0.6;
+    background: var(--tcl-surface-sunken);
+    cursor: not-allowed;
+  }
+}

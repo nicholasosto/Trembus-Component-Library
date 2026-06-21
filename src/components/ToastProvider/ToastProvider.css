@@ -1,0 +1,89 @@
+@layer tcl.components {
+  .tcl-toast-viewport {
+    position: fixed;
+    z-index: var(--tcl-z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    right: var(--tcl-space-5);
+    width: min(360px, calc(100vw - var(--tcl-space-7)));
+    pointer-events: none;
+  }
+  .tcl-toast-viewport--bottom {
+    bottom: var(--tcl-space-5);
+  }
+  .tcl-toast-viewport--top {
+    top: var(--tcl-space-5);
+  }
+
+  .tcl-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-4);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-status-neutral);
+    box-shadow: var(--tcl-elevation-3);
+    font-family: var(--tcl-font-sans);
+    animation: tcl-toast-in var(--tcl-dur-base) var(--tcl-ease-calm);
+  }
+  .tcl-toast--success {
+    border-left-color: var(--tcl-status-success);
+  }
+  .tcl-toast--info {
+    border-left-color: var(--tcl-status-info);
+  }
+  .tcl-toast--warning {
+    border-left-color: var(--tcl-status-warning);
+  }
+  .tcl-toast--danger {
+    border-left-color: var(--tcl-status-danger);
+  }
+  .tcl-toast--neutral {
+    border-left-color: var(--tcl-status-neutral);
+  }
+  .tcl-toast__body {
+    flex: 1;
+    min-width: 0;
+  }
+  .tcl-toast__title {
+    margin: 0;
+    font-size: var(--tcl-text-base);
+    font-weight: var(--tcl-weight-semibold);
+    color: var(--tcl-text);
+  }
+  .tcl-toast__desc {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-toast__close {
+    flex-shrink: 0;
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--tcl-text-dim);
+    padding: 2px;
+    border-radius: var(--tcl-radius-sm);
+    display: inline-flex;
+  }
+  .tcl-toast__close:hover {
+    color: var(--tcl-text);
+  }
+
+  @keyframes tcl-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

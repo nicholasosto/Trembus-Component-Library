@@ -1,0 +1,31 @@
+@layer tcl.components {
+  .tcl-tooltip {
+    z-index: var(--tcl-z-tooltip);
+    max-width: 240px;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    background: var(--tcl-text);
+    color: var(--tcl-bg);
+    border-radius: var(--tcl-radius-sm);
+    font-family: var(--tcl-font-sans);
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    box-shadow: var(--tcl-elevation-2);
+    pointer-events: none;
+    animation: tcl-tooltip-in var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-tooltip--top {
+    transform: translate(-50%, -100%);
+  }
+  .tcl-tooltip--bottom {
+    transform: translate(-50%, 0);
+  }
+
+  @keyframes tcl-tooltip-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

@@ -1,8 +1,8 @@
 @layer tcl.components {
-  .tcl-input {
+  .tcl-select {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: var(--tcl-space-3);
     background: var(--tcl-surface-raised);
     border: 1px solid var(--tcl-border-strong);
     border-radius: var(--tcl-radius-md);
@@ -10,48 +10,47 @@
       border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
       box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm);
   }
-  .tcl-input--sm {
+  .tcl-select--sm {
     height: 30px;
-    padding-inline: var(--tcl-space-3);
   }
-  .tcl-input--md {
+  .tcl-select--md {
     height: 36px;
-    padding-inline: var(--tcl-space-4);
   }
-  .tcl-input--lg {
+  .tcl-select--lg {
     height: 44px;
-    padding-inline: var(--tcl-space-4);
   }
-  .tcl-input:focus-within {
+  .tcl-select:focus-within {
     border-color: var(--tcl-accent);
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--tcl-focus-ring) 55%, transparent);
   }
-  .tcl-input.is-invalid {
+  .tcl-select.is-invalid {
     border-color: var(--tcl-status-danger);
   }
-  .tcl-input.is-invalid:focus-within {
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--tcl-status-danger) 45%, transparent);
-  }
-  .tcl-input.is-disabled {
+  .tcl-select.is-disabled {
     opacity: 0.6;
     background: var(--tcl-surface-sunken);
   }
-  .tcl-input__slot {
-    display: inline-flex;
-    align-items: center;
-    color: var(--tcl-text-dim);
-  }
-  .tcl-input__control {
+  .tcl-select__control {
+    appearance: none;
+    -webkit-appearance: none;
     flex: 1;
     min-width: 0;
+    height: 100%;
     border: none;
     background: transparent;
     outline: none;
     color: var(--tcl-text);
-    font-family: inherit;
+    font-family: var(--tcl-font-sans);
     font-size: var(--tcl-text-base);
+    padding-inline: var(--tcl-space-4);
+    padding-right: var(--tcl-space-7);
+    cursor: pointer;
   }
-  .tcl-input__control::placeholder {
-    color: var(--tcl-text-faint);
+  .tcl-select__chevron {
+    position: absolute;
+    right: var(--tcl-space-4);
+    pointer-events: none;
+    display: inline-flex;
+    color: var(--tcl-text-dim);
   }
 }

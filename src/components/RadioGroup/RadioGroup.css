@@ -1,0 +1,67 @@
+@layer tcl.components {
+  .tcl-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+  }
+  .tcl-radio-group__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-radio-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-1);
+  }
+  .tcl-radio-field.is-disabled {
+    opacity: 0.6;
+  }
+  .tcl-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    cursor: pointer;
+  }
+  .tcl-radio-field.is-disabled .tcl-radio {
+    cursor: not-allowed;
+  }
+  .tcl-radio__dot {
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--tcl-border-strong);
+    background: var(--tcl-surface-raised);
+    transition: border-color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-radio__input:checked + .tcl-radio__dot {
+    border-color: var(--tcl-accent);
+  }
+  .tcl-radio__input:checked + .tcl-radio__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--tcl-accent);
+  }
+  .tcl-radio__input:focus-visible + .tcl-radio__dot {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+  .tcl-radio__label {
+    font-size: var(--tcl-text-base);
+    color: var(--tcl-text);
+  }
+  .tcl-radio__desc {
+    margin: 0;
+    padding-left: calc(18px + var(--tcl-space-3));
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+}

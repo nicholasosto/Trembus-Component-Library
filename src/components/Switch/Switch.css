@@ -1,0 +1,60 @@
+@layer tcl.components {
+  .tcl-switch-field {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--tcl-space-1);
+    font-family: var(--tcl-font-sans);
+  }
+  .tcl-switch-field.is-disabled {
+    opacity: 0.6;
+  }
+  .tcl-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    cursor: pointer;
+  }
+  .tcl-switch-field.is-disabled .tcl-switch {
+    cursor: not-allowed;
+  }
+  .tcl-switch__track {
+    position: relative;
+    flex-shrink: 0;
+    width: 36px;
+    height: 20px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-border-strong);
+    transition: background var(--tcl-dur-base) var(--tcl-ease-calm);
+  }
+  .tcl-switch__thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: var(--tcl-elevation-1);
+    transition: transform var(--tcl-dur-base) var(--tcl-ease-calm);
+  }
+  .tcl-switch__input:checked + .tcl-switch__track {
+    background: var(--tcl-accent);
+  }
+  .tcl-switch__input:checked + .tcl-switch__track .tcl-switch__thumb {
+    transform: translateX(16px);
+  }
+  .tcl-switch__input:focus-visible + .tcl-switch__track {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+  .tcl-switch__label {
+    font-size: var(--tcl-text-base);
+    color: var(--tcl-text);
+  }
+  .tcl-switch__desc {
+    margin: 0;
+    padding-left: calc(36px + var(--tcl-space-3));
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+}

@@ -1,5 +1,5 @@
-import { useId } from 'react';
 import type { InputHTMLAttributes, ReactNode, Ref } from 'react';
+import { FieldShell, useFieldIds } from '../../internal/field';
 import { cx } from '../../utils/cx';
 import './Input.css';
 
@@ -30,30 +30,19 @@ export function Input({
   ref,
   ...rest
 }: InputProps) {
-  const autoId = useId();
-  const inputId = id ?? autoId;
-  const descId = description ? `${inputId}-desc` : undefined;
-  const errId = error ? `${inputId}-err` : undefined;
-  const describedBy = [descId, errId].filter(Boolean).join(' ') || undefined;
+  const { controlId, describedBy, descId, errId } = useFieldIds(id, !!description, !!error);
 
   return (
-    <div className={cx('tcl-field', containerClassName)}>
-      {label && (
-        <label htmlFor={inputId} className="tcl-field__label">
-          {label}
-          {required && (
-            <span className="tcl-field__req" aria-hidden="true">
-              {' '}
-              *
-            </span>
-          )}
-        </label>
-      )}
-      {description && (
-        <p id={descId} className="tcl-field__desc">
-          {description}
-        </p>
-      )}
+    <FieldShell
+      label={label}
+      description={description}
+      error={error}
+      required={required}
+      htmlFor={controlId}
+      descId={descId}
+      errId={errId}
+      className={containerClassName}
+    >
       <div
         className={cx(
           'tcl-input',
@@ -64,7 +53,7 @@ export function Input({
       >
         {startSlot && <span className="tcl-input__slot">{startSlot}</span>}
         <input
-          id={inputId}
+          id={controlId}
           ref={ref}
           className={cx('tcl-input__control', className)}
           disabled={disabled}
@@ -75,11 +64,6 @@ export function Input({
         />
         {endSlot && <span className="tcl-input__slot">{endSlot}</span>}
       </div>
-      {error && (
-        <p id={errId} className="tcl-field__error" role="alert">
-          {error}
-        </p>
-      )}
-    </div>
+    </FieldShell>
   );
 }

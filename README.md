@@ -74,7 +74,16 @@ any `--tcl-*` token to re-skin, or flip `[data-theme]` for the built-in light/da
 **Acknowledge-Input**
 
 - **Input** — labeled field with description, validation (`aria-invalid` + announced error).
+- **Textarea** — multiline field; same shared field chrome and validation.
+- **Select** — native-first select with placeholder, validation, and a chevron.
+- **Checkbox** — labeled, tri-state (indeterminate), custom box.
+- **RadioGroup** — single-choice group (`role=radiogroup`); compound `RadioGroup.Item`.
+- **Switch** — labeled toggle (`role=switch`).
+- **Tooltip** — hover + focus, `role=tooltip` bound via `aria-describedby`, Esc/blur dismiss.
 - **Dialog** — focus-trapped modal: portal, scroll-lock, Esc/overlay dismiss, return-focus.
+- **Toast** — `ToastProvider` + `useToast()`: portal viewport, tone-coded, `aria-live`, auto-dismiss with pause-on-hover.
+
+Labeled controls (Input/Textarea/Select) share one internal field shell (`src/internal/field`) — a single source of truth for label/description/error wiring.
 
 Primitives (`Box`, `Stack`, `Inline`, `Text`, `Pressable`), hooks (`useAffordanceState`,
 `useFocusTrap`, `useReturnFocus`, `useReducedMotion`, `useDismissable`), and utils

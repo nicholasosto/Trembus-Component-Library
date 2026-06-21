@@ -1,0 +1,26 @@
+@layer tcl.components {
+  .tcl-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+    font-family: var(--tcl-font-sans);
+  }
+  .tcl-field__label {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium);
+    color: var(--tcl-text);
+  }
+  .tcl-field__req {
+    color: var(--tcl-status-danger);
+  }
+  .tcl-field__desc {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-field__error {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-status-danger);
+  }
+}
