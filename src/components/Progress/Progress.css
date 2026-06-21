@@ -1,0 +1,27 @@
+@layer tcl.components {
+  /* Segmented variant — the track becomes a row of discrete cells. */
+  .tcl-fillbar--segmented {
+    background: transparent;
+    border: none;
+    overflow: visible;
+    display: flex;
+    gap: 3px;
+  }
+  .tcl-fillbar--segmented .tcl-fillbar__cell {
+    flex: 1;
+    align-self: stretch;
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+    transition:
+      background var(--tcl-dur-base) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-base) var(--tcl-ease-calm);
+  }
+  .tcl-fillbar--segmented .tcl-fillbar__cell.is-on {
+    background: var(--bar);
+    border-color: var(--bar);
+  }
+  .tcl-fillbar--segmented.is-glow .tcl-fillbar__cell.is-on {
+    box-shadow: 0 0 8px color-mix(in oklab, var(--bar) 50%, transparent);
+  }
+}

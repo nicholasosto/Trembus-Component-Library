@@ -1,0 +1,143 @@
+import type { ReactNode } from 'react';
+import { FillBarShell, clampPct, toneVar, vars } from '../../internal/fillbar';
+import type { FillBarSize, FillBarTone } from '../../internal/fillbar';
+import './Meter.css';
+
+export interface MeterSegment {
+  value: number;
+  tone?: FillBarTone;
+  label?: string;
+}
+
+export interface MeterThreshold {
+  value: number;
+  tone?: FillBarTone;
+}
+
+export interface MeterProps {
+  value?: number;
+  min?: number;
+  max?: number;
+  tone?: FillBarTone;
+  variant?: 'solid' | 'stacked' | 'threshold';
+  /** Proportional segments for `variant="stacked"`. */
+  segments?: MeterSegment[];
+  /** Markers for `variant="threshold"`; the fill recolors as `value` crosses them. */
+  thresholds?: MeterThreshold[];
+  size?: FillBarSize;
+  glow?: boolean;
+  showValue?: boolean;
+  icon?: ReactNode;
+  /** Accessible name for the meter. */
+  label?: string;
+  className?: string;
+}
+
+/**
+ * `Meter` — a static measurement (role=meter). `solid` fills to a value;
+ * `stacked` shows proportions that sum across the track; `threshold` recolors
+ * the fill as the value crosses configured markers (a gauge). Clean by default;
+ * `glow` turns on the HUD skin.
+ */
+export function Meter({
+  value = 0,
+  min = 0,
+  max = 100,
+  tone = 'success',
+  variant = 'solid',
+  segments = [],
+  thresholds = [],
+  size = 'md',
+  glow = false,
+  showValue,
+  icon,
+  label,
+  className,
+}: MeterProps) {
+  if (variant === 'stacked') {
+    const total = segments.reduce((sum, s) => sum + s.value, 0);
+    return (
+      <FillBarShell
+        role="meter"
+        value={total}
+        min={min}
+        max={max}
+        ariaLabel={label}
+        valueText={segments.map((s) => `${s.label ?? 'segment'}: ${s.value}`).join(', ')}
+        showValue={showValue ?? false}
+        icon={icon}
+        size={size}
+        glow={glow}
+        tone={tone}
+        className={className}
+        trackClassName="tcl-fillbar--stacked"
+      >
+        {segments.map((s, i) => (
+          <span
+            key={i}
+            className="tcl-fillbar__seg"
+            style={vars(
+              { '--seg': toneVar(s.tone ?? tone) },
+              { width: `${clampPct(s.value, 0, max)}%` },
+            )}
+          >
+            {s.label}
+          </span>
+        ))}
+      </FillBarShell>
+    );
+  }
+
+  if (variant === 'threshold') {
+    const sorted = [...thresholds].sort((a, b) => a.value - b.value);
+    let activeTone = tone;
+    for (const t of sorted) if (value >= t.value) activeTone = t.tone ?? activeTone;
+    return (
+      <FillBarShell
+        role="meter"
+        value={value}
+        min={min}
+        max={max}
+        ariaLabel={label}
+        showValue={showValue ?? true}
+        icon={icon}
+        size={size}
+        glow={glow}
+        tone={activeTone}
+        className={className}
+        trackClassName="tcl-fillbar--threshold"
+      >
+        <span className="tcl-fillbar__fill" />
+        {sorted.map((t, i) => (
+          <span
+            key={i}
+            className="tcl-fillbar__marker"
+            aria-hidden="true"
+            style={vars(
+              { '--mk': toneVar(t.tone ?? 'neutral') },
+              { left: `${clampPct(t.value, min, max)}%` },
+            )}
+          />
+        ))}
+      </FillBarShell>
+    );
+  }
+
+  return (
+    <FillBarShell
+      role="meter"
+      value={value}
+      min={min}
+      max={max}
+      ariaLabel={label}
+      showValue={showValue ?? true}
+      icon={icon}
+      size={size}
+      glow={glow}
+      tone={tone}
+      className={className}
+    >
+      <span className="tcl-fillbar__fill" />
+    </FillBarShell>
+  );
+}

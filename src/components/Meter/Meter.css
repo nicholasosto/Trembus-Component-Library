@@ -1,0 +1,44 @@
+@layer tcl.components {
+  /* Stacked — proportional segments that sum across the track. */
+  .tcl-fillbar--stacked {
+    display: flex;
+    gap: 2px;
+  }
+  .tcl-fillbar--stacked .tcl-fillbar__seg {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    background: var(--seg, var(--bar));
+    color: #ffffff;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-variant-numeric: tabular-nums;
+    transition: width var(--tcl-dur-slow) var(--tcl-ease-calm);
+  }
+
+  /* Threshold — markers sit above the bar, so the track must not clip. */
+  .tcl-fillbar--threshold {
+    overflow: visible;
+  }
+  .tcl-fillbar__marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: color-mix(in oklab, var(--mk, var(--tcl-text)) 65%, transparent);
+  }
+  .tcl-fillbar__marker::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid var(--mk, var(--tcl-text));
+  }
+}

@@ -1,0 +1,349 @@
+@layer tcl.components {
+  .tcl-brief {
+    --brief-accent: var(--tcl-accent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    width: 100%;
+    max-width: 760px;
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+  .tcl-brief[data-kind='agents'] {
+    --brief-accent: var(--tcl-status-info);
+  }
+  .tcl-brief[data-kind='plan'] {
+    --brief-accent: var(--tcl-status-success);
+  }
+  .tcl-brief[data-kind='spec'] {
+    --brief-accent: var(--tcl-status-neutral);
+  }
+
+  /* ── header ── */
+  .tcl-brief__header {
+    padding-bottom: var(--tcl-space-4);
+    border-bottom: 2px solid var(--brief-accent);
+  }
+  .tcl-brief__kindrow {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-brief__kind {
+    padding: 2px 10px;
+    border-radius: var(--tcl-radius-full);
+    background: color-mix(in oklab, var(--brief-accent) 16%, var(--tcl-surface));
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--brief-accent);
+  }
+  .tcl-brief__id {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-brief__title {
+    margin: var(--tcl-space-3) 0 0;
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    line-height: var(--tcl-leading-tight);
+  }
+  .tcl-brief__summary {
+    margin: var(--tcl-space-3) 0 0;
+    font-size: var(--tcl-text-base);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-brief__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2);
+    margin-top: var(--tcl-space-4);
+  }
+  .tcl-brief__metapill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--tcl-space-2);
+    padding: 2px 10px;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+  }
+  .tcl-brief__metalabel {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-brief__metavalue {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── sections ── */
+  .tcl-brief__sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-brief__section {
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+    overflow: hidden;
+  }
+  .tcl-brief__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--tcl-space-3);
+    padding-right: var(--tcl-space-4);
+  }
+  .tcl-brief__section-h {
+    margin: 0;
+    flex: 1;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  .tcl-brief__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    width: 100%;
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+    color: var(--tcl-text);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-brief__toggle:hover {
+    background: var(--tcl-surface-hover);
+  }
+  .tcl-brief__toggle:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: -2px;
+  }
+  .tcl-brief__chevron {
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    color: var(--tcl-text-faint);
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-brief__section[data-state='open'] .tcl-brief__chevron {
+    transform: rotate(90deg);
+  }
+  .tcl-brief__section-kind {
+    flex-shrink: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-brief__section-body {
+    padding: 0 var(--tcl-space-5) var(--tcl-space-4) var(--tcl-space-5);
+  }
+  .tcl-brief__note {
+    margin: 0 0 var(--tcl-space-3);
+    font-size: var(--tcl-text-sm);
+    font-style: italic;
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── prose ── */
+  .tcl-brief__prose {
+    margin: 0 0 var(--tcl-space-2);
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── shared list reset ── */
+  .tcl-brief__list,
+  .tcl-brief__rules {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+    font-size: var(--tcl-text-sm);
+  }
+  .tcl-brief__rules {
+    counter-reset: rule;
+  }
+  .tcl-brief__rule {
+    position: relative;
+    padding-left: var(--tcl-space-6);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-brief__rule::before {
+    counter-increment: rule;
+    content: counter(rule);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.25rem;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    color: var(--brief-accent);
+  }
+  .tcl-brief__desc {
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── commands ── */
+  .tcl-brief__command {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-brief__code,
+  .tcl-brief__chip {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    padding: 1px 6px;
+    border-radius: var(--tcl-radius-sm);
+    background: var(--tcl-surface-sunken);
+    color: var(--tcl-text);
+    white-space: nowrap;
+  }
+  .tcl-brief__command-desc {
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── checklist (severity callouts) ── */
+  .tcl-brief__check {
+    --sev: var(--tcl-status-neutral);
+    --sev-bg: var(--tcl-status-neutral-bg);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border-left: 3px solid var(--sev);
+    border-radius: var(--tcl-radius-sm);
+    background: var(--sev-bg);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-brief__check[data-severity='info'] {
+    --sev: var(--tcl-status-info);
+    --sev-bg: var(--tcl-status-info-bg);
+  }
+  .tcl-brief__check[data-severity='warn'] {
+    --sev: var(--tcl-status-warning);
+    --sev-bg: var(--tcl-status-warning-bg);
+  }
+  .tcl-brief__check[data-severity='danger'] {
+    --sev: var(--tcl-status-danger);
+    --sev-bg: var(--tcl-status-danger-bg);
+  }
+  .tcl-brief__check-glyph {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--sev);
+  }
+
+  /* ── phases (light plan) ── */
+  .tcl-brief__phase {
+    --st: var(--tcl-status-neutral);
+    display: flex;
+    align-items: baseline;
+    gap: var(--tcl-space-3);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-brief__phase[data-status='done'] {
+    --st: var(--tcl-status-success);
+  }
+  .tcl-brief__phase[data-status='active'] {
+    --st: var(--tcl-status-warning);
+  }
+  .tcl-brief__phase[data-status='pending'] {
+    --st: var(--tcl-text-faint);
+  }
+  .tcl-brief__phase-pip {
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--st);
+    background: var(--st);
+    align-self: center;
+  }
+  .tcl-brief__phase[data-status='pending'] .tcl-brief__phase-pip {
+    background: transparent;
+  }
+  .tcl-brief__phase-text {
+    flex: 1;
+  }
+  .tcl-brief__phase-status {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--st);
+  }
+
+  /* ── decisions ── */
+  .tcl-brief__decision {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-3);
+    line-height: var(--tcl-leading-normal);
+  }
+  .tcl-brief__decision-title {
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-brief__decision-choice {
+    color: var(--tcl-text-dim);
+  }
+  .tcl-brief__arrow {
+    color: var(--brief-accent);
+    font-weight: var(--tcl-weight-bold);
+  }
+
+  /* ── artifacts / boundaries / reference ── */
+  .tcl-brief__ref {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-3);
+  }
+  .tcl-brief__ref-text {
+    font-weight: var(--tcl-weight-medium);
+  }
+  a.tcl-brief__chip {
+    color: var(--tcl-status-info-fg);
+    text-decoration: none;
+  }
+  a.tcl-brief__chip:hover {
+    text-decoration: underline;
+  }
+  .tcl-brief__status {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-brief__empty {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+}

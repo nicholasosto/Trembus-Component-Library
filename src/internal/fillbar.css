@@ -1,0 +1,92 @@
+@layer tcl.components {
+  .tcl-fillbar-row {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+  }
+  .tcl-fillbar__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: var(--tcl-text-dim);
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+  }
+  .tcl-fillbar__value {
+    flex-shrink: 0;
+    min-width: 3.5ch;
+    text-align: right;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── track ── */
+  .tcl-fillbar {
+    --bar: var(--tcl-accent);
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+    overflow: hidden;
+  }
+  .tcl-fillbar--sm {
+    height: 8px;
+  }
+  .tcl-fillbar--md {
+    height: 14px;
+  }
+  .tcl-fillbar--lg {
+    height: 20px;
+  }
+
+  /* ── tones (the color-coded ontology) ── */
+  .tcl-fillbar--accent {
+    --bar: var(--tcl-accent);
+  }
+  .tcl-fillbar--info {
+    --bar: var(--tcl-status-info);
+  }
+  .tcl-fillbar--success {
+    --bar: var(--tcl-status-success);
+  }
+  .tcl-fillbar--warning {
+    --bar: var(--tcl-status-warning);
+  }
+  .tcl-fillbar--danger {
+    --bar: var(--tcl-status-danger);
+  }
+  .tcl-fillbar--neutral {
+    --bar: var(--tcl-status-neutral);
+  }
+
+  /* ── solid fill ── */
+  .tcl-fillbar__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--value, 0%);
+    background: var(--bar);
+    border-radius: inherit;
+    transition: width var(--tcl-dur-slow) var(--tcl-ease-calm);
+  }
+
+  /* ── opt-in glow skin (decorative; static, so reduced-motion-safe) ── */
+  .tcl-fillbar.is-glow .tcl-fillbar__fill {
+    box-shadow: 0 0 10px color-mix(in oklab, var(--bar) 55%, transparent);
+  }
+  .tcl-fillbar.is-glow .tcl-fillbar__fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0) 48%);
+  }
+}

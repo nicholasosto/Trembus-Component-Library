@@ -91,6 +91,10 @@ export { Skeleton } from './components/Skeleton/Skeleton';
 export type { SkeletonProps } from './components/Skeleton/Skeleton';
 export { Card } from './components/Card/Card';
 export type { CardProps, CardSectionProps } from './components/Card/Card';
+export { Progress } from './components/Progress/Progress';
+export type { ProgressProps } from './components/Progress/Progress';
+export { Meter } from './components/Meter/Meter';
+export type { MeterProps, MeterSegment, MeterThreshold } from './components/Meter/Meter';
 
 // ── visualizations (data-driven; consume Visual Grammar contracts) ──
 export { Hub } from './components/Hub/Hub';
@@ -103,3 +107,5 @@ export type {
   HubDomainKind,
   HubSlot,
 } from './components/Hub/Hub';
+export { Brief } from './components/Brief/Brief';
+export type { BriefProps } from './components/Brief/Brief';
