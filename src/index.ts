@@ -107,5 +107,16 @@ export type {
   HubDomainKind,
   HubSlot,
 } from './components/Hub/Hub';
-export { Brief } from './components/Brief/Brief';
-export type { BriefProps } from './components/Brief/Brief';
+export { Brief, parseBrief, fromMarkdown } from './components/Brief/Brief';
+export type {
+  BriefProps,
+  BriefContract,
+  BriefSection,
+  BriefItem,
+  BriefMeta,
+  BriefKind,
+  SectionKind,
+  Severity,
+  BriefIssue,
+  BriefParseResult,
+} from './components/Brief/Brief';

@@ -1,7 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { a11yViolations } from '../../test/a11y';
-import { Brief } from './Brief';
+import { Brief, parseBrief, fromMarkdown } from './Brief';
 import type { BriefContract } from './Brief';
 
 const doc: BriefContract = {
@@ -54,5 +56,119 @@ describe('Brief', () => {
   it('has no axe violations', async () => {
     const { container } = render(<Brief data={doc} />);
     expect(await a11yViolations(container)).toEqual([]);
+  });
+});
+
+describe('parseBrief', () => {
+  it('accepts a valid contract with zero issues', () => {
+    const r = parseBrief(doc);
+    expect(r.ok).toBe(true);
+    expect(r.issues).toEqual([]);
+    expect(r.data.title).toBe('Test guide');
+  });
+
+  it('coerces string items into objects in the returned data', () => {
+    const r = parseBrief({
+      view: 'brief',
+      sections: [{ heading: 'R', kind: 'rules', items: ['a', 'b'] }],
+    });
+    expect(r.data.sections[0].items).toEqual([{ text: 'a' }, { text: 'b' }]);
+  });
+
+  it('defaults a missing view to "brief" with a warning', () => {
+    const r = parseBrief({ sections: [] });
+    expect(r.data.view).toBe('brief');
+    expect(r.issues.some((i) => i.path === 'view' && i.level === 'warn')).toBe(true);
+  });
+
+  it('flags an unknown section kind with a didYouMean (and still renders)', () => {
+    const r = parseBrief({ view: 'brief', sections: [{ heading: 'X', kind: 'command' }] });
+    const issue = r.issues.find((i) => i.path === 'sections[0].kind');
+    expect(issue?.didYouMean).toBe('commands');
+    expect(r.ok).toBe(true); // unknown kind is info, not error
+  });
+
+  it('suggests the nearest kind for a typo', () => {
+    const r = parseBrief({ view: 'brief', kind: 'claud', sections: [] });
+    expect(r.issues.find((i) => i.path === 'kind')?.didYouMean).toBe('claude');
+  });
+
+  it('never throws on garbage; returns a renderable shell + error', () => {
+    const r = parseBrief(42);
+    expect(r.ok).toBe(false);
+    expect(r.data).toEqual({ view: 'brief', sections: [] });
+    expect(r.issues[0].level).toBe('error');
+  });
+
+  it('parses a JSON string', () => {
+    const r = parseBrief(JSON.stringify(doc));
+    expect(r.ok).toBe(true);
+    expect(r.data.sections).toHaveLength(2);
+  });
+
+  it('reports an error for non-array sections', () => {
+    const r = parseBrief({ view: 'brief', sections: 'nope' });
+    expect(r.ok).toBe(false);
+    expect(r.issues.some((i) => i.path === 'sections' && i.level === 'error')).toBe(true);
+  });
+});
+
+describe('fromMarkdown', () => {
+  const sample = [
+    '# Sample Guide',
+    '',
+    'A short intro paragraph.',
+    '',
+    '## Commands',
+    '',
+    '- `pnpm dev` — start the server',
+    '- `pnpm test` — run tests',
+    '',
+    '## Conventions',
+    '',
+    '- Tokens only.',
+    '- Use import type.',
+    '',
+    '## Gotchas',
+    '',
+    '- Watch out for portals.',
+    '',
+    '## Notes',
+    '',
+    'Just a paragraph, no list.',
+  ].join('\n');
+
+  it('maps the H1 to the title and the intro to the summary', () => {
+    const c = fromMarkdown(sample);
+    expect(c.title).toBe('Sample Guide');
+    expect(c.summary).toBe('A short intro paragraph.');
+  });
+
+  it('infers section kinds from content and heading', () => {
+    const byHeading = Object.fromEntries(
+      fromMarkdown(sample).sections.map((s) => [s.heading, s.kind]),
+    );
+    expect(byHeading['Commands']).toBe('commands'); // leading inline code
+    expect(byHeading['Conventions']).toBe('rules'); // plain bullets
+    expect(byHeading['Gotchas']).toBe('checklist'); // heading hint
+    expect(byHeading['Notes']).toBe('prose'); // no list
+  });
+
+  it('splits "term — desc" command items', () => {
+    const commands = fromMarkdown(sample).sections.find((s) => s.heading === 'Commands');
+    expect(commands?.items?.[0]).toEqual({ text: 'pnpm dev', desc: 'start the server' });
+  });
+
+  it('round-trips cleanly through parseBrief (no errors)', () => {
+    const r = parseBrief(fromMarkdown(sample));
+    expect(r.issues.filter((i) => i.level === 'error')).toEqual([]);
+  });
+
+  it("renders this repo's real CLAUDE.md deterministically", () => {
+    const md = readFileSync(join(process.cwd(), 'CLAUDE.md'), 'utf8');
+    const c = fromMarkdown(md);
+    expect(c.title?.toLowerCase()).toContain('trembus');
+    expect(c.sections.find((s) => s.heading === 'Commands')?.kind).toBe('commands');
+    expect(c.sections.length).toBeGreaterThan(3);
   });
 });

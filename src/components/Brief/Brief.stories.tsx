@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { Brief } from './Brief';
+import { Brief, fromMarkdown } from './Brief';
 import type { BriefContract } from './Brief';
 
 // ── SCOPE A: an instruction doc (this project's own CLAUDE.md) ──────────────
@@ -266,3 +266,38 @@ export const WithPlan: Story = { args: { data: withPlan } };
 
 /** Scope C — any sectioned markdown (a design spec). */
 export const GenericDoc: Story = { args: { data: genericDoc } };
+
+// A raw markdown doc — exactly what you'd paste from an AGENTS.md — converted to
+// a contract at render time by fromMarkdown(). No model in the loop; deterministic.
+const SAMPLE_MD = `---
+kind: agents
+id: agents.service-worker
+---
+# AGENTS.md — service-worker
+
+An operating brief an agent can act on cold. Local markdown is the source of truth.
+
+## Commands
+
+- \`pnpm dev\` — start the worker on :8787
+- \`pnpm test\` — vitest + miniflare
+- \`pnpm deploy\` — wrangler publish (prod)
+
+## Operating rules
+
+- Read the manifest before moving files.
+- Never write to KV without an explicit approval.
+- Prefer warnings over blocking until hooks land.
+
+## Gotchas
+
+- **Durable Objects** are single-threaded — don't block the event loop.
+- Secrets live in \`wrangler.toml\`, never in code.
+
+## Boundaries
+
+The worker owns auth + routing only; business logic lives in the API service.
+`;
+
+/** Generator: a raw markdown doc → BriefContract via fromMarkdown(), rendered live. */
+export const FromMarkdown: Story = { args: { data: fromMarkdown(SAMPLE_MD) } };
