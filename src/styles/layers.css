@@ -5,4 +5,4 @@
    any file order without specificity fights. A consumer's own
    *unlayered* app styles always beat any tcl layer by default.
    ════════════════════════════════════════════════════════════ */
-@layer tcl.reset, tcl.tokens, tcl.base, tcl.components, tcl.utilities;
+@layer tcl.reset, tcl.tokens, tcl.base, tcl.components, tcl.materials, tcl.utilities;

@@ -1,6 +1,12 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 import type { PolymorphicComponentPropsWithRef } from '../../types/polymorphic';
-import type { RadiusToken, SpaceToken, SurfaceTone, ZToken } from '../../tokens/tokens.types';
+import type {
+  MaterialTone,
+  RadiusToken,
+  SpaceToken,
+  SurfaceTone,
+  ZToken,
+} from '../../tokens/tokens.types';
 import { cx } from '../../utils/cx';
 import './Box.css';
 
@@ -12,6 +18,8 @@ import './Box.css';
  */
 export interface BoxOwnProps {
   surface?: SurfaceTone;
+  /** Material skin (e.g. frosted `glass`) applied via [data-material]; tune with the --tcl-mat-* knobs. */
+  material?: MaterialTone;
   radius?: RadiusToken;
   border?: boolean | 'soft' | 'strong';
   z?: ZToken;
@@ -55,6 +63,7 @@ export function Box<C extends ElementType = 'div'>(props: BoxProps<C>) {
   const {
     as,
     surface = 'none',
+    material,
     radius,
     border,
     z,
@@ -82,5 +91,12 @@ export function Box<C extends ElementType = 'div'>(props: BoxProps<C>) {
     className,
   );
 
-  return <Component className={classes} style={{ ...boxStyle, ...style }} {...rest} />;
+  return (
+    <Component
+      className={classes}
+      data-material={material}
+      style={{ ...boxStyle, ...style }}
+      {...rest}
+    />
+  );
 }
