@@ -95,6 +95,8 @@ export { Progress } from './components/Progress/Progress';
 export type { ProgressProps } from './components/Progress/Progress';
 export { Meter } from './components/Meter/Meter';
 export type { MeterProps, MeterSegment, MeterThreshold } from './components/Meter/Meter';
+export { Stat } from './components/Stat/Stat';
+export type { StatProps, StatDelta, StatTone } from './components/Stat/Stat';
 export { Table } from './components/Table/Table';
 export type {
   TableProps,
@@ -143,3 +145,5 @@ export type {
   BarChartMarker,
   BarTone,
 } from './components/BarChart/BarChart';
+export { Sparkline } from './components/Sparkline/Sparkline';
+export type { SparklineProps, SparklineTone } from './components/Sparkline/Sparkline';

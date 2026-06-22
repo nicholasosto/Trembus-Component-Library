@@ -1,0 +1,162 @@
+@layer tcl.components {
+  .tcl-stat {
+    --stat-accent: var(--tcl-accent);
+    /* fixed height of the embedded trend strip — a deliberate knob */
+    --stat-spark-h: 34px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-5);
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-top: 2px solid var(--stat-accent);
+    border-radius: var(--tcl-radius-lg);
+    box-shadow: var(--tcl-elevation-1);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* tone → accent rail + strap + sparkline color */
+  .tcl-stat--accent {
+    --stat-accent: var(--tcl-accent);
+  }
+  .tcl-stat--info {
+    --stat-accent: var(--tcl-status-info);
+  }
+  .tcl-stat--success {
+    --stat-accent: var(--tcl-status-success);
+  }
+  .tcl-stat--warning {
+    --stat-accent: var(--tcl-status-warning);
+  }
+  .tcl-stat--danger {
+    --stat-accent: var(--tcl-status-danger);
+  }
+  .tcl-stat--neutral {
+    --stat-accent: var(--tcl-status-neutral);
+  }
+
+  /* ── head: strap + label, status badge ── */
+  .tcl-stat__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-stat__heading {
+    display: block;
+    min-width: 0;
+  }
+  .tcl-stat__strap {
+    display: block;
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--stat-accent);
+  }
+  .tcl-stat__label {
+    display: block;
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-stat__badge {
+    flex: none;
+  }
+
+  /* ── body: value, delta, target, sparkline ── */
+  .tcl-stat__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-stat__value {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: var(--tcl-space-2);
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--tcl-leading-tight);
+  }
+  .tcl-stat__unit {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-stat__delta {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--tcl-space-2);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .tcl-stat__delta--good {
+    color: var(--tcl-status-success);
+  }
+  .tcl-stat__delta--bad {
+    color: var(--tcl-status-danger);
+  }
+  .tcl-stat__delta--flat {
+    color: var(--tcl-text-faint);
+  }
+  .tcl-stat__delta-arrow {
+    font-size: 0.85em;
+  }
+
+  .tcl-stat__target {
+    display: block;
+    margin: 0;
+    font-size: var(--tcl-text-xs);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-stat__spark {
+    width: 100%;
+    height: var(--stat-spark-h);
+    margin-top: var(--tcl-space-1);
+  }
+
+  /* ── interactive (drill-in button / link) ── */
+  .tcl-stat--interactive {
+    appearance: none;
+    width: 100%;
+    margin: 0;
+    text-align: left;
+    text-decoration: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      background var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-stat--interactive:hover {
+    background: var(--tcl-surface-hover);
+    border-color: var(--tcl-border-strong);
+  }
+  .tcl-stat--interactive:active {
+    background: var(--tcl-surface-hover);
+  }
+  .tcl-stat--interactive:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-stat--interactive {
+      transition: none;
+    }
+  }
+}
