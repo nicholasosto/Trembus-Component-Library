@@ -1,0 +1,181 @@
+@layer tcl.components {
+  .tcl-heatmap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-heatmap__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-heatmap__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-heatmap__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-heatmap__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── grid ── */
+  .tcl-heatmap__grid {
+    display: grid;
+    gap: 2px;
+    align-items: center;
+  }
+  .tcl-heatmap__colhead {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-bottom: var(--tcl-space-1);
+  }
+  .tcl-heatmap__rowhead {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+    text-align: right;
+    padding-right: var(--tcl-space-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+  }
+
+  .tcl-heatmap__cell {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--tcl-radius-sm);
+    aspect-ratio: 1 / 1;
+    min-height: 18px;
+    width: 100%;
+    background: var(--tcl-surface-sunken);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-heatmap__cell:hover {
+    transform: scale(1.08);
+  }
+  .tcl-heatmap__cell.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  .tcl-heatmap__cell:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  .tcl-heatmap__cell--empty {
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--tcl-surface-sunken),
+      var(--tcl-surface-sunken) 3px,
+      transparent 3px,
+      transparent 6px
+    );
+    cursor: default;
+  }
+  .tcl-heatmap__cell-value {
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    font-weight: var(--tcl-weight-semibold);
+    /* adapts to the theme and stays legible on both dark and bright cells via a halo */
+    color: var(--tcl-text);
+    text-shadow:
+      0 0 2px var(--tcl-bg),
+      0 1px 1px var(--tcl-bg);
+    pointer-events: none;
+  }
+
+  /* ── scale legend ── */
+  .tcl-heatmap__scale {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+    flex-wrap: wrap;
+  }
+  .tcl-heatmap__scale-stop {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-1);
+  }
+  .tcl-heatmap__scale-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--tcl-radius-sm);
+    background: var(--sw, var(--tcl-accent));
+  }
+  .tcl-heatmap__scale-gradient {
+    width: 120px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+    background: linear-gradient(to right, var(--g0), var(--g1));
+  }
+
+  /* ── inspector ── */
+  .tcl-heatmap__inspector {
+    min-height: 44px;
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-heatmap__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-heatmap__inspector-sub {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-heatmap__inspector-value {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-heatmap__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-heatmap__cell {
+      transition: none;
+    }
+  }
+}

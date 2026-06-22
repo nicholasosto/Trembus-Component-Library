@@ -147,3 +147,30 @@ export type {
 } from './components/BarChart/BarChart';
 export { Sparkline } from './components/Sparkline/Sparkline';
 export type { SparklineProps, SparklineTone } from './components/Sparkline/Sparkline';
+export { LineChart } from './components/LineChart/LineChart';
+export type {
+  LineChartProps,
+  LineChartContract,
+  LineSeries,
+  LinePoint,
+  LineBand,
+  LineTarget,
+  LineTone,
+} from './components/LineChart/LineChart';
+export { Gauge } from './components/Gauge/Gauge';
+export type { GaugeProps, GaugeZone, GaugeTone } from './components/Gauge/Gauge';
+export { DonutChart } from './components/DonutChart/DonutChart';
+export type {
+  DonutChartProps,
+  DonutContract,
+  DonutSegment,
+  DonutTone,
+} from './components/DonutChart/DonutChart';
+export { Heatmap } from './components/Heatmap/Heatmap';
+export type {
+  HeatmapProps,
+  HeatmapContract,
+  HeatmapRow,
+  HeatmapStop,
+  HeatTone,
+} from './components/Heatmap/Heatmap';

@@ -1,0 +1,212 @@
+@layer tcl.components {
+  .tcl-line-chart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-line-chart__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-line-chart__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-line-chart__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-line-chart__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── plot ── */
+  .tcl-line-chart__plot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-line-chart__canvas {
+    position: relative;
+  }
+  .tcl-line-chart__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* axes + grid */
+  .tcl-line-chart__grid {
+    stroke: var(--tcl-border-soft);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .tcl-line-chart__axis-text {
+    fill: var(--tcl-text-faint);
+    font-family: var(--tcl-font-mono);
+    font-size: 11px;
+  }
+
+  /* tolerance band */
+  .tcl-line-chart__band {
+    fill: var(--bnd, var(--tcl-status-success));
+    fill-opacity: 0.1;
+  }
+  .tcl-line-chart__band-edge {
+    stroke: var(--bnd, var(--tcl-status-success));
+    stroke-opacity: 0.45;
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    vector-effect: non-scaling-stroke;
+  }
+  .tcl-line-chart__band-label {
+    fill: var(--bnd, var(--tcl-status-success));
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+  }
+
+  /* target line */
+  .tcl-line-chart__target {
+    stroke: var(--tgt, var(--tcl-status-warning));
+    stroke-width: 1.5;
+    stroke-dasharray: 3 3;
+    vector-effect: non-scaling-stroke;
+  }
+  .tcl-line-chart__target-label {
+    fill: var(--tgt, var(--tcl-status-warning));
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+  }
+
+  /* series */
+  .tcl-line-chart__line {
+    fill: none;
+    stroke: var(--tcl-accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tcl-line-chart__line.is-dashed {
+    stroke-dasharray: 6 4;
+  }
+  .tcl-line-chart__area {
+    fill: var(--tcl-accent);
+    fill-opacity: 0.1;
+    stroke: none;
+  }
+
+  /* ── interactive points (overlaid buttons) ── */
+  .tcl-line-chart__points {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .tcl-line-chart__dot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    appearance: none;
+    margin: 0;
+    padding: 5px;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 50%;
+    background: var(--dot, var(--tcl-accent));
+    background-clip: content-box;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: padding var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-line-chart__dot:hover {
+    padding: 4px;
+  }
+  .tcl-line-chart__dot.is-selected {
+    padding: 4px;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  .tcl-line-chart__dot:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── legend ── */
+  .tcl-line-chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-4);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-line-chart__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-line-chart__legend-swatch {
+    width: 16px;
+    height: 0;
+    border-top: 2px solid var(--dot, var(--tcl-accent));
+  }
+  .tcl-line-chart__legend-swatch.is-dashed {
+    border-top-style: dashed;
+  }
+
+  /* ── inspector ── */
+  .tcl-line-chart__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-line-chart__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-line-chart__inspector-value {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-line-chart__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-line-chart__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-line-chart__dot {
+      transition: none;
+    }
+  }
+}

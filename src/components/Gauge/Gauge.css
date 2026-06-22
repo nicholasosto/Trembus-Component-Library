@@ -1,0 +1,96 @@
+@layer tcl.components {
+  .tcl-gauge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  .tcl-gauge__dial {
+    position: relative;
+    width: 100%;
+    max-width: 240px;
+  }
+  .tcl-gauge__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .tcl-gauge__track {
+    fill: none;
+    stroke: var(--tcl-surface-sunken);
+    stroke-width: 16;
+    stroke-linecap: round;
+  }
+  .tcl-gauge__zone {
+    fill: none;
+    stroke: var(--tcl-accent);
+    stroke-width: 16;
+    stroke-linecap: butt;
+  }
+  .tcl-gauge__target {
+    stroke: var(--tcl-text);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+  .tcl-gauge__needle line {
+    stroke: var(--tcl-text);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  .tcl-gauge__needle circle {
+    fill: var(--tcl-text);
+  }
+
+  /* readout sits in the lower-centre of the dial */
+  .tcl-gauge__readout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+  }
+  .tcl-gauge__value {
+    display: flex;
+    align-items: baseline;
+    gap: var(--tcl-space-1);
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .tcl-gauge__unit {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-gauge__label {
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+
+  .tcl-gauge__target-label {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+
+  .tcl-gauge__scale {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 220px;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+}
