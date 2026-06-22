@@ -88,6 +88,15 @@ barrel (`../index`) so the example exercises the real consumer API. See
 - **`color-mix(in oklab, <tone> N%, var(--tcl-surface-sunken))`** is the tokens-only way to make a
   continuous intensity scale (Heatmap); for cell text over arbitrary mixes use `var(--tcl-text)` +
   a `var(--tcl-bg)` halo so it stays legible on both dark and bright cells, in both themes.
+- **Inline text on a SOLID tone fill uses the tone's `-fg` token, not `var(--tcl-text)`.** The
+  status tokens are AA-tuned for white in light theme and dark-fg in dark theme, so a solid-tone
+  cell (Treemap) must set its text to `var(--tcl-status-<tone>-fg)` / `var(--tcl-accent-fg)` — plain
+  `--tcl-text` fails contrast on the darker light-theme tones. Custom hex fills can't map to a tone
+  fg → fall back to `--tcl-text` + the `--tcl-bg` halo above.
+- **A clamped bar must clamp its label too.** If a bar's width is capped (`clampPct`), the % it
+  prints must clamp to the same ceiling — else an out-of-order/non-monotonic datum shows e.g. "150%"
+  next to a full bar (Funnel: conversion vs top, and "% retained"). Size bars against the largest
+  datum (not strictly the first) so a zero/low reference can't collapse every bar to empty.
 
 ## Visualizations
 
