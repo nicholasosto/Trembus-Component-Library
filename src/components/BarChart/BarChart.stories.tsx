@@ -123,3 +123,35 @@ export const Interaction: Story = {
     await expect(canvas.getByText(/Table edge cases/)).toBeInTheDocument();
   },
 };
+
+/**
+ * Clustered multi-series — one bar per series under each category, with a legend.
+ * Selecting any bar names its series + category in the inspector.
+ */
+export const Grouped: Story = {
+  args: {
+    data: {
+      view: 'bar-chart',
+      code: 'pmo.utilization.byteam',
+      title: 'Utilization vs target by team',
+      caption: 'Billable vs target utilization across delivery teams. Click any bar to inspect it.',
+      unit: '%',
+      max: 100,
+      markers: [{ value: 80, label: 'target', tone: 'success' }],
+      categories: ['Platform', 'Data', 'Cloud', 'Advisory'],
+      series: [
+        { id: 'billable', name: 'Billable', tone: 'accent', values: [78, 84, 71, 66] },
+        { id: 'target', name: 'Target', tone: 'neutral', values: [80, 80, 80, 75] },
+        { id: 'forecast', name: 'Forecast', tone: 'info', values: [82, 86, 74, 70] },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bar = canvas.getByRole('button', { name: 'Forecast, Data: 86%' });
+    await expect(bar).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.click(bar);
+    await expect(bar).toHaveAttribute('aria-pressed', 'true');
+    await expect(canvas.getByText(/Data · 86%/)).toBeInTheDocument();
+  },
+};

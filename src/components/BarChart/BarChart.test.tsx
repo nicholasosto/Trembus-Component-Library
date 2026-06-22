@@ -68,3 +68,60 @@ describe('BarChart', () => {
     expect(await a11yViolations(container)).toEqual([]);
   });
 });
+
+const grouped: BarChartContract = {
+  view: 'bar-chart',
+  code: 'test.grouped',
+  title: 'Utilization by team',
+  unit: '%',
+  categories: ['Platform', 'Data', 'Cloud'],
+  series: [
+    { id: 'billable', name: 'Billable', tone: 'accent', values: [78, 84, 71] },
+    { id: 'target', name: 'Target', tone: 'neutral', values: [80, 80, null] },
+  ],
+};
+
+describe('BarChart (grouped multi-series)', () => {
+  it('renders a labelled button per series × category cell', () => {
+    render(<BarChart data={grouped} />);
+    expect(screen.getByRole('button', { name: 'Billable, Platform: 78%' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Target, Data: 80%' })).toBeInTheDocument();
+  });
+
+  it('leaves no button for null values', () => {
+    render(<BarChart data={grouped} />);
+    // Target has no Cloud value → no button for that slot.
+    expect(screen.queryByRole('button', { name: /Target, Cloud/ })).not.toBeInTheDocument();
+  });
+
+  it('renders the legend with each series name', () => {
+    render(<BarChart data={grouped} />);
+    const legend = document.querySelector('.tcl-bar-chart__legend');
+    expect(legend).toHaveTextContent('Billable');
+    expect(legend).toHaveTextContent('Target');
+  });
+
+  it('selects a grouped bar and reveals its series + category', async () => {
+    const user = userEvent.setup();
+    render(<BarChart data={grouped} />);
+    const bar = screen.getByRole('button', { name: 'Billable, Data: 84%' });
+    await user.click(bar);
+    expect(bar).toHaveAttribute('aria-pressed', 'true');
+    const inspector = document.querySelector('.tcl-bar-chart__inspector');
+    expect(inspector).toHaveTextContent('Billable');
+    expect(inspector).toHaveTextContent('Data · 84%');
+  });
+
+  it('calls onSelect with a collision-proof {series}#{category} id', async () => {
+    const onSelect = vi.fn();
+    const user = userEvent.setup();
+    render(<BarChart data={grouped} onSelect={onSelect} />);
+    await user.click(screen.getByRole('button', { name: 'Target, Platform: 80%' }));
+    expect(onSelect).toHaveBeenCalledWith('target#0');
+  });
+
+  it('has no axe violations in grouped mode', async () => {
+    const { container } = render(<BarChart data={grouped} />);
+    expect(await a11yViolations(container)).toEqual([]);
+  });
+});

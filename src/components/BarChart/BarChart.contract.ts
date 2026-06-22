@@ -11,7 +11,7 @@ export const barChartContract: ComponentContract = {
     },
     affordAction: {
       satisfiedBy:
-        'every bar is a button; selecting one inspects its value, caption, and note in the panel. The same contract renders vertical or horizontal.',
+        'every bar is a button; selecting one inspects its value, caption, and note in the panel. The same contract renders vertical or horizontal, single-series or clustered multi-series (with a legend).',
       story: 'States',
     },
     acknowledgeInput: {

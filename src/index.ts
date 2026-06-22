@@ -142,6 +142,7 @@ export type {
   BarChartProps,
   BarChartContract,
   BarDatum,
+  BarSeries,
   BarChartMarker,
   BarTone,
 } from './components/BarChart/BarChart';
