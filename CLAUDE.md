@@ -39,6 +39,16 @@ Every component in `src/components/<Name>/` has EXACTLY:
 - `scripts/check-contracts.ts` enforces the shape + that each of the three jobs names a real
   exported story. Use the story names `Default` / `States` / `Interaction`.
 
+## Example pages (multi-component compositions)
+
+Pages that group several components together are NOT library components — they have no single
+"3 jobs" contract. Put them in `src/examples/`, **not** `src/components/` (the contract checker
+scans every `src/components/<Name>/` dir and would fail the gate demanding a contract). A plain
+`<Name>.stories.tsx` there is all you need — no contract / css / test files; Storybook still
+finds it via the `src/**/*.stories.tsx` glob. Title them `Examples/*` and compose from the public
+barrel (`../index`) so the example exercises the real consumer API. See
+`src/examples/Dashboard.stories.tsx`.
+
 ## Conventions
 
 - **Tokens only**: components reference `var(--tcl-*)` — never hardcode a hex. Component CSS
