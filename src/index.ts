@@ -175,3 +175,17 @@ export type {
   HeatmapStop,
   HeatTone,
 } from './components/Heatmap/Heatmap';
+export { Funnel } from './components/Funnel/Funnel';
+export type {
+  FunnelProps,
+  FunnelContract,
+  FunnelStage,
+  FunnelTone,
+} from './components/Funnel/Funnel';
+export { Treemap } from './components/Treemap/Treemap';
+export type {
+  TreemapProps,
+  TreemapContract,
+  TreemapNode,
+  TreemapTone,
+} from './components/Treemap/Treemap';

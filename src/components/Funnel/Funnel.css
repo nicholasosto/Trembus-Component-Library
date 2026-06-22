@@ -1,0 +1,167 @@
+@layer tcl.components {
+  .tcl-funnel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-funnel__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-funnel__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-funnel__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-funnel__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── stages ── */
+  .tcl-funnel__stages {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-funnel__stage {
+    /* button reset */
+    appearance: none;
+    margin: 0;
+    padding: var(--tcl-space-1) var(--tcl-space-2);
+    border: 1px solid transparent;
+    border-radius: var(--tcl-radius-sm);
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    /* label | bar | readout */
+    display: grid;
+    grid-template-columns: minmax(72px, 132px) 1fr auto;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    transition: background var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-funnel__stage:hover {
+    background: var(--tcl-surface-hover);
+  }
+  .tcl-funnel__stage.is-selected {
+    background: var(--tcl-surface-hover);
+    border-color: var(--tcl-border);
+  }
+  .tcl-funnel__stage:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--tcl-focus-ring);
+  }
+
+  .tcl-funnel__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  .tcl-funnel__track {
+    position: relative;
+    height: 22px;
+    border-radius: var(--tcl-radius-sm);
+    background: var(--tcl-surface-sunken);
+    overflow: hidden;
+  }
+  .tcl-funnel__bar {
+    display: block;
+    height: 100%;
+    width: var(--pct);
+    min-width: 2px;
+    background: var(--bar-color, var(--tcl-accent));
+    border-radius: var(--tcl-radius-sm);
+    transition:
+      width var(--tcl-dur-slow) var(--tcl-ease-calm),
+      filter var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-funnel__stage:hover .tcl-funnel__bar {
+    filter: brightness(1.08);
+  }
+
+  .tcl-funnel__readout {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: var(--tcl-space-2);
+    min-width: 76px;
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .tcl-funnel__value {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text);
+  }
+  .tcl-funnel__conv {
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── inspector ── */
+  .tcl-funnel__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-funnel__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-funnel__inspector-value {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-funnel__inspector-drop {
+    margin: var(--tcl-space-2) 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-funnel__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-funnel__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-funnel__bar {
+      transition: none;
+    }
+  }
+}

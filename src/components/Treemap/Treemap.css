@@ -1,0 +1,163 @@
+@layer tcl.components {
+  .tcl-treemap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-treemap__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-treemap__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-treemap__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-treemap__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── plot ── */
+  .tcl-treemap__plot {
+    position: relative;
+    width: 100%;
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface-sunken);
+    overflow: hidden;
+  }
+  .tcl-treemap__empty {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-treemap__cell {
+    position: absolute;
+    appearance: none;
+    margin: 0;
+    padding: var(--tcl-space-2);
+    /* Border in the page bg colour draws the gutter without shifting geometry. */
+    border: 1.5px solid var(--tcl-bg);
+    box-sizing: border-box;
+    border-radius: var(--tcl-radius-sm);
+    background: var(--cell, var(--tcl-accent));
+    color: var(--cell-fg, var(--tcl-text));
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    text-align: left;
+    transition: filter var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-treemap__cell:hover {
+    filter: brightness(1.08);
+  }
+  .tcl-treemap__cell.is-selected {
+    z-index: 2;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  .tcl-treemap__cell:focus-visible {
+    outline: none;
+    z-index: 2;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-treemap__cell-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    max-width: 100%;
+    /* text colour comes from the cell's tone fg; the bg halo keeps custom-colour
+       cells (which fall back to --tcl-text) legible — the Heatmap idiom */
+    color: inherit;
+    text-shadow:
+      0 0 2px var(--tcl-bg),
+      0 1px 1px var(--tcl-bg);
+    pointer-events: none;
+  }
+  .tcl-treemap__cell-label {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: var(--tcl-leading-tight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tcl-treemap__cell-value {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+    opacity: 0.82;
+  }
+
+  /* ── inspector ── */
+  .tcl-treemap__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-treemap__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-treemap__inspector-sub {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-treemap__inspector-value {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-treemap__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-treemap__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-treemap__cell {
+      transition: none;
+    }
+  }
+}
