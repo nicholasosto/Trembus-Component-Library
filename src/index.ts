@@ -135,3 +135,11 @@ export type {
   BriefIssue,
   BriefParseResult,
 } from './components/Brief/Brief';
+export { BarChart } from './components/BarChart/BarChart';
+export type {
+  BarChartProps,
+  BarChartContract,
+  BarDatum,
+  BarChartMarker,
+  BarTone,
+} from './components/BarChart/BarChart';

@@ -1,0 +1,271 @@
+@layer tcl.components {
+  .tcl-bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-bar-chart__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-bar-chart__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-bar-chart__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-bar-chart__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── plot: a grid of [canvas][axis]; orientation swaps which way they stack ── */
+  .tcl-bar-chart__plot {
+    display: grid;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-bar-chart__canvas {
+    position: relative;
+    grid-area: canvas;
+  }
+  .tcl-bar-chart__axis {
+    grid-area: axis;
+  }
+
+  .tcl-bar-chart__cell {
+    /* button reset */
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .tcl-bar-chart__bar {
+    position: relative;
+    background: var(--bar-color, var(--tcl-accent));
+    border-radius: var(--tcl-radius-sm);
+    transition:
+      height var(--tcl-dur-slow) var(--tcl-ease-calm),
+      width var(--tcl-dur-slow) var(--tcl-ease-calm),
+      filter var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-bar-chart__cell:hover .tcl-bar-chart__bar {
+    filter: brightness(1.08);
+  }
+  /* Selection / focus — a ring around the bar (inner bg ring opens a gap). */
+  .tcl-bar-chart__cell.is-selected .tcl-bar-chart__bar {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  .tcl-bar-chart__cell:focus-visible {
+    outline: none;
+  }
+  .tcl-bar-chart__cell:focus-visible .tcl-bar-chart__bar {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-bar-chart__value {
+    position: absolute;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--tcl-text-dim);
+    white-space: nowrap;
+  }
+
+  .tcl-bar-chart__tick {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.04em;
+    color: var(--tcl-text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tcl-bar-chart__marker {
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .tcl-bar-chart__marker-label {
+    position: absolute;
+    font-family: var(--tcl-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mk, var(--tcl-text-faint));
+    background: var(--tcl-bg);
+    padding: 0 4px;
+    white-space: nowrap;
+  }
+
+  /* ── VERTICAL — canvas on top, ticks below ── */
+  .tcl-bar-chart--vertical .tcl-bar-chart__plot {
+    grid-template-areas: 'canvas' 'axis';
+    grid-template-rows: 1fr auto;
+    padding-top: var(--tcl-space-6); /* headroom for value labels that float above bars */
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__canvas {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--tcl-space-4);
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__cell {
+    flex: 1 1 0;
+    height: 100%;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__bar {
+    width: 100%;
+    max-width: 72px;
+    height: var(--pct);
+    min-height: 3px;
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__value {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: var(--tcl-space-2);
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__axis {
+    display: flex;
+    gap: var(--tcl-space-4);
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__tick {
+    flex: 1 1 0;
+    text-align: center;
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__marker {
+    left: 0;
+    right: 0;
+    bottom: var(--at);
+    border-top: 1px dashed color-mix(in oklab, var(--mk, var(--tcl-text)) 70%, transparent);
+  }
+  .tcl-bar-chart--vertical .tcl-bar-chart__marker-label {
+    right: 0;
+    bottom: 2px;
+  }
+
+  /* ── HORIZONTAL — ticks on the left, canvas on the right ── */
+  .tcl-bar-chart--horizontal .tcl-bar-chart__plot {
+    grid-template-areas: 'axis canvas';
+    grid-template-columns: auto 1fr;
+    padding-right: var(--tcl-space-7); /* room for value labels that float past the bar end */
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__axis {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__canvas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__tick {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    max-width: 160px;
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__cell {
+    flex: 1 1 0;
+    min-height: var(--tcl-space-7);
+    width: 100%;
+    align-items: center;
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__bar {
+    height: 100%;
+    max-height: 28px;
+    width: var(--pct);
+    min-width: 3px;
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__value {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: var(--tcl-space-2);
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__marker {
+    top: 0;
+    bottom: 0;
+    left: var(--at);
+    border-left: 1px dashed color-mix(in oklab, var(--mk, var(--tcl-text)) 70%, transparent);
+  }
+  .tcl-bar-chart--horizontal .tcl-bar-chart__marker-label {
+    top: 0;
+    left: 4px;
+  }
+
+  /* ── inspector ── */
+  .tcl-bar-chart__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-bar-chart__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-bar-chart__inspector-value {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-bar-chart__inspector-sub {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-bar-chart__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-bar-chart__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-bar-chart__bar {
+      transition: none;
+    }
+  }
+}
