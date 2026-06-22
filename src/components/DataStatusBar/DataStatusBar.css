@@ -1,0 +1,319 @@
+@layer tcl.components {
+  .tcl-data-status-bar {
+    /* --dsb: the status tone, set per modifier below */
+    --dsb: var(--tcl-status-neutral);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--tcl-space-3) var(--tcl-space-5);
+    padding: var(--tcl-space-3) var(--tcl-space-5);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--dsb);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface-raised);
+    box-shadow: var(--tcl-elevation-1);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  .tcl-data-status-bar--dense {
+    padding: var(--tcl-space-2) var(--tcl-space-4);
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+  }
+
+  /* status → accent rail + dot color (mirrors the Badge/Callout ontology) */
+  .tcl-data-status-bar--success {
+    --dsb: var(--tcl-status-success);
+  }
+  .tcl-data-status-bar--info {
+    --dsb: var(--tcl-status-info);
+  }
+  .tcl-data-status-bar--warning {
+    --dsb: var(--tcl-status-warning);
+  }
+  .tcl-data-status-bar--danger {
+    --dsb: var(--tcl-status-danger);
+  }
+  .tcl-data-status-bar--neutral {
+    --dsb: var(--tcl-status-neutral);
+  }
+  .tcl-data-status-bar--accent {
+    --dsb: var(--tcl-accent);
+  }
+
+  /* ── lead: title · status · metrics ── */
+  .tcl-data-status-bar__lead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-3) var(--tcl-space-4);
+    min-width: 0;
+  }
+
+  .tcl-data-status-bar__title {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    color: var(--tcl-text);
+  }
+
+  /* ── status cluster ── */
+  .tcl-data-status-bar__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+  }
+  /* the live region: dot + word only */
+  .tcl-data-status-bar__signal {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+  }
+
+  .tcl-data-status-bar__dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--dsb);
+    /* a faint ring grounds the dot on bright surfaces */
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--dsb) 18%, transparent);
+  }
+
+  /* live → a calm breathing beacon */
+  .tcl-data-status-bar__dot--beacon {
+    animation: tcl-dsb-beacon 2.4s var(--tcl-ease-calm) infinite;
+  }
+  /* loading → a quicker pulse */
+  .tcl-data-status-bar__dot--pulse {
+    animation: tcl-dsb-pulse 1s var(--tcl-ease-calm) infinite;
+  }
+
+  .tcl-data-status-bar__status-word {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    color: var(--dsb);
+  }
+
+  .tcl-data-status-bar__fresh {
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+    white-space: nowrap;
+  }
+
+  /* ── metrics ── */
+  .tcl-data-status-bar__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* a quiet divider dot between metrics */
+  .tcl-data-status-bar__metric + .tcl-data-status-bar__metric {
+    position: relative;
+    padding-left: var(--tcl-space-4);
+  }
+  .tcl-data-status-bar__metric + .tcl-data-status-bar__metric::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    margin-top: -1.5px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-text-faint);
+  }
+  .tcl-data-status-bar__metric {
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-data-status-bar__metric-value {
+    font-weight: var(--tcl-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    color: var(--tcl-text);
+  }
+  .tcl-data-status-bar__metric-label {
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── controls: filter chips + refresh ── */
+  .tcl-data-status-bar__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    min-width: 0;
+  }
+
+  .tcl-data-status-bar__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tcl-data-status-bar__chip {
+    --chip: var(--tcl-status-neutral);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    height: 22px;
+    padding: 0 var(--tcl-space-2) 0 var(--tcl-space-3);
+    border: 1px solid color-mix(in oklab, var(--chip) 30%, transparent);
+    border-radius: var(--tcl-radius-full);
+    background: color-mix(in oklab, var(--chip) 12%, var(--tcl-surface));
+    font-size: var(--tcl-text-xs);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  /* with no remove button the right padding should match the left */
+  .tcl-data-status-bar__chip:not(:has(.tcl-data-status-bar__chip-remove)) {
+    padding-right: var(--tcl-space-3);
+  }
+
+  .tcl-data-status-bar__chip--neutral {
+    --chip: var(--tcl-status-neutral);
+  }
+  .tcl-data-status-bar__chip--success {
+    --chip: var(--tcl-status-success);
+  }
+  .tcl-data-status-bar__chip--info {
+    --chip: var(--tcl-status-info);
+  }
+  .tcl-data-status-bar__chip--warning {
+    --chip: var(--tcl-status-warning);
+  }
+  .tcl-data-status-bar__chip--danger {
+    --chip: var(--tcl-status-danger);
+  }
+  .tcl-data-status-bar__chip--accent {
+    --chip: var(--tcl-accent);
+  }
+
+  .tcl-data-status-bar__chip-label {
+    color: var(--tcl-text-faint);
+    text-transform: uppercase;
+    letter-spacing: var(--tcl-tracking-wide);
+    font-size: 0.85em;
+  }
+  .tcl-data-status-bar__chip-value {
+    color: var(--tcl-text);
+    font-weight: var(--tcl-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tcl-data-status-bar__chip-remove {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: var(--tcl-space-1);
+    padding: 0;
+    border: none;
+    border-radius: var(--tcl-radius-full);
+    background: none;
+    color: color-mix(in oklab, var(--chip) 70%, var(--tcl-text-faint));
+    font-size: 0.78em;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background var(--tcl-dur-fast) var(--tcl-ease-calm),
+      color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-data-status-bar__chip-remove:hover {
+    background: color-mix(in oklab, var(--chip) 24%, transparent);
+    color: var(--tcl-text);
+  }
+  .tcl-data-status-bar__chip-remove:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--tcl-focus-ring);
+  }
+
+  /* ── refresh ── */
+  .tcl-data-status-bar__refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    height: 26px;
+    padding: 0 var(--tcl-space-3);
+    border: 1px solid var(--tcl-border-strong);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+    color: var(--tcl-text-dim);
+    font-family: inherit;
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-medium);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-data-status-bar__refresh:hover {
+    background: var(--tcl-surface-hover);
+    border-color: var(--tcl-border-strong);
+    color: var(--tcl-text);
+  }
+  .tcl-data-status-bar__refresh:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--tcl-focus-ring);
+  }
+  .tcl-data-status-bar__refresh:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .tcl-data-status-bar__refresh-icon {
+    font-size: 1.05em;
+    line-height: 1;
+  }
+  /* while loading, the refresh glyph spins */
+  .tcl-data-status-bar__refresh[aria-busy='true'] .tcl-data-status-bar__refresh-icon {
+    animation: tcl-dsb-spin 0.9s linear infinite;
+  }
+
+  @keyframes tcl-dsb-beacon {
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--dsb) 18%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 5px color-mix(in oklab, var(--dsb) 6%, transparent);
+    }
+  }
+  @keyframes tcl-dsb-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+  @keyframes tcl-dsb-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-data-status-bar__dot--beacon,
+    .tcl-data-status-bar__dot--pulse,
+    .tcl-data-status-bar__refresh[aria-busy='true'] .tcl-data-status-bar__refresh-icon {
+      animation: none;
+    }
+    .tcl-data-status-bar__refresh,
+    .tcl-data-status-bar__chip-remove {
+      transition: none;
+    }
+  }
+}

@@ -193,3 +193,11 @@ export { Callout } from './components/Callout/Callout';
 export type { CalloutProps, CalloutTone } from './components/Callout/Callout';
 export { EmptyState } from './components/EmptyState/EmptyState';
 export type { EmptyStateProps } from './components/EmptyState/EmptyState';
+export { DataStatusBar } from './components/DataStatusBar/DataStatusBar';
+export type {
+  DataStatusBarProps,
+  DataStatus,
+  DataChipTone,
+  DataFilter,
+  DataMetric,
+} from './components/DataStatusBar/DataStatusBar';
