@@ -1,0 +1,299 @@
+@layer tcl.components {
+  .tcl-swimlane {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header (mirrors the other viz) ── */
+  .tcl-swimlane__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-swimlane__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-swimlane__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-swimlane__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── board: sticky actor column + horizontally-scrolling track ── */
+  .tcl-swimlane__board {
+    display: flex;
+    overflow-x: auto;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface-raised);
+  }
+
+  .tcl-swimlane__lanes {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    flex: none;
+    background: var(--tcl-surface);
+    border-right: 1px solid var(--tcl-border);
+  }
+  .tcl-swimlane__lane-head {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    width: 124px;
+    padding: 0 var(--tcl-space-4);
+    box-sizing: border-box;
+  }
+  .tcl-swimlane__lane-head + .tcl-swimlane__lane-head {
+    border-top: 1px solid var(--tcl-border-soft);
+  }
+  .tcl-swimlane__lane-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--lane-tone, var(--tcl-status-neutral));
+  }
+  .tcl-swimlane__lane-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-swimlane__lane-kind {
+    flex: none;
+    margin-left: auto;
+    font-family: var(--tcl-font-mono);
+    font-size: 9px;
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-swimlane__track {
+    position: relative;
+    flex: none;
+  }
+
+  /* lane stripes — a quiet zebra so rows read across the scroll */
+  .tcl-swimlane__stripe {
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+  .tcl-swimlane__stripe.is-alt {
+    background: var(--tcl-surface-sunken);
+    opacity: 0.45;
+  }
+
+  /* ── connectors (decorative) ── */
+  .tcl-swimlane__edges {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .tcl-swimlane__edge {
+    color: var(--tcl-border-strong);
+  }
+  .tcl-swimlane__edge-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+  .tcl-swimlane__edge-arrow {
+    fill: currentColor;
+    stroke: none;
+  }
+  .tcl-swimlane__edge.is-active {
+    color: var(--tcl-accent);
+  }
+  .tcl-swimlane__edge.is-active .tcl-swimlane__edge-line {
+    stroke-width: 2;
+  }
+
+  /* ── steps ── */
+  .tcl-swimlane__steps {
+    position: absolute;
+    inset: 0;
+  }
+  .tcl-swimlane__step {
+    /* button reset */
+    appearance: none;
+    position: absolute;
+    margin: 0;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--tcl-space-1);
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--step-tone, var(--tcl-status-neutral));
+    border-radius: var(--tcl-radius-md);
+    box-shadow: var(--tcl-elevation-1);
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-swimlane__step:hover {
+    border-color: var(--tcl-border-strong);
+    box-shadow: var(--tcl-elevation-2);
+  }
+  .tcl-swimlane__step:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  /* selection is a single, consistent accent affordance (matching the lit
+     connectors); status stays on the left rail + dot */
+  .tcl-swimlane__step.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  /* pending / skipped read as not-yet-done */
+  .tcl-swimlane__step.is-pending {
+    background: var(--tcl-surface);
+    box-shadow: none;
+  }
+  .tcl-swimlane__step.is-skipped {
+    background: var(--tcl-surface);
+    border-style: dashed;
+    box-shadow: none;
+  }
+  .tcl-swimlane__step.is-skipped .tcl-swimlane__step-label {
+    color: var(--tcl-text-faint);
+    text-decoration: line-through;
+  }
+
+  .tcl-swimlane__step-top {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    min-width: 0;
+  }
+  .tcl-swimlane__step-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--step-tone, var(--tcl-status-neutral));
+  }
+  /* the active step's dot breathes */
+  .tcl-swimlane__step.is-active .tcl-swimlane__step-dot {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--step-tone) 60%, transparent);
+    animation: tcl-swimlane-pulse 1.8s var(--tcl-ease-calm) infinite;
+  }
+  .tcl-swimlane__step-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-swimlane__step-detail {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: calc(8px + var(--tcl-space-2));
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+
+  .tcl-swimlane__empty {
+    margin: 0;
+    padding: var(--tcl-space-6);
+    text-align: center;
+    color: var(--tcl-text-faint);
+    font-size: var(--tcl-text-sm);
+    border: 1px dashed var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+  }
+
+  /* ── inspector ── */
+  .tcl-swimlane__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-swimlane__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-swimlane__inspector-lane {
+    color: var(--tcl-text-dim);
+  }
+  .tcl-swimlane__inspector-status {
+    font-family: var(--tcl-font-mono);
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-swimlane__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-swimlane__inspector-handoff {
+    margin: var(--tcl-space-2) 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-swimlane__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @keyframes tcl-swimlane-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--step-tone) 55%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 5px color-mix(in oklab, var(--step-tone) 0%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-swimlane__step {
+      transition: none;
+    }
+    .tcl-swimlane__step.is-active .tcl-swimlane__step-dot {
+      animation: none;
+    }
+  }
+}

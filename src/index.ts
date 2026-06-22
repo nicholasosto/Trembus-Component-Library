@@ -189,6 +189,15 @@ export type {
   TreemapNode,
   TreemapTone,
 } from './components/Treemap/Treemap';
+export { Swimlane } from './components/Swimlane/Swimlane';
+export type {
+  SwimlaneProps,
+  SwimlaneContract,
+  SwimlaneLane,
+  SwimlaneStep,
+  SwimlaneStatus,
+  SwimlaneLaneKind,
+} from './components/Swimlane/Swimlane';
 export { Callout } from './components/Callout/Callout';
 export type { CalloutProps, CalloutTone } from './components/Callout/Callout';
 export { EmptyState } from './components/EmptyState/EmptyState';
