@@ -77,6 +77,17 @@ barrel (`../index`) so the example exercises the real consumer API. See
   effect sees the node on the same commit (see `src/utils/Portal.tsx`).
 - **attw**: this is an ESM-only package — `verify:exports` runs with `--profile esm-only` and
   excludes the `./styles.css` entrypoint.
+- **Viz datum ids — never fall back to the label.** Use `id ?? \`s${i}\``(index), NOT`id ?? label`. Duplicate labels/names with no id collide → wrong inspector target, double
+  selection rings, duplicate React keys. Recurred in LineChart/Donut/Heatmap — same fix each time.
+- **Forced viz domains must clamp.** A forced `min`/`max` (or band/target) can invert the scale or
+  push points/lines outside the plot box. Guard `hi <= lo`, swap inverted pairs, SVG `clipPath` the
+  series, and skip overlay buttons whose value is out of domain (no phantom clickables).
+- **A clamped meter must clamp everywhere.** Clamp the value ONCE and feed the same number to the
+  needle, readout, `aria-valuenow` AND `aria-valuetext` — else a screen reader announces two
+  different values for out-of-range input (Gauge).
+- **`color-mix(in oklab, <tone> N%, var(--tcl-surface-sunken))`** is the tokens-only way to make a
+  continuous intensity scale (Heatmap); for cell text over arbitrary mixes use `var(--tcl-text)` +
+  a `var(--tcl-bg)` halo so it stays legible on both dark and bright cells, in both themes.
 
 ## Visualizations
 
@@ -86,3 +97,14 @@ Mirror the schema as a TS type so ONE contract renders in both the static HTML k
 Title these `Visualizations/*` in Storybook. Tier-1 (deterministic layout, no heavy deps) lives
 here; Tier-2 (flow/topology graphs needing a layout engine) is planned for a sibling
 `@trembus/viz` package.
+
+**The Tier-1 viz spine** (Hub · BarChart · LineChart · DonutChart · Heatmap): lead job is
+_reveal-state_, but afford/acknowledge are real — each datum is a focusable **HTML `<button>`**
+(not an SVG node) carrying the accessible name, driven by controlled/uncontrolled `selectedId`
+(+ `defaultSelectedId` + `onSelect`), with an `aria-live` **inspector** revealing the selected
+datum. The SVG/grid is decorative (`aria-hidden`); when points live inside an SVG (LineChart),
+overlay HTML buttons positioned by `%` over a `preserveAspectRatio` chart so axis text never
+distorts and selection stays accessible. **Gauge** (`role=meter` + `aria-valuetext`) and
+**Sparkline** (`role=img`/decorative) are the presentational exceptions — they declare
+afford/acknowledge as "presentational" like Badge/Skeleton and may name their third story
+descriptively (`Labeled`/`Zones`); the checker only requires the contract to point at a real story.
