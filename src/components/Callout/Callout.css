@@ -1,0 +1,123 @@
+@layer tcl.components {
+  .tcl-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    border: 1px solid color-mix(in oklab, var(--cal) 28%, transparent);
+    border-left: 3px solid var(--cal);
+    border-radius: var(--tcl-radius-md);
+    background: var(--cal-bg);
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+  }
+
+  /* ── tones (mirror the Badge ontology) ── */
+  .tcl-callout--accent {
+    --cal: var(--tcl-accent);
+    --cal-bg: color-mix(in oklab, var(--tcl-accent) 12%, var(--tcl-surface));
+  }
+  .tcl-callout--neutral {
+    --cal: var(--tcl-status-neutral);
+    --cal-bg: var(--tcl-status-neutral-bg);
+  }
+  .tcl-callout--success {
+    --cal: var(--tcl-status-success);
+    --cal-bg: var(--tcl-status-success-bg);
+  }
+  .tcl-callout--info {
+    --cal: var(--tcl-status-info);
+    --cal-bg: var(--tcl-status-info-bg);
+  }
+  .tcl-callout--warning {
+    --cal: var(--tcl-status-warning);
+    --cal-bg: var(--tcl-status-warning-bg);
+  }
+  .tcl-callout--danger {
+    --cal: var(--tcl-status-danger);
+    --cal-bg: var(--tcl-status-danger-bg);
+  }
+
+  .tcl-callout__icon {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border-radius: var(--tcl-radius-full);
+    font-size: var(--tcl-text-sm);
+    line-height: 1;
+    color: var(--cal);
+  }
+
+  .tcl-callout__content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .tcl-callout__title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: var(--tcl-leading-tight);
+  }
+  /* a body after a title gets a little separation */
+  .tcl-callout__title + .tcl-callout__body {
+    margin-top: var(--tcl-space-1);
+  }
+  .tcl-callout__body {
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-callout__body :first-child {
+    margin-top: 0;
+  }
+  .tcl-callout__body :last-child {
+    margin-bottom: 0;
+  }
+  .tcl-callout__body code {
+    font-family: var(--tcl-font-mono);
+    font-size: 0.92em;
+    padding: 0.1em 0.35em;
+    border-radius: var(--tcl-radius-sm);
+    background: color-mix(in oklab, var(--cal) 14%, transparent);
+    color: var(--tcl-text);
+  }
+  .tcl-callout__body a {
+    color: var(--cal);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .tcl-callout__dismiss {
+    flex: none;
+    appearance: none;
+    margin: -2px -4px 0 0;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--tcl-radius-sm);
+    background: none;
+    color: var(--tcl-text-faint);
+    font-size: var(--tcl-text-sm);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background var(--tcl-dur-fast) var(--tcl-ease-calm),
+      color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-callout__dismiss:hover {
+    background: color-mix(in oklab, var(--cal) 16%, transparent);
+    color: var(--tcl-text);
+  }
+  .tcl-callout__dismiss:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--tcl-focus-ring);
+  }
+}

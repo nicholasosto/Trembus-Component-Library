@@ -189,3 +189,7 @@ export type {
   TreemapNode,
   TreemapTone,
 } from './components/Treemap/Treemap';
+export { Callout } from './components/Callout/Callout';
+export type { CalloutProps, CalloutTone } from './components/Callout/Callout';
+export { EmptyState } from './components/EmptyState/EmptyState';
+export type { EmptyStateProps } from './components/EmptyState/EmptyState';
