@@ -3,6 +3,11 @@
 // 3-jobs contract). Compose from the public barrel ('../index') so it exercises the real
 // consumer API. The "magic" — selecting a run time-travels the diagram — lives here, via
 // the page-local `applyRun` transform, so Swimlane itself stays untouched.
+//
+// Run history is treated as an OPTIONAL companion to the flow: a pill switch toggles it,
+// and when a workflow has no history the switch is disabled (greyed) and only the flow's
+// definition shows. With the switch on, run history sits ABOVE a full-width flow so the
+// diagram is never starved for horizontal room.
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card, Inline, RunHistory, Stack, Swimlane, Text } from '../index';
@@ -15,7 +20,7 @@ const base: SwimlaneContract = {
   brand: 'Trembus',
   code: 'workflow.ship-feature',
   title: 'Ship a feature with Claude',
-  caption: 'Pick a run on the left to replay its state across the lanes.',
+  caption: 'Pick a run to replay its state across the lanes.',
   lanes: [
     { id: 'human', label: 'You', kind: 'human' },
     { id: 'ai', label: 'Claude', kind: 'ai' },
@@ -111,68 +116,116 @@ const runLog: RunHistoryContract = {
   runs: RUNS,
 };
 
-// ── page-local segmented control (no aria-controls → no dangling refs) ──
-function Segmented<T extends string>({
-  value,
+// ── page-local pill switch: a true on/off control that greys out (and disables) when
+// there is nothing to toggle. role=switch + aria-checked keeps it accessible. ──
+function SwitchPill({
+  checked,
   onChange,
-  options,
+  label,
+  count,
+  disabled = false,
+  disabledHint,
 }: {
-  value: T;
-  onChange: (v: T) => void;
-  options: ReadonlyArray<{ value: T; label: string }>;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  count?: number;
+  disabled?: boolean;
+  disabledHint?: string;
 }) {
+  const on = checked && !disabled; // a disabled switch always reads + paints as off
   return (
-    <div
-      role="group"
-      aria-label="Layout"
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      disabled={disabled}
+      title={disabled ? disabledHint : undefined}
+      onClick={() => onChange(!checked)}
       style={{
+        appearance: 'none',
         display: 'inline-flex',
-        gap: 2,
-        padding: 2,
-        background: 'var(--tcl-surface-sunken)',
+        alignItems: 'center',
+        gap: 'var(--tcl-space-2)',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        font: 'inherit',
+        fontSize: 'var(--tcl-text-sm)',
+        fontWeight: 600,
+        color: disabled ? 'var(--tcl-text-faint)' : on ? 'var(--tcl-text)' : 'var(--tcl-text-dim)',
+        padding: '6px 14px 6px 8px',
+        borderRadius: 'var(--tcl-radius-full)',
         border: '1px solid var(--tcl-border)',
-        borderRadius: 'var(--tcl-radius-md)',
+        background: disabled ? 'var(--tcl-surface-sunken)' : 'var(--tcl-surface-raised)',
+        opacity: disabled ? 0.6 : 1,
+        boxShadow: on ? 'var(--tcl-elevation-1)' : 'none',
+        transition: 'color var(--tcl-dur-fast) var(--tcl-ease-calm)',
       }}
     >
-      {options.map((o) => {
-        const active = o.value === value;
-        return (
-          <button
-            key={o.value}
-            type="button"
-            aria-pressed={active}
-            onClick={() => onChange(o.value)}
-            style={{
-              appearance: 'none',
-              cursor: 'pointer',
-              border: 'none',
-              borderRadius: 'var(--tcl-radius-sm)',
-              padding: '6px 14px',
-              font: 'inherit',
-              fontSize: 'var(--tcl-text-sm)',
-              fontWeight: active ? 600 : 500,
-              color: active ? 'var(--tcl-text)' : 'var(--tcl-text-dim)',
-              background: active ? 'var(--tcl-surface-raised)' : 'transparent',
-              boxShadow: active ? 'var(--tcl-elevation-1)' : 'none',
-            }}
-          >
-            {o.label}
-          </button>
-        );
-      })}
-    </div>
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'relative',
+          flex: 'none',
+          width: 32,
+          height: 18,
+          borderRadius: 'var(--tcl-radius-full)',
+          background: on ? 'var(--tcl-accent)' : 'var(--tcl-border-strong)',
+          transition: 'background var(--tcl-dur-fast) var(--tcl-ease-calm)',
+        }}
+      >
+        <span
+          style={{
+            position: 'absolute',
+            top: 2,
+            left: 2,
+            width: 14,
+            height: 14,
+            borderRadius: 'var(--tcl-radius-full)',
+            background: 'var(--tcl-surface-raised)',
+            boxShadow: 'var(--tcl-elevation-1)',
+            transform: on ? 'translateX(14px)' : 'none',
+            transition: 'transform var(--tcl-dur-fast) var(--tcl-ease-calm)',
+          }}
+        />
+      </span>
+      <span>
+        {label}
+        {typeof count === 'number' && (
+          <span style={{ fontWeight: 500, color: 'var(--tcl-text-dim)' }}> · {count}</span>
+        )}
+      </span>
+    </button>
   );
 }
 
-function WorkflowConsole() {
-  // start on the failed run so the time-travel (a blocked test step) shows immediately
-  const [selectedRunId, setSelectedRunId] = useState('r128');
-  const [view, setView] = useState<'split' | 'full'>('split');
-  const selectedRun = RUNS.find((r) => r.id === selectedRunId) ?? RUNS[0];
-  const derived = applyRun(base, selectedRun);
+function WorkflowConsole({ runs }: { runs: RunRecord[] }) {
+  const hasRuns = runs.length > 0;
+  // start on the failed run (if present) so the time-travel — a blocked test step — shows
+  // immediately; otherwise the first run, or nothing when there is no history.
+  const [selectedRunId, setSelectedRunId] = useState(
+    () => runs.find((r) => r.status === 'failed')?.id ?? runs[0]?.id ?? '',
+  );
+  const [showRuns, setShowRuns] = useState(true);
+
+  const runsVisible = showRuns && hasRuns;
+  const selectedRun = runs.find((r) => r.id === selectedRunId) ?? runs[0];
+
+  // Keep the flow's caption honest about what is (or isn't) being replayed.
+  const swimlaneData: SwimlaneContract =
+    runsVisible && selectedRun
+      ? {
+          ...applyRun(base, selectedRun),
+          caption: 'Selected run replayed across the lanes — pick another above.',
+        }
+      : {
+          ...base,
+          caption: hasRuns
+            ? 'Run history is hidden — switch it on to replay past executions.'
+            : 'No run history yet — this is the workflow definition.',
+        };
 
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', padding: 'var(--tcl-space-6)' }}>
+    <div style={{ maxWidth: 1360, margin: '0 auto', padding: 'var(--tcl-space-6)' }}>
       <Stack gap={5}>
         <Inline justify="between" align="center" wrap gap={4}>
           <Stack gap={1}>
@@ -188,41 +241,31 @@ function WorkflowConsole() {
               Ship a feature with Claude
             </Text>
           </Stack>
-          <Segmented
-            value={view}
-            onChange={setView}
-            options={[
-              { value: 'split', label: 'Split view' },
-              { value: 'full', label: 'Full table' },
-            ]}
+          <SwitchPill
+            checked={showRuns}
+            onChange={setShowRuns}
+            label="Run history"
+            count={hasRuns ? runs.length : undefined}
+            disabled={!hasRuns}
+            disabledHint="No run history configured for this workflow"
           />
         </Inline>
 
-        {view === 'split' ? (
-          <div
-            style={{
-              display: 'grid',
-              gap: 'var(--tcl-space-5)',
-              gridTemplateColumns: 'minmax(0, 540px) minmax(0, 1fr)',
-              alignItems: 'start',
-            }}
-          >
+        <Stack gap={5}>
+          {runsVisible && (
             <RunHistory
-              data={runLog}
-              density="compact"
+              data={{ ...runLog, runs }}
               selectedRunId={selectedRunId}
               onSelectRun={setSelectedRunId}
             />
-            <Card>
-              <Card.Body>
-                {/* key by run so the diagram's own step-selection resets on run change */}
-                <Swimlane key={selectedRunId} data={derived} />
-              </Card.Body>
-            </Card>
-          </div>
-        ) : (
-          <RunHistory data={runLog} selectedRunId={selectedRunId} onSelectRun={setSelectedRunId} />
-        )}
+          )}
+          <Card>
+            <Card.Body>
+              {/* key by run so the diagram's own step-selection resets on run change */}
+              <Swimlane key={runsVisible ? selectedRunId : 'base'} data={swimlaneData} />
+            </Card.Body>
+          </Card>
+        </Stack>
       </Stack>
     </div>
   );
@@ -236,7 +279,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Run history beside a time-travelled Swimlane: pick a run and the diagram replays its state. */
+/**
+ * Run history above a time-travelled Swimlane: pick a run and the flow replays its state.
+ * The "Run history" pill switch hides the log to show the bare workflow definition.
+ */
 export const Default: Story = {
-  render: () => <WorkflowConsole />,
+  render: () => <WorkflowConsole runs={RUNS} />,
+};
+
+/**
+ * A workflow with no recorded runs: the "Run history" switch is disabled (greyed) and only
+ * the flow's definition renders — the same component, gracefully degraded.
+ */
+export const NoHistory: Story = {
+  render: () => <WorkflowConsole runs={[]} />,
 };

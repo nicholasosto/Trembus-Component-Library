@@ -34,6 +34,14 @@ const PKG = {
     a11y: '@trembus/tokens/testing',
     title: 'Visualizations',
   },
+  // game-viz builds ON @trembus/ui (it composes primitives), but pulls the
+  // contract + a11y helper from the shared @trembus/tokens foundation.
+  'game-viz': {
+    cx: '../../internal/cx',
+    contract: '@trembus/tokens/contract',
+    a11y: '@trembus/tokens/testing',
+    title: 'Game',
+  },
 };
 
 function fail(msg) {

@@ -24,6 +24,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PACKAGES: Record<string, string> = {
   ui: 'packages/ui',
   viz: 'packages/viz',
+  'game-viz': 'packages/game-viz',
 };
 
 const errors: string[] = [];

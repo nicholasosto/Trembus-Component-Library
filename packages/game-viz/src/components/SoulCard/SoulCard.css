@@ -1,0 +1,196 @@
+@layer tcl.components {
+  /* The root is the sizing + 3D-perspective container; the card SURFACE lives on
+     the face so the front + back can flip independently. A card with no `back`
+     renders a single front face and looks identical to the static dossier. */
+  .tcl-soul-card {
+    --soul-tone: var(--tcl-status-danger);
+    --soul-tone-text: var(--tcl-status-danger);
+    position: relative;
+    max-width: 390px;
+  }
+  .tcl-soul-card.is-flippable {
+    perspective: 1600px;
+  }
+
+  .tcl-soul-card__flipper {
+    display: grid;
+    transform-style: preserve-3d;
+    transition: transform 0.55s var(--tcl-ease-calm);
+  }
+  .tcl-soul-card.is-flippable[data-flipped] .tcl-soul-card__flipper {
+    transform: rotateY(180deg);
+  }
+
+  .tcl-soul-card__face {
+    grid-area: 1 / 1; /* front + back share one cell → container sizes to the taller */
+    min-width: 0;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    padding: var(--tcl-space-6);
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-lg);
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+  }
+  .tcl-soul-card__face.is-back {
+    transform: rotateY(180deg);
+  }
+
+  /* ── flip control ── */
+  .tcl-soul-card__flip {
+    position: absolute;
+    right: var(--tcl-space-4);
+    bottom: var(--tcl-space-4);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    appearance: none;
+    cursor: pointer;
+    color: var(--tcl-text-dim);
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+    font-size: var(--tcl-text-lg);
+    line-height: 1;
+    box-shadow: var(--tcl-elevation-1);
+    transition:
+      color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-soul-card__flip:hover {
+    color: var(--soul-tone-text);
+    border-color: color-mix(in oklab, var(--soul-tone) 50%, var(--tcl-border));
+  }
+  .tcl-soul-card__flip:hover span {
+    transform: rotate(-90deg);
+  }
+  .tcl-soul-card__flip span {
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-soul-card__flip:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── head: eyebrow index + tone-coded state tag ── */
+  .tcl-soul-card__index,
+  .tcl-soul-card__state {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+  }
+  .tcl-soul-card__index {
+    color: var(--tcl-text-dim);
+  }
+  .tcl-soul-card__state {
+    color: var(--soul-state, var(--tcl-text-dim));
+    font-weight: var(--tcl-weight-semibold);
+  }
+
+  /* ── portrait ── */
+  .tcl-soul-card__portrait {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid var(--tcl-border);
+    background: var(--tcl-bg);
+  }
+  .tcl-soul-card__portrait.is-empty {
+    background: radial-gradient(
+      120% 110% at 50% 22%,
+      color-mix(in oklab, var(--soul-tone) 28%, var(--tcl-bg)) 0%,
+      var(--tcl-bg) 72%
+    );
+  }
+
+  /* ── identity: display-serif name + epithet ── */
+  .tcl-soul-card__name {
+    margin: 0;
+    font-family: var(--tcl-font-display, Georgia, 'Times New Roman', serif);
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    line-height: var(--tcl-leading-tight);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  .tcl-soul-card__epithet {
+    margin: 0;
+    font-family: var(--tcl-font-display, Georgia, 'Times New Roman', serif);
+    font-style: italic;
+    font-size: var(--tcl-text-md);
+    /* tone as running text → use the legibility-safe variant (accent→--tcl-text) */
+    color: var(--soul-tone-text);
+  }
+
+  /* ── stat rows (definition list) with dotted separators ── */
+  .tcl-soul-card__stats {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .tcl-soul-card__stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--tcl-space-4);
+    padding: var(--tcl-space-3) 0;
+    border-bottom: 1px dashed var(--tcl-border-soft);
+  }
+  .tcl-soul-card__stat:first-child {
+    border-top: 1px dashed var(--tcl-border-soft);
+  }
+  .tcl-soul-card__stat-label {
+    flex: none;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-soul-card__stat-value {
+    margin: 0;
+    text-align: right;
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+  }
+
+  /* ── bio ── */
+  .tcl-soul-card__desc {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── pull-quote ── */
+  .tcl-soul-card__quote {
+    margin: 0;
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    border-left: 3px solid var(--soul-tone);
+    background: color-mix(in oklab, var(--soul-tone) 7%, transparent);
+    font-family: var(--tcl-font-display, Georgia, 'Times New Roman', serif);
+    font-style: italic;
+    font-size: var(--tcl-text-md);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text);
+  }
+
+  /* the flip still toggles (rotateY jumps instantly) — just no spin animation */
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-soul-card__flipper,
+    .tcl-soul-card__flip span {
+      transition: none;
+    }
+  }
+}

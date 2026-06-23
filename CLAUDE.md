@@ -6,7 +6,7 @@ First-principles UX: tokens → primitives → components, each carrying a machi
 
 ## Workspace
 
-This repo is a **pnpm workspace** with three packages under `packages/`:
+This repo is a **pnpm workspace** with four packages under `packages/`:
 
 - **`@trembus/tokens`** (`packages/tokens/`) — the shared design-token foundation: the
   `var(--tcl-*)` token CSS (`src/css/tokens.*.css` + `layers.css`), the type-safe token ontology,
@@ -17,6 +17,16 @@ This repo is a **pnpm workspace** with three packages under `packages/`:
   paths and public API are unchanged.
 - **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
+- **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
+  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`), titled `Game/*`. Liturgical-gothic
+  idiom: HUD frames, character dossiers, episode decks, title plates. UNLIKE `@trembus/viz`
+  (tokens-only), it **builds on `@trembus/ui`** (composes `Box`/`Stack`/`Inline`/`Text`/`Pressable`
+  - reuses materials), so it depends on both `@trembus/ui` and `@trembus/tokens`. Same 3-jobs
+    contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
+    `aria-hidden`, interactive bits are real focusable controls, tone-coding always paired with a
+    word, motion behind `prefers-reduced-motion`). **Tone-as-text gotcha:** a tone painted as TEXT
+    needs a legibility-safe variant — map `accent → var(--tcl-text)` (gold-on-light fails AA ~1.8:1;
+    the Badge precedent) and keep the full tone only on borders/tints/strokes.
 
 Run gates at the **root** (`pnpm validate` orchestrates every package via `pnpm -r` + one
 Storybook build) or per package (`pnpm --filter @trembus/<pkg> validate`). One root `.storybook/`
@@ -48,10 +58,10 @@ reads `.claude/launch.json` (`storybook dev -p 6006 --ci`) and serves on :6006; 
 
 ## Adding a component — the canonical 5-file shape
 
-Fastest path: `node .claude/skills/new-component/scaffold.mjs <Name> [--pkg ui|viz]` (the
+Fastest path: `node .claude/skills/new-component/scaffold.mjs <Name> [--pkg ui|viz|game-viz]` (the
 `/new-component` skill). `--pkg` defaults to `ui` (titled `Components/*`); `--pkg viz` titles
-`Visualizations/*` and wires the shared `@trembus/tokens` imports. It scaffolds the shape below
-and wires the barrel.
+`Visualizations/*` and `--pkg game-viz` titles `Game/*`, both wiring the shared `@trembus/tokens`
+imports. It scaffolds the shape below and wires the barrel.
 
 Every component in `packages/<pkg>/src/components/<Name>/` has EXACTLY:
 `<Name>.tsx · <Name>.css · <Name>.contract.ts · <Name>.stories.tsx · <Name>.test.tsx`

@@ -38,6 +38,7 @@ export const tokens = {
   font: {
     sans: 'var(--tcl-font-sans)',
     mono: 'var(--tcl-font-mono)',
+    display: 'var(--tcl-font-display)',
   },
   fontSize: (step: TypeToken) => `var(--tcl-text-${step})`,
   radius: (step: RadiusToken) => `var(--tcl-radius-${step})`,
