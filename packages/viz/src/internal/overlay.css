@@ -1,0 +1,26 @@
+@layer tcl.components {
+  /* The overlay canvas — the SVG establishes height; the node layer floats over it. */
+  .tcl-viz-overlay {
+    position: relative;
+    width: 100%;
+  }
+
+  .tcl-viz-overlay__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* Let node halos/rings that sit near the edge paint without clipping. */
+    overflow: visible;
+  }
+
+  /* Nodes positioned by % over the (decorative) SVG. The layer is click-through;
+     each node button re-enables pointer events. */
+  .tcl-viz-overlay__layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .tcl-viz-overlay__layer > * {
+    pointer-events: auto;
+  }
+}

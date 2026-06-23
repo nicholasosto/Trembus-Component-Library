@@ -1,0 +1,9 @@
+/* ════════════════════════════════════════════════════════════
+   @trembus/viz — style entry. Import this ONCE in a consumer app:
+       import '@trembus/viz/styles.css';
+   Pulls in the shared @trembus/tokens foundation (the @layer cascade
+   order + every var(--tcl-*)) so a viz-only consumer needs no
+   @trembus/ui. Component CSS opens `@layer tcl.components` and bundles
+   alongside via each component's side-effect import.
+   ════════════════════════════════════════════════════════════ */
+@import '@trembus/tokens/styles.css';

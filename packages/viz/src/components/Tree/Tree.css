@@ -1,0 +1,198 @@
+@layer tcl.components {
+  .tcl-tree {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the Tier-1 viz spine) ── */
+  .tcl-tree__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-tree__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-tree__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-tree__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-tree__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── nodes: HTML buttons positioned by % over the decorative SVG ── */
+  /* Centered on the layout point (sx, sy) so edges connect to the node's center.
+     The toggle is hung off the node's edge (position:absolute) so it does NOT
+     widen this box and shift the node off its edge endpoint. */
+  .tcl-tree__node-wrap {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .tcl-tree__node {
+    appearance: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    max-width: 150px;
+    margin: 0;
+    padding: 6px 10px;
+    border: 1.5px solid var(--tcl-bg);
+    border-radius: var(--tcl-radius-md);
+    background: var(--node, var(--tcl-accent));
+    color: var(--node-fg, var(--tcl-text));
+    font-family: inherit;
+    font-size: var(--tcl-text-sm);
+    line-height: 1.2;
+    text-align: left;
+    /* legible on both custom-hex fills (which fall back to --tcl-text) and tone fills */
+    text-shadow:
+      0 0 2px var(--tcl-bg),
+      0 1px 1px var(--tcl-bg);
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-tree__node-label {
+    max-width: 130px;
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .tcl-tree__node-sub {
+    font-size: var(--tcl-text-xs);
+    opacity: 0.85;
+  }
+  .tcl-tree__node:hover {
+    transform: translateY(-1px);
+  }
+  .tcl-tree__node.is-lineage {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 3px var(--tcl-accent);
+  }
+  .tcl-tree__node.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  .tcl-tree__node:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── expand/collapse toggle — a distinct focusable child, not the node itself ── */
+  .tcl-tree__toggle {
+    appearance: none;
+    cursor: pointer;
+    /* hung off the node's right edge, out of the centering flow */
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 4px;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    font-size: 12px;
+    line-height: 1;
+  }
+  .tcl-tree__toggle:hover {
+    border-color: var(--tcl-border-strong);
+  }
+  .tcl-tree__toggle:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── edges (decorative; the SVG is aria-hidden) ── */
+  .tcl-tree__edge {
+    fill: none;
+    stroke: var(--tcl-border-soft);
+    stroke-width: 1.5;
+    /* don't fatten when the SVG scales to width */
+    vector-effect: non-scaling-stroke;
+  }
+  .tcl-tree__edge.is-lineage {
+    stroke: var(--tcl-accent);
+    stroke-width: 2;
+  }
+
+  /* ── aria-live inspector ── */
+  .tcl-tree__inspector {
+    min-height: 2.75rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-tree__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-tree__inspector-sub {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+  }
+  .tcl-tree__inspector-value {
+    color: var(--tcl-accent);
+    font-family: var(--tcl-font-mono);
+  }
+  .tcl-tree__inspector-path {
+    margin: 2px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-tree__inspector-note {
+    margin: 4px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-tree__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-tree__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-tree__node {
+      transition: none;
+    }
+    .tcl-tree__node:hover {
+      transform: none;
+    }
+  }
+}
