@@ -1,0 +1,241 @@
+@layer tcl.components {
+  .tcl-run-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-5);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header (mirrors the other viz) ── */
+  .tcl-run-history__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-run-history__code {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-run-history__title {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-run-history__caption {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── run cell (the interactive first cell) ── */
+  .tcl-run-history__run {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+    min-width: 0;
+  }
+  .tcl-run-history__run-label {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    font-variant-numeric: tabular-nums;
+    color: var(--tcl-text-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* visually-hidden completion of the row's accessible name */
+  .tcl-run-history__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* the "running" status dot breathes (reuses Badge's dot) */
+  .tcl-run-history__status.is-running .tcl-badge__dot {
+    animation: tcl-run-history-pulse 1.6s var(--tcl-ease-calm) infinite;
+  }
+
+  .tcl-run-history__when {
+    color: var(--tcl-text-dim);
+    white-space: nowrap;
+  }
+
+  /* ── step tally ── */
+  .tcl-run-history__steps {
+    font-size: var(--tcl-text-xs);
+    white-space: nowrap;
+  }
+  .tcl-run-history__steps-none {
+    color: var(--tcl-text-faint);
+  }
+  .tcl-run-history__tally {
+    font-variant-numeric: tabular-nums;
+  }
+  .tcl-run-history__tally.is-success {
+    color: var(--tcl-text-dim);
+  }
+  .tcl-run-history__tally.is-accent {
+    color: var(--tcl-accent);
+  }
+  .tcl-run-history__tally.is-danger {
+    color: var(--tcl-status-danger);
+  }
+  .tcl-run-history__tally.is-warning {
+    color: var(--tcl-status-warning);
+  }
+  .tcl-run-history__tally.is-neutral {
+    color: var(--tcl-text-faint);
+  }
+  .tcl-run-history__tally-sep {
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── selected row (own selection, not Table's checkbox selection) ── */
+  .tcl-run-history .tcl-table__row.is-run-selected {
+    background: color-mix(in srgb, var(--tcl-accent) 14%, var(--tcl-surface-raised));
+  }
+  .tcl-run-history .tcl-table__row.is-run-selected:hover {
+    background: color-mix(in srgb, var(--tcl-accent) 18%, var(--tcl-surface-raised));
+  }
+  .tcl-run-history .tcl-table__row.is-run-selected .tcl-table__td:first-child {
+    box-shadow: inset 3px 0 0 var(--tcl-accent);
+  }
+
+  /* ── inspector ── */
+  .tcl-run-history__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-run-history__inspector-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2);
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-run-history__inspector-label {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .tcl-run-history__inspector-meta {
+    font-family: var(--tcl-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-run-history__inspector-note {
+    margin: var(--tcl-space-3) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-run-history__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-run-history__no-outputs {
+    margin: var(--tcl-space-3) 0 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── output link chips ── */
+  .tcl-run-history__outputs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    margin-top: var(--tcl-space-3);
+  }
+  .tcl-run-history__chip {
+    --chip: var(--tcl-status-neutral);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    height: 24px;
+    padding: 0 var(--tcl-space-3);
+    border: 1px solid color-mix(in oklab, var(--chip) 30%, transparent);
+    border-radius: var(--tcl-radius-full);
+    background: color-mix(in oklab, var(--chip) 12%, var(--tcl-surface));
+    color: var(--tcl-text);
+    font-size: var(--tcl-text-xs);
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .tcl-run-history__chip.is-accent {
+    --chip: var(--tcl-accent);
+  }
+  .tcl-run-history__chip.is-info {
+    --chip: var(--tcl-status-info);
+  }
+  .tcl-run-history__chip.is-success {
+    --chip: var(--tcl-status-success);
+  }
+  .tcl-run-history__chip.is-warning {
+    --chip: var(--tcl-status-warning);
+  }
+  .tcl-run-history__chip.is-danger {
+    --chip: var(--tcl-status-danger);
+  }
+  .tcl-run-history__chip.is-neutral {
+    --chip: var(--tcl-status-neutral);
+  }
+  a.tcl-run-history__chip {
+    color: var(--tcl-text);
+  }
+  a.tcl-run-history__chip:hover {
+    background: color-mix(in oklab, var(--chip) 22%, var(--tcl-surface));
+    border-color: color-mix(in oklab, var(--chip) 50%, transparent);
+  }
+  a.tcl-run-history__chip:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--tcl-focus-ring);
+  }
+  .tcl-run-history__chip-ext {
+    color: var(--tcl-text-faint);
+    font-size: 0.9em;
+  }
+  .tcl-run-history__more {
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  @keyframes tcl-run-history-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-run-history__status.is-running .tcl-badge__dot {
+      animation: none;
+    }
+  }
+}

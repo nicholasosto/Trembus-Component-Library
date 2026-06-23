@@ -198,6 +198,16 @@ export type {
   SwimlaneStatus,
   SwimlaneLaneKind,
 } from './components/Swimlane/Swimlane';
+export { RunHistory } from './components/RunHistory/RunHistory';
+export type {
+  RunHistoryProps,
+  RunHistoryContract,
+  RunRecord,
+  RunOutput,
+  RunStepOutcome,
+  RunStatus,
+  RunOutputKind,
+} from './components/RunHistory/RunHistory';
 export { Callout } from './components/Callout/Callout';
 export type { CalloutProps, CalloutTone } from './components/Callout/Callout';
 export { EmptyState } from './components/EmptyState/EmptyState';
