@@ -1,0 +1,182 @@
+@layer tcl.components {
+  .tcl-lineage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the viz spine) ── */
+  .tcl-lineage__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-lineage__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-lineage__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-lineage__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-lineage__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── nodes: HTML buttons positioned by % over the decorative SVG ── */
+  .tcl-lineage__node-wrap {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .tcl-lineage__node {
+    appearance: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    max-width: 200px;
+    margin: 0;
+    padding: 6px 10px;
+    border: 1.5px solid var(--tcl-bg);
+    border-radius: var(--tcl-radius-md);
+    background: var(--node, var(--tcl-accent));
+    color: var(--node-fg, var(--tcl-text));
+    font-family: inherit;
+    font-size: var(--tcl-text-sm);
+    line-height: 1.2;
+    text-align: left;
+    text-shadow:
+      0 0 2px var(--tcl-bg),
+      0 1px 1px var(--tcl-bg);
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      opacity var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-lineage__node-label {
+    max-width: 180px;
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .tcl-lineage__node-sub {
+    font-size: var(--tcl-text-xs);
+    opacity: 0.85;
+  }
+  .tcl-lineage__node:hover {
+    transform: translateY(-1px);
+  }
+  .tcl-lineage__node.is-lineage {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 3px var(--tcl-accent);
+  }
+  .tcl-lineage__node.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  /* Off-lineage nodes stay full-opacity (legible + operable); the trace pops via
+     the lineage ring + the brightened edges, not by dimming focusable controls. */
+  .tcl-lineage__node:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── edges (decorative; the SVG is aria-hidden). Directed via marker-end. ── */
+  .tcl-lineage__edge {
+    fill: none;
+    stroke: var(--edge, var(--tcl-border-strong));
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    transition: opacity var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-lineage__edge.is-dashed {
+    stroke-dasharray: 5 4;
+  }
+  .tcl-lineage__edge.is-lineage {
+    stroke: var(--tcl-accent);
+    stroke-width: 2;
+  }
+  .tcl-lineage__edge.is-muted {
+    opacity: 0.25;
+  }
+  .tcl-lineage__edge-label {
+    fill: var(--tcl-text-dim);
+    font-family: var(--tcl-font-sans);
+    font-size: 11px;
+    paint-order: stroke;
+    stroke: var(--tcl-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+
+  /* ── aria-live inspector ── */
+  .tcl-lineage__inspector {
+    min-height: 2.75rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-lineage__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-lineage__inspector-sub,
+  .tcl-lineage__inspector-kind {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+  }
+  .tcl-lineage__inspector-flow {
+    margin: 2px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-lineage__inspector-conn {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-lineage__inspector-note {
+    margin: 4px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-lineage__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-lineage__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-lineage__node,
+    .tcl-lineage__edge {
+      transition: none;
+    }
+    .tcl-lineage__node:hover {
+      transform: none;
+    }
+  }
+}

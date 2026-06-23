@@ -34,6 +34,7 @@ export default defineConfig({
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
         'd3-hierarchy',
+        /^@dagrejs\//,
       ],
       output: {
         // Force a stable CSS filename so the exports map can point at it.

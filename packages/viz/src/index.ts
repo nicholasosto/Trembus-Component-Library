@@ -6,3 +6,12 @@ import './styles/index.css';
 // ── visualizations (Tier-2 node-link; consume the Visual Grammar contracts) ──
 export { Tree } from './components/Tree/Tree';
 export type { TreeProps, TreeContract, TreeNode, TreeTone } from './components/Tree/Tree';
+
+export { Lineage } from './components/Lineage/Lineage';
+export type {
+  LineageProps,
+  GraphContract,
+  GraphNode,
+  GraphEdge,
+  LineageTone,
+} from './components/Lineage/Lineage';
