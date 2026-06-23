@@ -1,0 +1,248 @@
+@layer tcl.components {
+  /* A cinematic reliquary stage for a 3D relic: recessed surface, bracket reticle,
+     a mono index tab and a display-serif caption. Tone drives the reticle, tab,
+     caption rule, and the model-viewer progress bar — never meaning by color
+     alone (the index/caption carry the words). */
+  .tcl-effigy {
+    --effigy-tone: var(--tcl-accent);
+    --effigy-tone-text: var(--tcl-text);
+    --effigy-ratio: 1 / 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-5);
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+  }
+
+  /* ── decorative corner reticle (aria-hidden in the markup) ── */
+  .tcl-effigy__bracket {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    border: 0 solid var(--effigy-tone);
+  }
+  .tcl-effigy__bracket.is-tl {
+    top: -1px;
+    left: -1px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+  }
+  .tcl-effigy__bracket.is-tr {
+    top: -1px;
+    right: -1px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+  .tcl-effigy__bracket.is-bl {
+    bottom: -1px;
+    left: -1px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+  }
+  .tcl-effigy__bracket.is-br {
+    bottom: -1px;
+    right: -1px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+  }
+
+  /* ── mono index tab (top-left) ── */
+  .tcl-effigy__index {
+    align-self: flex-start;
+    max-width: 100%;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    /* text uses the legibility-safe tone (accent→--tcl-text); tint + border keep
+       the full tone so the gold identity survives */
+    color: var(--effigy-tone-text);
+    border: 1px solid color-mix(in oklab, var(--effigy-tone) 50%, var(--tcl-border));
+    background: color-mix(in oklab, var(--effigy-tone) 8%, transparent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── the model stage ── */
+  .tcl-effigy__stage {
+    position: relative;
+    aspect-ratio: var(--effigy-ratio);
+    overflow: hidden;
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border-soft);
+  }
+  /* model-viewer is focusable in-browser; ring the whole stage when it (or the
+     overlay controls) hold focus */
+  .tcl-effigy__stage:focus-within {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .tcl-effigy__viewer {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    /* theme model-viewer's own custom props from tokens */
+    --poster-color: var(--tcl-surface-sunken);
+    --progress-bar-color: var(--effigy-tone);
+    --progress-mask: transparent;
+  }
+
+  /* ── poster plate: decorative; the model's NAME lives on `alt`. Fills
+     model-viewer's #poster slot (positioned) and rides its reveal/dismiss. ── */
+  .tcl-effigy__poster {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none; /* let a tap reach model-viewer to trigger reveal */
+    background: var(--tcl-surface-sunken);
+  }
+  .tcl-effigy__poster-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  /* no-poster fallback — a tone-tinted relic diamond */
+  .tcl-effigy__poster-glyph {
+    width: 38%;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in oklab, var(--effigy-tone) 40%, var(--tcl-border));
+    background: radial-gradient(
+      circle at 50% 38%,
+      color-mix(in oklab, var(--effigy-tone) 22%, transparent),
+      transparent 62%
+    );
+    transform: rotate(45deg);
+  }
+
+  /* interaction-reveal: the poster IS the load affordance (a real button), so it
+     re-enables pointer-events and resets the button chrome */
+  .tcl-effigy__poster.is-load {
+    pointer-events: auto;
+    padding: 0;
+    border: 0;
+    color: var(--tcl-text);
+    cursor: pointer;
+  }
+  .tcl-effigy__poster.is-load:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: -2px;
+  }
+  .tcl-effigy__poster-cue {
+    position: absolute;
+    bottom: var(--tcl-space-3);
+    padding: var(--tcl-space-1) var(--tcl-space-3);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--effigy-tone-text);
+    background: color-mix(in oklab, var(--effigy-tone) 16%, var(--tcl-surface-raised));
+    border: 1px solid color-mix(in oklab, var(--effigy-tone) 50%, var(--tcl-border));
+  }
+
+  /* ── auto-rotate pause control (overlay, top-right) ── */
+  .tcl-effigy__rotate {
+    position: absolute;
+    top: var(--tcl-space-2);
+    right: var(--tcl-space-2);
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    font-size: var(--tcl-text-sm);
+    line-height: 1;
+    color: var(--tcl-text);
+    background: color-mix(in oklab, var(--tcl-surface-raised) 82%, transparent);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+    cursor: pointer;
+  }
+  .tcl-effigy__rotate:hover {
+    background: var(--tcl-surface-hover);
+  }
+  .tcl-effigy__rotate:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* ── AR button (slotted into model-viewer; it positions + gates visibility) ── */
+  .tcl-effigy__ar {
+    padding: var(--tcl-space-2) var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text);
+    background: var(--tcl-surface-raised);
+    border: 1px solid color-mix(in oklab, var(--effigy-tone) 55%, var(--tcl-border));
+    border-radius: var(--tcl-radius-full);
+    cursor: pointer;
+  }
+  .tcl-effigy__ar:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* ── load fault (decorative; the aria-live region carries the SR message) ── */
+  .tcl-effigy__fault {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+    align-items: center;
+    justify-content: center;
+    padding: var(--tcl-space-4);
+    text-align: center;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-status-danger);
+    background: color-mix(in oklab, var(--tcl-status-danger) 12%, var(--tcl-surface-sunken));
+  }
+  .tcl-effigy__fault-glyph {
+    font-size: var(--tcl-text-xl);
+  }
+
+  /* ── caption (display serif, tone rule above) ── */
+  .tcl-effigy__caption {
+    margin: 0;
+    padding-top: var(--tcl-space-3);
+    font-family: var(--tcl-font-display);
+    font-size: var(--tcl-text-md);
+    color: var(--tcl-text);
+    border-top: 2px solid color-mix(in oklab, var(--effigy-tone) 60%, transparent);
+  }
+
+  /* ── aria-live status: perceivable to AT, invisible on screen ── */
+  .tcl-effigy__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-effigy__poster {
+      transition: none;
+    }
+  }
+}

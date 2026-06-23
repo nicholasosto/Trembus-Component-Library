@@ -37,3 +37,5 @@ export type {
   HeroAction,
   HeroAccolade,
 } from './components/CinematicHero/CinematicHero';
+export { Effigy } from './components/Effigy/Effigy';
+export type { EffigyProps, EffigyContract, EffigyTone } from './components/Effigy/Effigy';
