@@ -4,6 +4,25 @@ Web React component library (NOT Roblox — that's the separate `@trembus/rbx-ui
 First-principles UX: tokens → primitives → components, each carrying a machine-checked
 "3 UI jobs" contract (Reveal State / Afford Action / Acknowledge Input).
 
+## Workspace
+
+This repo is a **pnpm workspace** with three packages under `packages/`:
+
+- **`@trembus/tokens`** (`packages/tokens/`) — the shared design-token foundation: the
+  `var(--tcl-*)` token CSS (`src/css/tokens.*.css` + `layers.css`), the type-safe token ontology,
+  the color-coded tone vocabulary, the `ComponentContract` type (`@trembus/tokens/contract`), and
+  the axe `a11yViolations` helper (`@trembus/tokens/testing`). React-free; exported from source.
+- **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; keeps
+  re-export shims (`src/tokens`, `src/types/contract`, `src/test/a11y`) so its internal import
+  paths and public API are unchanged.
+- **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, …). Depends on
+  `@trembus/tokens` **only**, never on `@trembus/ui`.
+
+Run gates at the **root** (`pnpm validate` orchestrates every package via `pnpm -r` + one
+Storybook build) or per package (`pnpm --filter @trembus/<pkg> validate`). One root `.storybook/`
+globs `packages/*`; shared compiler options in root `tsconfig.base.json`;
+`scripts/check-contracts.ts` is package-parameterized.
+
 ## Commands
 
 - `pnpm run validate` — the full gate: lint → typecheck → check:contracts → test → build →
@@ -29,42 +48,47 @@ reads `.claude/launch.json` (`storybook dev -p 6006 --ci`) and serves on :6006; 
 
 ## Adding a component — the canonical 5-file shape
 
-Fastest path: `node .claude/skills/new-component/scaffold.mjs <Name>` (the `/new-component`
-skill). It scaffolds the shape below and wires the barrel.
+Fastest path: `node .claude/skills/new-component/scaffold.mjs <Name> [--pkg ui|viz]` (the
+`/new-component` skill). `--pkg` defaults to `ui` (titled `Components/*`); `--pkg viz` titles
+`Visualizations/*` and wires the shared `@trembus/tokens` imports. It scaffolds the shape below
+and wires the barrel.
 
-Every component in `src/components/<Name>/` has EXACTLY:
+Every component in `packages/<pkg>/src/components/<Name>/` has EXACTLY:
 `<Name>.tsx · <Name>.css · <Name>.contract.ts · <Name>.stories.tsx · <Name>.test.tsx`
 
-- Export it from `src/index.ts` (the barrel); `contract.name` must equal the directory name.
+- Export it from `packages/<pkg>/src/index.ts` (the barrel); `contract.name` must equal the
+  directory name.
 - `scripts/check-contracts.ts` enforces the shape + that each of the three jobs names a real
   exported story. Use the story names `Default` / `States` / `Interaction`.
 
 ## Example pages (multi-component compositions)
 
 Pages that group several components together are NOT library components — they have no single
-"3 jobs" contract. Put them in `src/examples/`, **not** `src/components/` (the contract checker
-scans every `src/components/<Name>/` dir and would fail the gate demanding a contract). A plain
-`<Name>.stories.tsx` there is all you need — no contract / css / test files; Storybook still
-finds it via the `src/**/*.stories.tsx` glob. Title them `Examples/*` and compose from the public
-barrel (`../index`) so the example exercises the real consumer API. See
-`src/examples/Dashboard.stories.tsx`.
+"3 jobs" contract. Put them in `packages/ui/src/examples/`, **not** `…/src/components/` (the
+contract checker scans every `src/components/<Name>/` dir per package and would fail the gate
+demanding a contract). A plain `<Name>.stories.tsx` there is all you need — no contract / css /
+test files; Storybook still finds it via the `packages/*/src/**/*.stories.tsx` glob. Title them
+`Examples/*` and compose from the public barrel (`../index`) so the example exercises the real
+consumer API. See `packages/ui/src/examples/Dashboard.stories.tsx`.
 
 ## Conventions
 
 - **Tokens only**: components reference `var(--tcl-*)` — never hardcode a hex. Component CSS
-  lives in `@layer tcl.components`. Tokens are defined once in `src/styles/tokens.*.css`;
-  light is the default, dark via `[data-theme="dark"]`.
+  lives in `@layer tcl.components`. Tokens are defined once in `@trembus/tokens`
+  (`packages/tokens/src/css/tokens.*.css`); light is the default, dark via `[data-theme="dark"]`.
 - **TypeScript**: `verbatimModuleSyntax` is on → use `import type { … }` for type-only
-  imports. `noUncheckedSideEffectImports` is on → CSS imports rely on `src/global.d.ts`.
+  imports (shared compiler options in root `tsconfig.base.json`). `noUncheckedSideEffectImports`
+  is on → CSS imports rely on each package's `src/global.d.ts`.
 - **Accessibility**: every component test asserts
-  `expect(await a11yViolations(container)).toEqual([])` using `src/test/a11y.ts` — it disables
-  page-level axe rules (region / landmark / page-has-heading-one) that false-positive on
-  isolated fragments and portals. `.storybook/preview.tsx` disables the same rules for the
-  browser a11y gate.
-- **Compose from primitives**: `Box` (Surface), `Stack`/`Inline` (Relation), `Text` (Mark),
-  `Pressable` (Affordance — owns the interaction FSM → `data-state`). Compound components use
-  `Object.assign(Root, { Sub })`. `asChild` uses `src/utils/Slot`.
-- Labeled controls (Input/Textarea/Select) share `src/internal/field` (FieldShell +
+  `expect(await a11yViolations(container)).toEqual([])` from `@trembus/tokens/testing` (`@trembus/ui`
+  keeps a re-export shim at `packages/ui/src/test/a11y.ts`) — it disables page-level axe rules
+  (region / landmark / page-has-heading-one) that false-positive on isolated fragments and portals.
+  `.storybook/preview.tsx` disables the same rules for the browser a11y gate.
+- **Compose from primitives** (`@trembus/ui`): `Box` (Surface), `Stack`/`Inline` (Relation),
+  `Text` (Mark), `Pressable` (Affordance — owns the interaction FSM → `data-state`). Compound
+  components use `Object.assign(Root, { Sub })`. `asChild` uses `packages/ui/src/utils/Slot`.
+  (`@trembus/viz` components compose NO primitives — raw HTML/SVG + `@trembus/tokens` only.)
+- Labeled controls (Input/Textarea/Select) share `packages/ui/src/internal/field` (FieldShell +
   useFieldIds) — one source of truth for label/description/error wiring.
 
 ## Gotchas (learned the hard way — don't rediscover these)
@@ -74,11 +98,15 @@ barrel (`../index`) so the example exercises the real consumer API. See
 - **jsx-a11y**: keep interaction handlers off a container with a composite role (e.g.
   `tablist`/`menu`) — put them on the focusable children.
 - **Portals render synchronously** (no deferred `useEffect` mount) so a parent's focus/measure
-  effect sees the node on the same commit (see `src/utils/Portal.tsx`).
+  effect sees the node on the same commit (see `packages/ui/src/utils/Portal.tsx`).
 - **attw**: this is an ESM-only package — `verify:exports` runs with `--profile esm-only` and
   excludes the `./styles.css` entrypoint.
 - **Viz datum ids — never fall back to the label.** Use `id ?? \`s${i}\``(index), NOT`id ?? label`. Duplicate labels/names with no id collide → wrong inspector target, double
-  selection rings, duplicate React keys. Recurred in LineChart/Donut/Heatmap — same fix each time.
+selection rings, duplicate React keys. Recurred in LineChart/Donut/Heatmap — same fix each time.
+**Tier-2 exception** (`@trembus/viz`): node ids are REQUIRED (parents/edges reference them) — no
+index fallback. Instead dedup duplicates (first wins), remap missing parents to a synthetic root,
+and derive a **collision-proof** synthetic-root id (suffix until unused) so a node literally named
+like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree).
 - **Forced viz domains must clamp.** A forced `min`/`max` (or band/target) can invert the scale or
   push points/lines outside the plot box. Guard `hi <= lo`, swap inverted pairs, SVG `clipPath` the
   series, and skip overlay buttons whose value is out of domain (no phantom clickables).
@@ -104,8 +132,12 @@ Data-driven viz components (e.g. `Hub`) consume the **Trembus Visual Grammar** J
 (schemas at `…/Project-Spaces/LLM-Agent-Development/canonical/kits/visual-grammar/schema/`).
 Mirror the schema as a TS type so ONE contract renders in both the static HTML kit and React.
 Title these `Visualizations/*` in Storybook. Tier-1 (deterministic layout, no heavy deps) lives
-here; Tier-2 (flow/topology graphs needing a layout engine) is planned for a sibling
-`@trembus/viz` package.
+in `@trembus/ui`; **Tier-2** (node-link graphs needing a layout engine) lives in the sibling
+**`@trembus/viz`** package — `Tree` shipped (strict hierarchy via `d3-hierarchy`; org-chart /
+file-tree / dendrogram), `Lineage` (DAG via `@dagrejs/dagre`) is next. Tier-2 reuses the same viz
+spine via `packages/viz/src/internal/` (`VizOverlay` = decorative aria-hidden `preserveAspectRatio`
+SVG edges + HTML `<button>` nodes positioned by `%`; `useControllableSelection`/`useControllableSet`;
+the aria-live inspector). Mirror each Tier-2 contract as a VG schema too (`tree.schema.json`).
 
 **The Tier-1 viz spine** (Hub · BarChart · LineChart · DonutChart · Heatmap): lead job is
 _reveal-state_, but afford/acknowledge are real — each datum is a focusable **HTML `<button>`**
