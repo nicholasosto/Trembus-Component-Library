@@ -1,0 +1,35 @@
+{
+  "name": "@trembus/tokens",
+  "version": "0.1.0",
+  "description": "Trembus design tokens — the var(--tcl-*) CSS custom properties, the type-safe token ontology, the color-coded tone vocabulary, the 3-jobs contract type, and the axe a11y test helper shared by @trembus/ui and @trembus/viz.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "private": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "src"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./contract": "./src/contract.ts",
+    "./testing": "./src/testing.ts",
+    "./styles.css": "./src/css/styles.css",
+    "./layers.css": "./src/css/layers.css",
+    "./light.css": "./src/css/tokens.light.css",
+    "./dark.css": "./src/css/tokens.dark.css",
+    "./materials.css": "./src/css/tokens.materials.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/jest-axe": "^3.5.9",
+    "jest-axe": "^9.0.0"
+  }
+}

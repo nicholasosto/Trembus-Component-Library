@@ -1,14 +1,11 @@
 /* ════════════════════════════════════════════════════════════
-   @trembus/ui — style entry. Import this ONCE in a consumer app:
-       import '@trembus/ui/styles.css';
-   Order matters: layers.css declares the cascade order first, then
-   tokens, then base/a11y. Component CSS is bundled separately (each
-   component opens `@layer tcl.components`).
+   @trembus/tokens — the design-token foundation. Import once:
+       import '@trembus/tokens/styles.css';
+   Declares the @layer cascade order first, then the light/dark/material
+   token sets. Component CSS in @trembus/ui and @trembus/viz opens
+   `@layer tcl.components`, so it slots in after these tokens.
    ════════════════════════════════════════════════════════════ */
 @import './layers.css';
-@import './reset.css';
 @import './tokens.light.css';
 @import './tokens.dark.css';
 @import './tokens.materials.css';
-@import './base.css';
-@import './a11y.css';

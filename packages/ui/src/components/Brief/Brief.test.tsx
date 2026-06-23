@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { a11yViolations } from '../../test/a11y';
@@ -165,7 +166,11 @@ describe('fromMarkdown', () => {
   });
 
   it("renders this repo's real CLAUDE.md deterministically", () => {
-    const md = readFileSync(join(process.cwd(), 'CLAUDE.md'), 'utf8');
+    // Resolve the workspace-root CLAUDE.md relative to THIS file (not cwd) so
+    // the test is independent of where the runner is invoked from (the package
+    // lives at packages/ui; CLAUDE.md stays at the repo root, five levels up).
+    const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '../../../../..');
+    const md = readFileSync(join(repoRoot, 'CLAUDE.md'), 'utf8');
     const c = fromMarkdown(md);
     expect(c.title?.toLowerCase()).toContain('trembus');
     expect(c.sections.find((s) => s.heading === 'Commands')?.kind).toBe('commands');

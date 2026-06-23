@@ -1,52 +1,28 @@
 {
-  "name": "@trembus/ui",
-  "version": "0.1.0",
-  "description": "Trembus React component library — first-principles UX, claude.ai-clean light + Trembus dark themes.",
+  "name": "trembus-component-library",
+  "version": "0.0.0",
+  "description": "Trembus component library workspace — @trembus/tokens · @trembus/ui · @trembus/viz.",
+  "private": true,
   "type": "module",
-  "license": "UNLICENSED",
-  "private": false,
   "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20"
   },
-  "files": [
-    "dist"
-  ],
-  "sideEffects": [
-    "**/*.css"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./styles.css": "./dist/styles.css",
-    "./package.json": "./package.json"
-  },
-  "module": "./dist/index.js",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "vite build",
     "build:storybook": "storybook build -o storybook-static",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "test": "vitest run --project unit",
-    "test:watch": "vitest --project unit",
-    "test:stories": "vitest run --project storybook",
-    "test:all": "vitest run",
+    "typecheck:root": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "pnpm typecheck:root && pnpm -r typecheck",
     "check:contracts": "tsx scripts/check-contracts.ts",
-    "verify:exports": "publint && attw --pack --profile esm-only --exclude-entrypoints ./styles.css",
-    "validate": "pnpm lint && pnpm typecheck && pnpm check:contracts && pnpm test && pnpm build && pnpm verify:exports && pnpm build:storybook",
-    "prepublishOnly": "pnpm build && pnpm verify:exports"
-  },
-  "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:stories": "vitest run --project storybook",
+    "verify:exports": "pnpm -r verify:exports",
+    "validate": "pnpm lint && pnpm typecheck && pnpm check:contracts && pnpm -r test && pnpm -r build && pnpm -r verify:exports && pnpm build:storybook"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -54,17 +30,11 @@
     ]
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.0",
     "@eslint/js": "^9.0.0",
     "@storybook/addon-a11y": "^9.0.0",
     "@storybook/addon-docs": "^9.0.0",
     "@storybook/addon-vitest": "^9.0.0",
     "@storybook/react-vite": "^9.0.0",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.0",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/jest-axe": "^3.5.9",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
@@ -75,11 +45,8 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-storybook": "^9.0.0",
     "globals": "^16.0.0",
-    "jest-axe": "^9.0.0",
-    "jsdom": "^26.0.0",
     "playwright": "^1.48.0",
     "prettier": "^3.4.0",
-    "publint": "^0.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "storybook": "^9.0.0",
@@ -87,7 +54,6 @@
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.18.0",
     "vite": "^7.0.0",
-    "vite-plugin-dts": "^4.3.0",
     "vitest": "^3.0.0"
   }
 }

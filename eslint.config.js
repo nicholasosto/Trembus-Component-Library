@@ -6,7 +6,7 @@ import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 
 export default tseslint.config(
-  { ignores: ['dist', 'storybook-static', 'node_modules', 'coverage', '.claude'] },
+  { ignores: ['**/dist', '**/storybook-static', '**/node_modules', '**/coverage', '.claude'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

@@ -5,28 +5,39 @@
  *   1. has the canonical 5-file shape,
  *   2. ships a contract declaring all three irreducible UI jobs,
  *   3. has a Storybook story for each job (the contract's claim is demonstrated),
- *   4. is exported from the public barrel (src/index.ts).
+ *   4. is exported from the package's public barrel (src/index.ts).
  *
- * Run: pnpm check:contracts
+ * Workspace-aware: scans every package in the registry, or one named package.
+ *   pnpm check:contracts            # all packages
+ *   tsx scripts/check-contracts.ts ui   # just @trembus/ui
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
-import type { ComponentContract } from '../src/types/contract';
+import type { ComponentContract } from '../packages/tokens/src/contract';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const componentsDir = join(root, 'src', 'components');
-const indexPath = join(root, 'src', 'index.ts');
+
+// Package key → source root (relative to the repo root). Each package exposing
+// contracted components keeps them under src/components/ and re-exports from
+// src/index.ts.
+const PACKAGES: Record<string, string> = {
+  ui: 'packages/ui',
+  viz: 'packages/viz',
+};
 
 const errors: string[] = [];
 const ok: string[] = [];
 
-function collectBarrelExports(): Set<string> {
+function collectBarrelExports(indexPath: string): Set<string> {
   const text = readFileSync(indexPath, 'utf8');
   const names = new Set<string>();
   for (const m of text.matchAll(/export\s*\{([\s\S]*?)\}/g)) {
     for (const part of m[1].split(',')) {
-      const id = part.trim().split(/\s+as\s+/)[0].trim();
+      const id = part
+        .trim()
+        .split(/\s+as\s+/)[0]
+        .trim();
       if (id) names.add(id);
     }
   }
@@ -41,13 +52,20 @@ function storyExports(storiesText: string): Set<string> {
   return names;
 }
 
-async function main(): Promise<void> {
-  const barrel = collectBarrelExports();
+async function checkPackage(label: string, pkgRoot: string): Promise<void> {
+  const componentsDir = join(pkgRoot, 'src', 'components');
+  const indexPath = join(pkgRoot, 'src', 'index.ts');
+  // A package with no contracted components yet (e.g. a freshly scaffolded one)
+  // is valid — nothing to check.
+  if (!existsSync(componentsDir)) return;
+
+  const barrel = existsSync(indexPath) ? collectBarrelExports(indexPath) : new Set<string>();
   const dirs = readdirSync(componentsDir, { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => d.name);
 
   for (const name of dirs) {
+    const tag = `${label}/${name}`;
     const dir = join(componentsDir, name);
     const required = [
       `${name}.tsx`,
@@ -58,7 +76,7 @@ async function main(): Promise<void> {
     ];
     const missing = required.filter((f) => !existsSync(join(dir, f)));
     if (missing.length) {
-      errors.push(`${name}: missing required file(s): ${missing.join(', ')}`);
+      errors.push(`${tag}: missing required file(s): ${missing.join(', ')}`);
       continue;
     }
 
@@ -68,7 +86,7 @@ async function main(): Promise<void> {
     };
     const contract = contractMod.default;
     if (!contract) {
-      errors.push(`${name}: ${name}.contract.ts has no default export`);
+      errors.push(`${tag}: ${name}.contract.ts has no default export`);
       continue;
     }
     const jobKeys = ['revealState', 'affordAction', 'acknowledgeInput'] as const;
@@ -77,29 +95,43 @@ async function main(): Promise<void> {
     for (const job of jobKeys) {
       const sat = contract.jobs?.[job];
       if (!sat?.satisfiedBy || !sat?.story) {
-        errors.push(`${name}: contract job "${job}" must declare satisfiedBy + story`);
+        errors.push(`${tag}: contract job "${job}" must declare satisfiedBy + story`);
         continue;
       }
       // 3. The named story must exist.
       if (!stories.has(sat.story)) {
         errors.push(
-          `${name}: contract job "${job}" references story "${sat.story}" which is not exported in ${name}.stories.tsx`,
+          `${tag}: contract job "${job}" references story "${sat.story}" which is not exported in ${name}.stories.tsx`,
         );
       }
     }
 
     if (contract.name !== name) {
-      errors.push(`${name}: contract.name "${contract.name}" does not match directory "${name}"`);
+      errors.push(`${tag}: contract.name "${contract.name}" does not match directory "${name}"`);
     }
 
     // 4. Public export.
     if (!barrel.has(name)) {
-      errors.push(`${name}: not exported from src/index.ts`);
+      errors.push(`${tag}: not exported from ${label}'s src/index.ts`);
     }
 
-    if (!errors.some((e) => e.startsWith(`${name}:`))) {
-      ok.push(name);
+    if (!errors.some((e) => e.startsWith(`${tag}:`))) {
+      ok.push(tag);
     }
+  }
+}
+
+async function main(): Promise<void> {
+  const arg = process.argv[2];
+  const keys = arg ? [arg] : Object.keys(PACKAGES);
+
+  for (const key of keys) {
+    const pkgRoot = PACKAGES[key];
+    if (!pkgRoot) {
+      errors.push(`unknown package "${key}" (known: ${Object.keys(PACKAGES).join(', ')})`);
+      continue;
+    }
+    await checkPackage(key, join(root, pkgRoot));
   }
 
   if (ok.length) {
