@@ -2,3 +2,4 @@ dist
 storybook-static
 coverage
 pnpm-lock.yaml
+packages/video

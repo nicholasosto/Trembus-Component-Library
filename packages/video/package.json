@@ -1,0 +1,26 @@
+{
+  "name": "@trembus/video",
+  "version": "0.0.0",
+  "description": "Trembus motion studio — renders @trembus/* components to video with Remotion. Internal app, NOT a published library: no 3-jobs contract, not part of the `pnpm validate` gate. Its scripts are deliberately named off the gated set (studio/render/still/tc) so `pnpm -r` skips it.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "still": "remotion still",
+    "tc": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.482",
+    "@remotion/google-fonts": "4.0.482",
+    "@trembus/game-viz": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.482"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.0"
+  }
+}

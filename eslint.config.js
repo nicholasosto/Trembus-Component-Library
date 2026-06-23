@@ -6,7 +6,19 @@ import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 
 export default tseslint.config(
-  { ignores: ['**/dist', '**/storybook-static', '**/node_modules', '**/coverage', '.claude'] },
+  // packages/video is the Remotion motion app, not a gated library — it lives
+  // outside the 3-jobs/axe discipline, so the root lint skips it (it has its own
+  // tsconfig for `pnpm --filter @trembus/video tc`).
+  {
+    ignores: [
+      '**/dist',
+      '**/storybook-static',
+      '**/node_modules',
+      '**/coverage',
+      '.claude',
+      'packages/video',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

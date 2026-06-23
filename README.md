@@ -17,12 +17,12 @@ Every component is built to satisfy the **three irreducible UI jobs**:
 
 …by composing a small set of **primitives** that map to the five UI primitives:
 
-| Primitive  | Maps to     | Responsibility                                                        |
-| ---------- | ----------- | -------------------------------------------------------------------- |
-| `Box`      | Surface     | bounded region: padding, surface, radius, border, z-layer (tokens)   |
-| `Stack` / `Inline` | Relation | order & grouping made visual (flex over `Box`)                |
-| `Text`     | Mark        | draws glyphs; meaning comes from `as` (`h1`, `label`, …)             |
-| `Pressable`| Affordance  | the one interactive element; owns the idle→hover→pressed→focus FSM   |
+| Primitive          | Maps to    | Responsibility                                                     |
+| ------------------ | ---------- | ------------------------------------------------------------------ |
+| `Box`              | Surface    | bounded region: padding, surface, radius, border, z-layer (tokens) |
+| `Stack` / `Inline` | Relation   | order & grouping made visual (flex over `Box`)                     |
+| `Text`             | Mark       | draws glyphs; meaning comes from `as` (`h1`, `label`, …)           |
+| `Pressable`        | Affordance | the one interactive element; owns the idle→hover→pressed→focus FSM |
 
 The Affordance state machine lives once in `useAffordanceState` and is exposed as a
 `data-state` attribute, so feedback is structural rather than re-implemented per component.
@@ -52,7 +52,7 @@ export function App() {
 
 ```html
 <!-- light is the default; opt into dark with one attribute -->
-<html data-theme="dark">
+<html data-theme="dark"></html>
 ```
 
 No Tailwind, no build-tool config required. Theming is pure CSS custom properties — override
@@ -128,6 +128,10 @@ pnpm check:contracts   # enforce the 3-jobs contract per component
 pnpm verify:exports    # publint + are-the-types-wrong
 pnpm run validate      # the full gate, in order
 ```
+
+> **Video:** `pnpm --filter @trembus/video studio` opens the **Remotion** motion studio, which
+> renders the real components to MP4 (it `import`s the live component + `styles.css`). It's an
+> internal app **outside** the `validate` gate — see [`packages/video/README.md`](packages/video/README.md).
 
 ### The contract discipline
 

@@ -1,0 +1,4 @@
+# Remotion render artifacts + caches
+out/
+.remotion/
+node_modules/

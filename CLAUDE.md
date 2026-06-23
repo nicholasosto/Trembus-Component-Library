@@ -6,7 +6,8 @@ First-principles UX: tokens → primitives → components, each carrying a machi
 
 ## Workspace
 
-This repo is a **pnpm workspace** with four packages under `packages/`:
+This repo is a **pnpm workspace** with four **library** packages under `packages/` (plus a fifth
+member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ below):
 
 - **`@trembus/tokens`** (`packages/tokens/`) — the shared design-token foundation: the
   `var(--tcl-*)` token CSS (`src/css/tokens.*.css` + `layers.css`), the type-safe token ontology,
@@ -18,8 +19,10 @@ This repo is a **pnpm workspace** with four packages under `packages/`:
 - **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
 - **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
-  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`), titled `Game/*`. Liturgical-gothic
-  idiom: HUD frames, character dossiers, episode decks, title plates. UNLIKE `@trembus/viz`
+  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Effigy`), titled `Game/*`.
+  Liturgical-gothic idiom: HUD frames, character dossiers, episode decks, title plates, 3D model
+  thumbnails (`Effigy` wraps Google `<model-viewer>` — the repo's first 3D primitive). UNLIKE
+  `@trembus/viz`
   (tokens-only), it **builds on `@trembus/ui`** (composes `Box`/`Stack`/`Inline`/`Text`/`Pressable`
   - reuses materials), so it depends on both `@trembus/ui` and `@trembus/tokens`. Same 3-jobs
     contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
@@ -32,6 +35,20 @@ Run gates at the **root** (`pnpm validate` orchestrates every package via `pnpm 
 Storybook build) or per package (`pnpm --filter @trembus/<pkg> validate`). One root `.storybook/`
 globs `packages/*`; shared compiler options in root `tsconfig.base.json`;
 `scripts/check-contracts.ts` is package-parameterized.
+
+**Motion / video — `@trembus/video`** (`packages/video/`, private, **not a published library**) is a
+**Remotion** app that renders the real components to video: a composition `import`s the actual
+`@trembus/game-viz` component **and** `@trembus/game-viz/styles.css`, so the whole
+`@layer`/`var(--tcl-*)`/`color-mix` token system renders in headless Chromium with zero re-authoring
+(verified — a `CinematicHero` promo renders at full fidelity). It sits **outside the `pnpm validate`
+gate** (no `*.contract.ts`, no axe): its scripts are named off the gated set
+(`studio`/`render`/`still`/`tc`) so `pnpm -r` skips it, and `packages/video` is excluded from the root
+`eslint`/`prettier` scope. **Remotion gotchas:** drive motion off `useCurrentFrame()` — it does NOT
+mock the wall clock, so the components' own CSS transitions / `model-viewer` rAF won't animate
+(reuse the look, own the motion in frame-space); load `--tcl-font-display` explicitly (the repo ships
+no Cinzel face — use `@remotion/google-fonts`); set `data-theme` per composition; pin all
+`@remotion/*` to ONE exact version. Remotion is **source-available** (free ≤3 people, paid Company
+License at 4+). See `packages/video/README.md`.
 
 ## Commands
 
