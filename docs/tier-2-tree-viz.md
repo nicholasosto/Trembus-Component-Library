@@ -1,10 +1,11 @@
 # Tier-2 — node-link tree / org-chart / lineage viz (design sketch)
 
-> Status (2026-06-23): **`Tree` BUILT** in `@trembus/viz` (`packages/viz/src/components/Tree/`,
-> with `tree.schema.json` in the VG kit) — the `Tree`/`TreeContract`/`TreeProps` shapes below are
-> the spec it shipped against. **`Lineage` (Contract B) is still planned** (DAG via `@dagrejs/dagre`).
-> This file remains the design reference; it is intentionally **not** a `src/components/<Name>/` dir
-> (that would demand the 5-file contract shape and fail the gate).
+> Status (2026-06-23): **BOTH `Tree` and `Lineage` BUILT** in `@trembus/viz`
+> (`packages/viz/src/components/{Tree,Lineage}/`, with `tree.schema.json` + `lineage.schema.json`
+> in the VG kit) — the contract shapes below (Contract A = Tree via `d3-hierarchy`, Contract B =
+> Lineage/`GraphContract` via `@dagrejs/dagre`) are the specs they shipped against. This file
+> remains the design reference; it is intentionally **not** a `src/components/<Name>/` dir (that
+> would demand the 5-file contract shape and fail the gate).
 
 ## Why this is Tier-2, not Tier-1
 

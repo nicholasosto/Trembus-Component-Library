@@ -133,8 +133,9 @@ Data-driven viz components (e.g. `Hub`) consume the **Trembus Visual Grammar** J
 Mirror the schema as a TS type so ONE contract renders in both the static HTML kit and React.
 Title these `Visualizations/*` in Storybook. Tier-1 (deterministic layout, no heavy deps) lives
 in `@trembus/ui`; **Tier-2** (node-link graphs needing a layout engine) lives in the sibling
-**`@trembus/viz`** package — `Tree` shipped (strict hierarchy via `d3-hierarchy`; org-chart /
-file-tree / dendrogram), `Lineage` (DAG via `@dagrejs/dagre`) is next. Tier-2 reuses the same viz
+**`@trembus/viz`** package — `Tree` (strict hierarchy via `d3-hierarchy`; org-chart / file-tree /
+dendrogram) and `Lineage` (directed-graph / DAG via `@dagrejs/dagre`; pipeline · data-lineage ·
+dependency · genealogy) both shipped. Tier-2 reuses the same viz
 spine via `packages/viz/src/internal/` (`VizOverlay` = decorative aria-hidden `preserveAspectRatio`
 SVG edges + HTML `<button>` nodes positioned by `%`; `useControllableSelection`/`useControllableSet`;
 the aria-live inspector). Mirror each Tier-2 contract as a VG schema too (`tree.schema.json`).
