@@ -6,6 +6,19 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["exec", "storybook", "dev", "-p", "6006", "--ci"],
       "port": 6006
+    },
+    {
+      "name": "soul-steel",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@trembus-demo/soul-steel",
+        "dev",
+        "--port",
+        "5174",
+        "--strictPort"
+      ],
+      "port": 5174
     }
   ]
 }

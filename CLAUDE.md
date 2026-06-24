@@ -98,6 +98,28 @@ test files; Storybook still finds it via the `packages/*/src/**/*.stories.tsx` g
 `Examples/*` and compose from the public barrel (`../index`) so the example exercises the real
 consumer API. See `packages/ui/src/examples/Dashboard.stories.tsx`.
 
+## Demo sites (multi-page apps)
+
+A **demo site** is a real consuming app — multiple **routed** pages, an app shell, navigation,
+root-level theme — exercising the components the way a downstream product does (which neither
+Storybook nor the `Examples/*` single-canvas stories cover). They live under the top-level
+**`demos/*`** workspace glob (NOT `packages/`), each a private Vite + react-router SPA. First one
+shipped: `demos/soul-steel/` (composes all three packages; see its `README.md`).
+
+- **Consume the PUBLISHED API only** — import the bare specifiers (`@trembus/ui`, `@trembus/viz`,
+  `@trembus/game-viz`) + each package's `./styles.css`, never deep/relative `packages/*/src` paths.
+  Each styles.css bundles the full `@trembus/tokens` layer system, so the libs must be **built**
+  first (the demo resolves their `dist/`) — that's the point: it dog-foods the real consumer surface.
+- **Off the `validate` gate**, like `packages/video`: living under `demos/` keeps it invisible to
+  `scripts/check-contracts.ts` (scoped to `packages/{ui,viz,game-viz}`); it's in the root
+  `eslint`/`prettier` ignores; and its scripts are named OFF the gated set (`dev` / `build:site` /
+  `preview` / `tc`, not `build` / `test` / `typecheck`) so `pnpm -r <gated>` skips it.
+- **Dog-food check** is deliberate + separate: `pnpm demos:check` (root) builds the three libs, then
+  `tc` + `build:site` every demo. Run it (or a dedicated CI job) to catch consumer-facing API breaks
+  without letting a WIP demo page block a library release.
+- Preview live via the Claude_Preview MCP — `.claude/launch.json` has a `soul-steel` config
+  (`preview_start({name:'soul-steel'})` → :5174). Same `data-theme` + `.tcl-root` wrapper as Storybook.
+
 ## Conventions
 
 - **Tokens only**: components reference `var(--tcl-*)` — never hardcode a hex. Component CSS

@@ -1,0 +1,28 @@
+{
+  "name": "@trembus-demo/soul-steel",
+  "version": "0.0.0",
+  "description": "Soul Steel — a multi-page demo SITE consuming @trembus/{ui,viz,game-viz} via their published API (workspace:* + ./styles.css). NOT a library: no 3-jobs contract, not in the `pnpm validate` gate. Scripts are named off the gated set (dev/build:site/preview/tc) so `pnpm -r` skips it; run the dog-food check with `pnpm demos:check` from the repo root.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build:site": "vite build",
+    "preview": "vite preview",
+    "tc": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@trembus/game-viz": "workspace:*",
+    "@trembus/ui": "workspace:*",
+    "@trembus/viz": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.0.0"
+  }
+}

@@ -22,7 +22,8 @@
     "test": "pnpm -r test",
     "test:stories": "vitest run --project storybook",
     "verify:exports": "pnpm -r verify:exports",
-    "validate": "pnpm lint && pnpm typecheck && pnpm check:contracts && pnpm -r test && pnpm -r build && pnpm -r verify:exports && pnpm build:storybook"
+    "validate": "pnpm lint && pnpm typecheck && pnpm check:contracts && pnpm -r test && pnpm -r build && pnpm -r verify:exports && pnpm build:storybook",
+    "demos:check": "pnpm --filter @trembus/ui --filter @trembus/viz --filter @trembus/game-viz run build && pnpm --filter \"./demos/*\" run tc && pnpm --filter \"./demos/*\" run build:site"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

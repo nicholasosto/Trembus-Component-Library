@@ -3,3 +3,4 @@ storybook-static
 coverage
 pnpm-lock.yaml
 packages/video
+demos

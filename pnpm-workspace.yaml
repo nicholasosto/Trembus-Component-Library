@@ -1,2 +1,7 @@
 packages:
   - 'packages/*'
+  # Demo sites — real consuming apps (not published libraries). Workspace
+  # membership gives them `workspace:*` linking; they stay OFF the `validate`
+  # gate via off-gate script names (dev/build:site/tc) + the eslint/prettier
+  # ignores below, mirroring the packages/video precedent.
+  - 'demos/*'
