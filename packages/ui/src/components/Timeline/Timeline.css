@@ -1,0 +1,352 @@
+@layer tcl.components {
+  .tcl-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-timeline__header {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-4);
+  }
+  .tcl-timeline__code {
+    flex: none;
+    font-family: var(--tcl-font-display, var(--tcl-font-mono));
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    color: var(--tcl-timeline-accent, var(--tcl-accent));
+    line-height: 1;
+  }
+  .tcl-timeline__heading {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .tcl-timeline__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-timeline__title {
+    margin: 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-timeline__caption {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-timeline__meta {
+    flex: none;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── the rail: a horizontally-scrolling track holding the axis SVG + cards ── */
+  .tcl-timeline__scroller {
+    overflow-x: auto;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface-raised);
+    scrollbar-width: thin;
+  }
+  .tcl-timeline__track {
+    position: relative;
+    flex: none;
+  }
+
+  /* axis (decorative) */
+  .tcl-timeline__axis {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .tcl-timeline__rail {
+    stroke: var(--tcl-border-strong);
+    stroke-width: 1.5;
+    stroke-dasharray: 2 6;
+    stroke-linecap: round;
+  }
+  .tcl-timeline__stem {
+    stroke: color-mix(in oklab, var(--event-tone, var(--tcl-border-strong)) 50%, var(--tcl-border));
+    stroke-width: 1.5;
+  }
+  .tcl-timeline__node {
+    fill: var(--tcl-surface-raised);
+    stroke: var(--event-tone, var(--tcl-status-neutral));
+    stroke-width: 2;
+    transition: r var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-timeline__mark.is-selected .tcl-timeline__node {
+    fill: var(--event-tone, var(--tcl-timeline-accent, var(--tcl-accent)));
+  }
+  .tcl-timeline__mark.is-selected .tcl-timeline__stem {
+    stroke: var(--event-tone, var(--tcl-timeline-accent, var(--tcl-accent)));
+    stroke-width: 2;
+  }
+
+  /* ── event cards ── */
+  .tcl-timeline__events {
+    position: absolute;
+    inset: 0;
+  }
+  .tcl-timeline__event {
+    /* button reset */
+    appearance: none;
+    position: absolute;
+    margin: 0;
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-1);
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-top: 2px solid var(--event-tone, var(--tcl-status-neutral));
+    border-radius: var(--tcl-radius-md);
+    box-shadow: var(--tcl-elevation-1);
+    overflow: hidden;
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-timeline__event:hover {
+    border-color: var(--tcl-border-strong);
+    box-shadow: var(--tcl-elevation-2);
+  }
+  .tcl-timeline__event:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  .tcl-timeline__event.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-timeline-accent, var(--tcl-accent));
+  }
+  /* A selected event that also takes keyboard focus must keep the AA-contrast
+     focus ring — the accent selection ring can dip below the 3:1 focus-indicator
+     bar (gold in light theme), and `.is-selected` would otherwise win on order. */
+  .tcl-timeline__event.is-selected:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-timeline__date {
+    font-family: var(--tcl-font-display, var(--tcl-font-sans));
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-wide);
+    /* accent-as-text falls back to --tcl-text (see toneInk); other tones keep their hue */
+    color: var(--event-ink, var(--tcl-text));
+  }
+  .tcl-timeline__sub {
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-timeline__label {
+    margin-top: var(--tcl-space-1);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: var(--tcl-leading-tight, 1.25);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tcl-timeline__detail {
+    font-size: var(--tcl-text-xs);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tcl-timeline__tag {
+    margin-top: auto;
+    align-self: flex-start;
+    padding: 1px var(--tcl-space-2);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    font-weight: var(--tcl-weight-semibold);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--event-ink, var(--tcl-text));
+    border: 1px solid
+      color-mix(in oklab, var(--event-tone, var(--tcl-border)) 60%, var(--tcl-border));
+    border-radius: var(--tcl-radius-sm);
+  }
+
+  .tcl-timeline__empty {
+    margin: 0;
+    padding: var(--tcl-space-6);
+    text-align: center;
+    color: var(--tcl-text-faint);
+    font-size: var(--tcl-text-sm);
+    border: 1px dashed var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+  }
+
+  /* ── scrubber (decorative position indicator) ── */
+  .tcl-timeline__scrubber {
+    height: 4px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-sunken);
+    overflow: hidden;
+  }
+  .tcl-timeline__scrubber-fill {
+    display: block;
+    height: 100%;
+    width: var(--progress, 0%);
+    border-radius: inherit;
+    background: var(--tcl-timeline-accent, var(--tcl-accent));
+    transition: width var(--tcl-dur-normal, 240ms) var(--tcl-ease-calm);
+  }
+
+  /* ── inspector ── */
+  .tcl-timeline__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-timeline-accent, var(--tcl-accent));
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-timeline__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-timeline__inspector-date {
+    font-family: var(--tcl-font-display, var(--tcl-font-sans));
+    font-weight: var(--tcl-weight-bold);
+    color: var(--event-ink, var(--tcl-text));
+  }
+  .tcl-timeline__inspector-cat {
+    font-family: var(--tcl-font-mono);
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-timeline__inspector-sub {
+    margin: var(--tcl-space-2) 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-timeline__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-timeline__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── footer: prev/next + legend ── */
+  .tcl-timeline__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--tcl-space-4);
+  }
+  .tcl-timeline__nav {
+    appearance: none;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font: inherit;
+    color: var(--tcl-text);
+    cursor: pointer;
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    transition:
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      background-color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-timeline__nav:hover:not(:disabled) {
+    border-color: var(--tcl-border-strong);
+    background: var(--tcl-surface);
+  }
+  .tcl-timeline__nav:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  .tcl-timeline__nav:disabled {
+    color: var(--tcl-text-faint);
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .tcl-timeline__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tcl-timeline__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-timeline__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--event-tone, var(--tcl-status-neutral));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-timeline__event,
+    .tcl-timeline__node,
+    .tcl-timeline__nav,
+    .tcl-timeline__scrubber-fill {
+      transition: none;
+    }
+  }
+}

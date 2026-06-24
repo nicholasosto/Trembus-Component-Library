@@ -220,3 +220,11 @@ export type {
   DataFilter,
   DataMetric,
 } from './components/DataStatusBar/DataStatusBar';
+export { Timeline } from './components/Timeline/Timeline';
+export type {
+  TimelineProps,
+  TimelineContract,
+  TimelineEvent,
+  TimelineCategory,
+  TimelineTone,
+} from './components/Timeline/Timeline';

@@ -39,3 +39,9 @@ export type {
 } from './components/CinematicHero/CinematicHero';
 export { Effigy } from './components/Effigy/Effigy';
 export type { EffigyProps, EffigyContract, EffigyTone } from './components/Effigy/Effigy';
+export { Chronicle } from './components/Chronicle/Chronicle';
+export type {
+  ChronicleProps,
+  ChronicleTone,
+  ChronicleContract,
+} from './components/Chronicle/Chronicle';
