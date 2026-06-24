@@ -40,6 +40,7 @@
     transform: translate(-50%, -50%);
   }
   .tcl-lineage__node {
+    position: relative;
     appearance: none;
     cursor: pointer;
     display: flex;
@@ -48,25 +49,32 @@
     gap: 1px;
     max-width: 200px;
     margin: 0;
-    padding: 6px 10px;
-    border: 1.5px solid var(--tcl-bg);
+    /* extra left padding clears the tone accent bar (::before) */
+    padding: 6px 10px 6px 13px;
+    border: 0.5px solid var(--tcl-border);
     border-radius: var(--tcl-radius-md);
-    background: var(--node, var(--tcl-accent));
-    color: var(--node-fg, var(--tcl-text));
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    box-shadow: var(--tcl-elevation-1);
     font-family: inherit;
     font-size: var(--tcl-text-sm);
     line-height: 1.2;
     text-align: left;
-    text-shadow:
-      0 0 2px var(--tcl-bg),
-      0 1px 1px var(--tcl-bg);
     transition:
       box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
-      opacity var(--tcl-dur-fast) var(--tcl-ease-calm),
       transform var(--tcl-dur-fast) var(--tcl-ease-calm);
   }
+  /* the tone is an accent bar + dot on a calm surface — not the whole fill */
+  .tcl-lineage__node::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--node, var(--tcl-accent));
+    border-radius: var(--tcl-radius-md) 0 0 var(--tcl-radius-md);
+  }
   .tcl-lineage__node-label {
-    max-width: 180px;
+    max-width: 178px;
     overflow: hidden;
     font-weight: 600;
     white-space: nowrap;
@@ -74,20 +82,24 @@
   }
   .tcl-lineage__node-sub {
     font-size: var(--tcl-text-xs);
-    opacity: 0.85;
+    color: var(--tcl-text-dim);
   }
   .tcl-lineage__node:hover {
     transform: translateY(-1px);
+    box-shadow: var(--tcl-elevation-2);
   }
+  /* selection reads in-key: the node's OWN tone, layered over the resting elevation */
   .tcl-lineage__node.is-lineage {
     box-shadow:
       0 0 0 2px var(--tcl-bg),
-      0 0 0 3px var(--tcl-accent);
+      0 0 0 3px var(--node, var(--tcl-accent)),
+      var(--tcl-elevation-1);
   }
   .tcl-lineage__node.is-selected {
     box-shadow:
       0 0 0 2px var(--tcl-bg),
-      0 0 0 4px var(--tcl-accent);
+      0 0 0 4px var(--node, var(--tcl-accent)),
+      var(--tcl-elevation-1);
   }
   /* Off-lineage nodes stay full-opacity (legible + operable); the trace pops via
      the lineage ring + the brightened edges, not by dimming focusable controls. */
@@ -95,7 +107,8 @@
     outline: none;
     box-shadow:
       0 0 0 2px var(--tcl-bg),
-      0 0 0 4px var(--tcl-focus-ring);
+      0 0 0 4px var(--tcl-focus-ring),
+      var(--tcl-elevation-1);
   }
 
   /* ── edges (decorative; the SVG is aria-hidden). Directed via marker-end. ── */

@@ -5,7 +5,6 @@ import {
   cx,
   vars,
   toneVar,
-  toneFg,
   VizOverlay,
   useControllableSelection,
   useControllableSet,
@@ -352,7 +351,6 @@ export function Tree({
             const isSelected = n.id === selectedId;
             const onLineage = selectedAncestors.has(n.id);
             const tone = n.tone ?? TONE_CYCLE[(n.depth - 1) % TONE_CYCLE.length];
-            const fg = n.color ? 'var(--tcl-text)' : toneFg(tone);
             const isCollapsed = collapsed.has(n.id);
             return (
               <div
@@ -367,7 +365,7 @@ export function Tree({
                     isSelected && 'is-selected',
                     onLineage && 'is-lineage',
                   )}
-                  style={vars({ '--node': n.color ?? toneVar(tone), '--node-fg': fg })}
+                  style={vars({ '--node': n.color ?? toneVar(tone) })}
                   aria-pressed={isSelected}
                   aria-label={`${n.label}${n.sub ? `, ${n.sub}` : ''}, level ${n.depth}, ${n.ancestry}`}
                   onClick={() => select(n.id)}

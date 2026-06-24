@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import dagre from '@dagrejs/dagre';
-import { cx, vars, toneVar, toneFg, VizOverlay, useControllableSelection } from '../../internal';
+import { cx, vars, toneVar, VizOverlay, useControllableSelection } from '../../internal';
 import type { VizTone } from '../../internal';
 import './Lineage.css';
 
@@ -351,7 +351,6 @@ export function Lineage({
           nodes={laid.map((n) => {
             const isSelected = n.id === selectedId;
             const onLineage = lineage.nodes.has(n.id);
-            const fg = n.color ? 'var(--tcl-text)' : toneFg(n.tone);
             return (
               <div
                 key={n.id}
@@ -365,7 +364,7 @@ export function Lineage({
                     isSelected && 'is-selected',
                     onLineage && 'is-lineage',
                   )}
-                  style={vars({ '--node': n.color ?? toneVar(n.tone), '--node-fg': fg })}
+                  style={vars({ '--node': n.color ?? toneVar(n.tone) })}
                   aria-pressed={isSelected}
                   aria-label={`${n.label}${n.sub ? `, ${n.sub}` : ''}${n.kind ? `, ${n.kind}` : ''}`}
                   onClick={() => select(n.id)}
