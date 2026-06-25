@@ -23,11 +23,13 @@ jobs:
       # Required by the Storybook (browser) test project.
       - run: pnpm exec playwright install --with-deps chromium
 
+      # Build first — @trembus/tokens ships a dist build, so typecheck / tests
+      # can't resolve it until the packages are built (mirrors `pnpm validate`).
+      - run: pnpm build
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm check:contracts
       - run: pnpm test # unit (jsdom + axe) across all packages
       - run: pnpm test:stories # stories-as-tests in a real browser
-      - run: pnpm build
       - run: pnpm verify:exports
       - run: pnpm build:storybook
