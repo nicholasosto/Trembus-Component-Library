@@ -178,6 +178,14 @@
       0 0 0 2px var(--tcl-bg),
       0 0 0 4px var(--tcl-accent);
   }
+  /* A selected step that also takes keyboard focus must keep the AA-contrast
+     focus ring — the accent selection ring can dip below the 3:1 focus-indicator
+     bar (gold in light theme), and `.is-selected` would otherwise win on order. */
+  .tcl-swimlane__step.is-selected:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
   /* pending / skipped read as not-yet-done */
   .tcl-swimlane__step.is-pending {
     background: var(--tcl-surface);

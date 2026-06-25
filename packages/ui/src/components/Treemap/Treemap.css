@@ -95,17 +95,16 @@
     gap: 2px;
     min-width: 0;
     max-width: 100%;
-    /* text colour comes from the cell's tone fg; the bg halo keeps custom-colour
-       cells (which fall back to --tcl-text) legible — the Heatmap idiom */
+    /* tone cells: --cell-fg is already AA-tuned, no halo needed.
+       custom-hex cells: --cell-halo is set inline to a bg-coloured halo so
+       --tcl-text stays legible on an unknown fill. */
     color: inherit;
-    text-shadow:
-      0 0 2px var(--tcl-bg),
-      0 1px 1px var(--tcl-bg);
+    text-shadow: var(--cell-halo, none);
     pointer-events: none;
   }
   .tcl-treemap__cell-label {
     font-size: var(--tcl-text-sm);
-    font-weight: var(--tcl-weight-semibold);
+    font-weight: var(--tcl-weight-medium);
     line-height: var(--tcl-leading-tight);
     overflow: hidden;
     text-overflow: ellipsis;

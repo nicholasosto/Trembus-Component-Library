@@ -236,6 +236,9 @@ export function Treemap({
                 style={vars({
                   '--cell': c.node.color ?? toneVar(tone),
                   '--cell-fg': fg,
+                  '--cell-halo': c.node.color
+                    ? '0 0 2px var(--tcl-bg), 0 1px 1px var(--tcl-bg)'
+                    : 'none',
                   left: `${left}%`,
                   top: `${top}%`,
                   width: `${width}%`,
