@@ -6,45 +6,59 @@
 //     same <name>-<version>.tgz into the package dir → publint's async tarball
 //     cleanup races attw's pack → intermittent `ENOENT … trembus-*.tgz` under
 //     parallel load (`pnpm -r publish`).
-//   - A shell one-liner that packs once then globs `.pack/*.tgz` is fragile too:
-//     pnpm's script runner does not reliably expand globs, so the tools receive
-//     the literal `*.tgz`.
-// So: pack ONCE into an isolated temp dir, discover the tarball via `fs` (no
-// glob), and point both publint and attw at that single file. Deterministic,
-// shell-independent, and parallel-safe (each package gets its own mkdtemp dir).
+//   - A shell one-liner that packs once then globs `.pack/*.tgz` is fragile:
+//     pnpm's script runner does not reliably expand globs.
+//
+// So: pack ONCE and point both publint and attw at that single tarball. We read
+// the tarball location from `pnpm pack --json` (the authoritative `filename`)
+// rather than guessing it: inside `pnpm publish`'s prepublishOnly the outer run
+// redirects where the nested pack writes, so `--pack-destination` + a dir listing
+// is unreliable — `--json` always reports where the tarball actually landed.
+// Deterministic, shell-independent, parallel-safe; exit code propagates.
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const attwArgs = process.argv.slice(2).join(' ');
 const dir = mkdtempSync(join(tmpdir(), 'tcl-verify-'));
 
-const sh = (command, opts = {}) =>
-  spawnSync(command, { stdio: 'inherit', shell: true, ...opts }).status ?? 1;
+const sh = (command) => spawnSync(command, { stdio: 'inherit', shell: true }).status ?? 1;
 
 let code = 0;
+let tarball;
 try {
-  // Pack the current package (cwd) once. Ignore stdout so the pnpm update-notifier
-  // banner can't interfere; we locate the tarball from disk, not from stdout.
-  const packed = spawnSync(`pnpm pack --pack-destination ${JSON.stringify(dir)}`, {
-    stdio: ['ignore', 'ignore', 'inherit'],
+  // Pack once. Capture stdout (the JSON); pass stderr through (banners, warnings).
+  const packed = spawnSync(`pnpm pack --json --pack-destination ${JSON.stringify(dir)}`, {
+    encoding: 'utf8',
     shell: true,
+    stdio: ['ignore', 'pipe', 'inherit'],
   });
+  const out = packed.stdout ?? '';
   if (packed.status !== 0) {
+    process.stderr.write(out);
     code = packed.status ?? 1;
   } else {
-    const tgz = readdirSync(dir).find((f) => f.endsWith('.tgz'));
-    if (!tgz) {
-      console.error('verify-exports: pnpm pack produced no tarball');
+    let filename;
+    try {
+      filename = JSON.parse(out).filename;
+    } catch {
+      // Defensive: if anything leaked onto stdout alongside the JSON.
+      filename = (out.match(/"filename"\s*:\s*"([^"]+\.tgz)"/) ?? [])[1];
+    }
+    if (!filename) {
+      console.error('verify-exports: could not determine packed tarball from `pnpm pack --json`:\n' + out);
       code = 1;
     } else {
-      const tarball = JSON.stringify(join(dir, tgz));
-      code = sh(`publint ${tarball}`) || sh(`attw ${tarball} --profile esm-only ${attwArgs}`);
+      tarball = filename;
+      const t = JSON.stringify(filename);
+      code = sh(`publint ${t}`) || sh(`attw ${t} --profile esm-only ${attwArgs}`);
     }
   }
 } finally {
   rmSync(dir, { recursive: true, force: true });
+  // The tarball may live outside `dir` if the outer publish redirected it.
+  if (tarball) rmSync(tarball, { force: true });
 }
 
 process.exit(code);

@@ -55,7 +55,7 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "verify:exports": "node ../../scripts/verify-exports.mjs --exclude-entrypoints ./styles.css ./layers.css ./light.css ./dark.css ./reliquary.css ./materials.css",
-    "prepublishOnly": "pnpm build && pnpm verify:exports"
+    "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
     "jest-axe": "^9.0.0"

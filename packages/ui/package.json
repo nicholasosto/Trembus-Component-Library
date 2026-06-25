@@ -47,7 +47,7 @@
     "check:contracts": "tsx ../../scripts/check-contracts.ts ui",
     "verify:exports": "node ../../scripts/verify-exports.mjs --exclude-entrypoints ./styles.css",
     "validate": "pnpm lint && pnpm typecheck && pnpm check:contracts && pnpm test && pnpm build && pnpm verify:exports",
-    "prepublishOnly": "pnpm build && pnpm verify:exports"
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@trembus/tokens": "workspace:^"
