@@ -3,6 +3,18 @@
   "version": "0.1.0",
   "description": "Trembus expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates. Builds on @trembus/ui primitives + the 3-jobs contract; theatrical surface, accessible spine.",
   "type": "module",
+  "keywords": [
+    "react",
+    "game-ui",
+    "hud",
+    "cinematic",
+    "component-library",
+    "design-system",
+    "model-viewer",
+    "3d",
+    "accessibility",
+    "trembus"
+  ],
   "license": "MIT",
   "author": "Nicholas Osto",
   "private": false,

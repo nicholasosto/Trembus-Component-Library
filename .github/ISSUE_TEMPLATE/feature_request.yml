@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a component, prop, token, or improvement
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - '@trembus/ui'
+        - '@trembus/tokens'
+        - '@trembus/viz'
+        - '@trembus/game-viz'
+        - new package / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: The use case or pain point — not the solution yet.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would the API / component / token look like? How would it satisfy the three jobs (Reveal State · Afford Action · Acknowledge Input)?
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false

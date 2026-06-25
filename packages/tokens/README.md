@@ -1,9 +1,15 @@
 # @trembus/tokens
 
+[![npm](https://img.shields.io/npm/v/@trembus/tokens.svg)](https://www.npmjs.com/package/@trembus/tokens)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/nicholasosto/Trembus-Component-Library/blob/main/LICENSE)
+
 The shared design-token foundation for the Trembus component libraries: the
 `var(--tcl-*)` CSS custom properties, a type-safe token ontology, the color-coded
 tone vocabulary, the 3-jobs `ComponentContract` type, and an axe a11y test helper.
 React-free.
+
+Part of the [Trembus Component Library](https://github.com/nicholasosto/Trembus-Component-Library) —
+**[browse the live Storybook →](https://nicholasosto.github.io/Trembus-Component-Library/)**
 
 ```sh
 pnpm add @trembus/tokens
@@ -54,4 +60,4 @@ Usually you consume tokens transitively via [`@trembus/ui`](https://www.npmjs.co
 
 ## License
 
-MIT © Nicholas Osto
+MIT © Nicholas Osto · [source & contributing](https://github.com/nicholasosto/Trembus-Component-Library)

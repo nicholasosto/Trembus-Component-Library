@@ -1,0 +1,45 @@
+name: Bug report
+description: Something in a @trembus/* package doesn't behave as expected
+labels: [bug]
+body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package is affected?
+      options:
+        - '@trembus/ui'
+        - '@trembus/tokens'
+        - '@trembus/viz'
+        - '@trembus/game-viz'
+        - not sure / multiple
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal steps or a code snippet / sandbox link that reproduces the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: React version, browser, bundler, OS — anything relevant.
+    validations:
+      required: false

@@ -1,7 +1,7 @@
 {
   "name": "trembus-component-library",
   "version": "0.0.0",
-  "description": "Trembus component library workspace — @trembus/tokens · @trembus/ui · @trembus/viz.",
+  "description": "Trembus component library workspace — @trembus/tokens · @trembus/ui · @trembus/viz · @trembus/game-viz.",
   "license": "MIT",
   "private": true,
   "type": "module",

@@ -1,11 +1,66 @@
-# @trembus/ui
+# Trembus Component Library
 
-A React component library grounded in **first-principles UX** — a claude.ai-clean light
-theme by default, the Trembus Visual Grammar as a built-in dark theme, and zero styling
+[![CI](https://github.com/nicholasosto/Trembus-Component-Library/actions/workflows/ci.yml/badge.svg)](https://github.com/nicholasosto/Trembus-Component-Library/actions/workflows/ci.yml)
+[![Storybook](https://img.shields.io/badge/Storybook-live-ff4785?logo=storybook&logoColor=white)](https://nicholasosto.github.io/Trembus-Component-Library/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+A React component library grounded in **first-principles UX**. Every component is
+built from a small set of primitives and carries a **machine-checked contract**
+proving it does the three irreducible jobs of any UI — a claude.ai-clean light theme
+by default, a Trembus dark theme, a blood-dark `reliquary` theme, and zero styling
 config for consumers.
 
-> Tokens → primitives → components. Every component carries a machine-checked contract
-> proving it does the three irreducible jobs of any UI.
+> **Tokens → primitives → components.** Each component declares — in code the compiler
+> and CI both check — that it can _Reveal State_, _Afford Action_, and _Acknowledge Input_.
+
+**🔭 [Browse the live component gallery (Storybook) →](https://nicholasosto.github.io/Trembus-Component-Library/)**
+
+## Packages
+
+Four published packages, MIT-licensed, ESM-only, React 19. Import each package's
+`./styles.css` once and you're done — no Tailwind, no build-tool config.
+
+| Package                                         | npm                                                                                                           | What it is                                                                                                                                                                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@trembus/tokens`](packages/tokens#readme)     | [![npm](https://img.shields.io/npm/v/@trembus/tokens.svg)](https://www.npmjs.com/package/@trembus/tokens)     | The shared design-token foundation — the `var(--tcl-*)` CSS layer system (light · dark · reliquary + material presets), the type-safe token ontology, the `ComponentContract` type, and an axe a11y test helper. **React-free.** |
+| [`@trembus/ui`](packages/ui#readme)             | [![npm](https://img.shields.io/npm/v/@trembus/ui.svg)](https://www.npmjs.com/package/@trembus/ui)             | The component library — primitives (`Box` / `Stack` / `Text` / `Pressable`), form controls, overlays, and Tier-1 data viz. Depends on `@trembus/tokens`.                                                                         |
+| [`@trembus/viz`](packages/viz#readme)           | [![npm](https://img.shields.io/npm/v/@trembus/viz.svg)](https://www.npmjs.com/package/@trembus/viz)           | Tier-2 node-link visualizations — `Tree` (hierarchy via `d3-hierarchy`) and `Lineage` (DAG via `dagre`). Tokens only — never depends on `@trembus/ui`.                                                                           |
+| [`@trembus/game-viz`](packages/game-viz#readme) | [![npm](https://img.shields.io/npm/v/@trembus/game-viz.svg)](https://www.npmjs.com/package/@trembus/game-viz) | Expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates, 3D model thumbnails. A liturgical-gothic idiom over the same contract: _theatrical surface, accessible spine_.                     |
+
+## Quick start
+
+```sh
+pnpm add @trembus/ui react react-dom
+```
+
+Two lines wire up the whole library — import the stylesheet **once**, pick a theme:
+
+```tsx
+import '@trembus/ui/styles.css';
+import { Button, Stack } from '@trembus/ui';
+
+export function App() {
+  return (
+    <div className="tcl-root" data-theme="dark">
+      <Stack gap="4">
+        <Button tone="accent" onPress={() => console.log('pressed')}>
+          Save
+        </Button>
+      </Stack>
+    </div>
+  );
+}
+```
+
+```html
+<!-- light is the default; opt into a theme with one attribute -->
+<html data-theme="dark"></html>
+<!-- light (default) · dark · reliquary -->
+```
+
+Theming is pure CSS custom properties — override any `--tcl-*` token to re-skin, or flip
+`[data-theme]` for the built-in themes. Surfaces can also wear a **material** skin
+(`<Box material="glass">`).
 
 ## First principles
 
@@ -27,112 +82,6 @@ Every component is built to satisfy the **three irreducible UI jobs**:
 The Affordance state machine lives once in `useAffordanceState` and is exposed as a
 `data-state` attribute, so feedback is structural rather than re-implemented per component.
 
-## Install & use
-
-```sh
-pnpm add @trembus/ui react react-dom
-```
-
-Two lines wire up the whole library — import the stylesheet **once**, and set a theme:
-
-```tsx
-import '@trembus/ui/styles.css';
-import { Button, Badge, Input, Dialog } from '@trembus/ui';
-
-export function App() {
-  return (
-    <div className="tcl-root">
-      <Button tone="accent" onPress={() => console.log('pressed')}>
-        Save
-      </Button>
-    </div>
-  );
-}
-```
-
-```html
-<!-- light is the default; opt into dark with one attribute -->
-<html data-theme="dark"></html>
-```
-
-No Tailwind, no build-tool config required. Theming is pure CSS custom properties — override
-any `--tcl-*` token to re-skin, or flip `[data-theme]` for the built-in light/dark themes.
-
-## Components
-
-**Afford-Action**
-
-- **Button** — solid / outline / ghost × 6 tones, sizes, loading, `asChild`.
-- **IconButton** — square, icon-only; composes Button and requires an `aria-label`.
-- **Tabs** — ARIA tablist with roving tabindex + Arrow/Home/End nav (compound API).
-- **Menu** — dropdown (ARIA menu button): portal, roving focus, Esc/outside/Tab dismiss, return-focus.
-
-**Reveal-State**
-
-- **Badge** — the color-coded status ontology (success / info / warning / danger / neutral / accent).
-- **Avatar** — image → initials → glyph fallback; sizes, shapes, status tones; `role=img`.
-- **Spinner** — busy indicator (`role=status` + SR label); sizes and tones.
-- **Skeleton** — loading placeholders (text / rect / circle, multi-line, reduced-motion-aware shimmer).
-- **Card** — a raised surface that groups content; compound `Card.Header` / `Card.Body` / `Card.Footer`.
-
-**Acknowledge-Input**
-
-- **Input** — labeled field with description, validation (`aria-invalid` + announced error).
-- **Textarea** — multiline field; same shared field chrome and validation.
-- **Select** — native-first select with placeholder, validation, and a chevron.
-- **Checkbox** — labeled, tri-state (indeterminate), custom box.
-- **RadioGroup** — single-choice group (`role=radiogroup`); compound `RadioGroup.Item`.
-- **Switch** — labeled toggle (`role=switch`).
-- **Tooltip** — hover + focus, `role=tooltip` bound via `aria-describedby`, Esc/blur dismiss.
-- **Dialog** — focus-trapped modal: portal, scroll-lock, Esc/overlay dismiss, return-focus.
-- **Toast** — `ToastProvider` + `useToast()`: portal viewport, tone-coded, `aria-live`, auto-dismiss with pause-on-hover.
-
-Labeled controls (Input/Textarea/Select) share one internal field shell (`src/internal/field`) — a single source of truth for label/description/error wiring.
-
-**Visualizations** (data-driven; consume Visual Grammar contracts)
-
-- **Hub** — a hex-flower domain map (one center + up to six petals). Consumes the same JSON
-  shape as the Visual Grammar `hub.schema.json` contract, so a hub authored for the static HTML
-  kit renders here unchanged. Tiles are color-coded by `kind` (center / shipped / current /
-  planned); selecting a tile reveals its detail in a live inspector. Supports legacy VG `pos`
-  names, generic slots, or auto-placement.
-
-Primitives (`Box`, `Stack`, `Inline`, `Text`, `Pressable`), hooks (`useAffordanceState`,
-`useFocusTrap`, `useReturnFocus`, `useReducedMotion`, `useDismissable`), and utils
-(`Portal`, `Slot`, `cx`) are all exported for composing your own components.
-
-## Theming tokens
-
-Three layers, all CSS custom properties:
-
-- **Chrome** — `--tcl-bg`, `--tcl-surface[-raised|-sunken]`, `--tcl-border[-soft|-strong]`,
-  `--tcl-text[-dim|-faint]`, `--tcl-accent`.
-- **Status / intent** (the color-coded ontology) — `--tcl-status-{success|info|warning|danger|neutral}`
-  each with a `-bg` / `-fg` companion.
-- **Scales** — `--tcl-space-0..8`, `--tcl-radius-{sm|md|lg|full}`, `--tcl-text-{xs..xl}`,
-  `--tcl-elevation-{0..3}`, motion `--tcl-ease-calm` / `--tcl-dur-{fast|base|slow}`.
-
-A type-safe `tokens` object (var references) is exported for inline use:
-`style={{ color: tokens.color.accent }}`.
-
-## Development
-
-```sh
-pnpm dev               # Storybook (docs + playground) on :6006
-pnpm test              # unit tests (jsdom + axe a11y) — runs anywhere
-pnpm test:stories      # story tests in a real browser (needs: pnpm exec playwright install chromium)
-pnpm typecheck
-pnpm lint
-pnpm build             # → dist/{index.js, index.d.ts, styles.css}
-pnpm check:contracts   # enforce the 3-jobs contract per component
-pnpm verify:exports    # publint + are-the-types-wrong
-pnpm run validate      # the full gate, in order
-```
-
-> **Video:** `pnpm --filter @trembus/video studio` opens the **Remotion** motion studio, which
-> renders the real components to MP4 (it `import`s the live component + `styles.css`). It's an
-> internal app **outside** the `validate` gate — see [`packages/video/README.md`](packages/video/README.md).
-
 ### The contract discipline
 
 Each component owns a `*.contract.ts` — the single source of truth declaring how it
@@ -147,9 +96,60 @@ src/components/<Name>/
   <Name>.css           # @layer tcl.components { .tcl-<name> … }  — var(--tcl-*) only
   <Name>.contract.ts   # the 3-jobs contract (single source of truth)
   <Name>.stories.tsx   # Default / States / Interaction (names match the contract)
-  <Name>.test.tsx      # behavior + jest-axe
+  <Name>.test.tsx      # behavior + jest-axe (zero axe violations required)
 ```
+
+## Repository layout
+
+This is a [pnpm workspace](https://pnpm.io/workspaces). The four packages above live under
+`packages/`; two non-published members ride along:
+
+```
+packages/
+  tokens/      @trembus/tokens      — design-token foundation (published)
+  ui/          @trembus/ui          — component library      (published)
+  viz/         @trembus/viz         — Tier-2 node-link viz    (published)
+  game-viz/    @trembus/game-viz    — game / cinematic UI     (published)
+  video/       @trembus/video       — Remotion app that renders components to MP4 (private)
+demos/
+  soul-steel/  a multi-page demo site that consumes the published API (private)
+.storybook/    one Storybook globs every package's stories
+```
+
+- **[`packages/video`](packages/video/README.md)** is a [Remotion](https://www.remotion.dev/)
+  app that imports the real components + their `styles.css` and renders them to video — the
+  whole token system runs in headless Chromium with zero re-authoring.
+- **[`demos/soul-steel`](demos/soul-steel/README.md)** dog-foods the **published** API
+  (bare specifiers + each package's `dist/styles.css`) across routed pages, the way a
+  downstream product would.
+
+## Development
+
+Clone, then from the repo root:
+
+```sh
+pnpm install
+pnpm dev               # Storybook (docs + playground) on :6006
+pnpm run validate      # the full gate: lint → typecheck → contracts → test → build → verify:exports → storybook
+```
+
+Per-task scripts (run at the root, or scoped with `pnpm --filter @trembus/<pkg> <script>`):
+
+```sh
+pnpm test              # unit tests (jsdom + axe a11y) — runs anywhere
+pnpm test:stories      # story tests in a real browser (needs: pnpm exec playwright install chromium)
+pnpm typecheck
+pnpm lint
+pnpm build             # each package → dist/{index.js, index.d.ts, styles.css}
+pnpm check:contracts   # enforce the 3-jobs contract per component
+pnpm verify:exports    # publint + are-the-types-wrong
+pnpm demos:check       # build the libs, then typecheck + build every demo site (consumer-API guard)
+```
+
+Adding a component? `node .claude/skills/new-component/scaffold.mjs <Name> [--pkg ui|viz|game-viz]`
+scaffolds the canonical five-file shape and wires the barrel. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-UNLICENSED — internal Trembus package.
+[MIT](LICENSE) © Nicholas Osto

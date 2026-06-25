@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Browse the live Storybook
+    url: https://nicholasosto.github.io/Trembus-Component-Library/
+    about: See every component and theme before filing — it may already do what you need.
+  - name: Report a security vulnerability
+    url: https://github.com/nicholasosto/Trembus-Component-Library/security/advisories/new
+    about: Please report security issues privately, not as a public issue.
