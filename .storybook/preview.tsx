@@ -21,13 +21,14 @@ const preview: Preview = {
   initialGlobals: { theme: 'light' },
   globalTypes: {
     theme: {
-      description: 'Theme (light default + Trembus dark)',
+      description: 'Theme (light default + Trembus dark + blood-dark reliquary)',
       toolbar: {
         title: 'Theme',
         icon: 'paintbrush',
         items: [
           { value: 'light', title: 'Light' },
           { value: 'dark', title: 'Dark' },
+          { value: 'reliquary', title: 'Reliquary' },
         ],
         dynamicTitle: true,
       },

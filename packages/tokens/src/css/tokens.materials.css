@@ -35,8 +35,10 @@
     color: var(--tcl-text);
   }
 
-  /* Dark glass: thinner rim, lighter tint amount so the backdrop reads through. */
-  [data-theme='dark'] [data-material='glass'] {
+  /* Dark glass: thinner rim, lighter tint amount so the backdrop reads through.
+     The blood-dark `reliquary` theme is dark-based too → same reduced knobs. */
+  [data-theme='dark'] [data-material='glass'],
+  [data-theme='reliquary'] [data-material='glass'] {
     --tcl-mat-tint-amount: 50%;
     --tcl-mat-rim: 22%;
     --tcl-mat-edge: 16%;

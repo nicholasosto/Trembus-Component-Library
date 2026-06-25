@@ -3,33 +3,74 @@
   "version": "0.1.0",
   "description": "Trembus design tokens — the var(--tcl-*) CSS custom properties, the type-safe token ontology, the color-coded tone vocabulary, the 3-jobs contract type, and the axe a11y test helper shared by @trembus/ui and @trembus/viz.",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "author": "Nicholas Osto",
   "private": false,
   "engines": {
     "node": ">=20"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicholasosto/Trembus-Component-Library.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://github.com/nicholasosto/Trembus-Component-Library/tree/main/packages/tokens#readme",
+  "bugs": "https://github.com/nicholasosto/Trembus-Component-Library/issues",
+  "keywords": [
+    "design-tokens",
+    "css-variables",
+    "design-system",
+    "theme",
+    "trembus"
+  ],
   "files": [
+    "dist",
     "src"
   ],
   "sideEffects": [
     "**/*.css"
   ],
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
     "./contract": "./src/contract.ts",
     "./testing": "./src/testing.ts",
     "./styles.css": "./src/css/styles.css",
     "./layers.css": "./src/css/layers.css",
     "./light.css": "./src/css/tokens.light.css",
     "./dark.css": "./src/css/tokens.dark.css",
+    "./reliquary.css": "./src/css/tokens.reliquary.css",
     "./materials.css": "./src/css/tokens.materials.css",
     "./package.json": "./package.json"
   },
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "build": "vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "verify:exports": "publint && attw --pack --profile esm-only --exclude-entrypoints ./styles.css ./layers.css ./light.css ./dark.css ./reliquary.css ./materials.css",
+    "prepublishOnly": "pnpm build && pnpm verify:exports"
+  },
+  "peerDependencies": {
+    "jest-axe": "^9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "jest-axe": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.0",
     "@types/jest-axe": "^3.5.9",
-    "jest-axe": "^9.0.0"
+    "jest-axe": "^9.0.0",
+    "publint": "^0.3.0",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.3.0"
   }
 }

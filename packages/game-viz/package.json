@@ -3,10 +3,21 @@
   "version": "0.1.0",
   "description": "Trembus expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates. Builds on @trembus/ui primitives + the 3-jobs contract; theatrical surface, accessible spine.",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "author": "Nicholas Osto",
   "private": false,
   "engines": {
     "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicholasosto/Trembus-Component-Library.git",
+    "directory": "packages/game-viz"
+  },
+  "homepage": "https://github.com/nicholasosto/Trembus-Component-Library/tree/main/packages/game-viz#readme",
+  "bugs": "https://github.com/nicholasosto/Trembus-Component-Library/issues",
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist"
@@ -42,8 +53,8 @@
   },
   "dependencies": {
     "@google/model-viewer": "^4.3.1",
-    "@trembus/tokens": "workspace:*",
-    "@trembus/ui": "workspace:*"
+    "@trembus/tokens": "workspace:^",
+    "@trembus/ui": "workspace:^"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.0",

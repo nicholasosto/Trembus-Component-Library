@@ -8,4 +8,5 @@
 @import './layers.css';
 @import './tokens.light.css';
 @import './tokens.dark.css';
+@import './tokens.reliquary.css';
 @import './tokens.materials.css';

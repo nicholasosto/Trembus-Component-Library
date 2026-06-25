@@ -9,6 +9,7 @@
 @import './reset.css';
 @import '@trembus/tokens/light.css';
 @import '@trembus/tokens/dark.css';
+@import '@trembus/tokens/reliquary.css';
 @import '@trembus/tokens/materials.css';
 @import './base.css';
 @import './a11y.css';

@@ -14,12 +14,21 @@ const config: StorybookConfig = {
     // their per-component `import './X.css'` side-effects don't reach Storybook, so
     // a composed ui component (e.g. Timeline inside Chronicle) renders unstyled.
     // Source resolution injects that CSS and keeps Storybook on live ui source.
+    //
+    // @trembus/tokens `.` ships as built `dist` (its only published runtime entry);
+    // alias it to SOURCE too (exact match, so the `/*.css` subpaths — which stay
+    // source exports — are untouched) so dev needs no tokens prebuild and token-JS
+    // edits stay live.
     return mergeConfig(viteConfig, {
       resolve: {
         alias: [
           {
             find: /^@trembus\/ui$/,
             replacement: fileURLToPath(new URL('../packages/ui/src/index.ts', import.meta.url)),
+          },
+          {
+            find: /^@trembus\/tokens$/,
+            replacement: fileURLToPath(new URL('../packages/tokens/src/index.ts', import.meta.url)),
           },
         ],
       },
