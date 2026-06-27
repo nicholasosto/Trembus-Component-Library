@@ -15,3 +15,13 @@ export type {
   GraphEdge,
   LineageTone,
 } from './components/Lineage/Lineage';
+
+export { SystemMap } from './components/SystemMap/SystemMap';
+export type {
+  SystemMapProps,
+  SystemMapContract,
+  SystemNode,
+  SystemPort,
+  SystemEdge,
+  SystemTone,
+} from './components/SystemMap/SystemMap';

@@ -1,0 +1,213 @@
+@layer tcl.components {
+  .tcl-systemmap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the viz spine) ── */
+  .tcl-systemmap__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-systemmap__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-systemmap__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-systemmap__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-systemmap__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── breadcrumb — the constant orientation spine ── */
+  .tcl-systemmap__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tcl-systemmap__crumbs li {
+    display: inline-flex;
+    align-items: center;
+  }
+  .tcl-systemmap__crumb-sep {
+    margin: 0 4px;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-systemmap__crumb {
+    appearance: none;
+    margin: 0;
+    padding: 2px 6px;
+    border: 0;
+    border-radius: var(--tcl-radius-sm);
+    background: transparent;
+    color: var(--tcl-accent);
+    font-family: inherit;
+    font-size: var(--tcl-text-sm);
+    cursor: pointer;
+  }
+  button.tcl-systemmap__crumb:hover {
+    background: var(--tcl-surface-sunken);
+    text-decoration: underline;
+  }
+  button.tcl-systemmap__crumb:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 1px;
+  }
+  .tcl-systemmap__crumb.is-current {
+    color: var(--tcl-text);
+    font-weight: 600;
+    cursor: default;
+  }
+
+  /* ── nodes: HTML buttons positioned by % over the decorative SVG ── */
+  .tcl-systemmap__node-wrap {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+
+  /* the drill-in control — a separate button (no button-in-button) at the corner */
+  .tcl-systemmap__open {
+    position: absolute;
+    top: -9px;
+    left: -9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0.5px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-pill);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text-dim);
+    box-shadow: var(--tcl-elevation-1);
+    cursor: pointer;
+    transition: color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-systemmap__open:hover {
+    color: var(--tcl-accent);
+  }
+  .tcl-systemmap__open:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── edges (decorative; the SVG is aria-hidden). Directed via marker-end. ── */
+  .tcl-systemmap__edge {
+    fill: none;
+    stroke: var(--edge, var(--tcl-border-strong));
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    transition: opacity var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-systemmap__edge.is-dashed {
+    stroke-dasharray: 5 4;
+  }
+  .tcl-systemmap__edge.is-related {
+    stroke: var(--tcl-accent);
+    stroke-width: 2;
+  }
+  .tcl-systemmap__edge.is-muted {
+    opacity: 0.25;
+  }
+  .tcl-systemmap__edge-label {
+    fill: var(--tcl-text-dim);
+    font-family: var(--tcl-font-sans);
+    font-size: 11px;
+    paint-order: stroke;
+    stroke: var(--tcl-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+
+  /* ── aria-live inspector ── */
+  .tcl-systemmap__inspector {
+    min-height: 2.75rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-systemmap__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-systemmap__inspector-sub,
+  .tcl-systemmap__inspector-kind {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+  }
+  .tcl-systemmap__inspector-drill {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-accent);
+  }
+  .tcl-systemmap__inspector-ports {
+    margin: 2px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-systemmap__inspector-conn,
+  .tcl-systemmap__inspector-ext {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-systemmap__inspector-ext {
+    color: var(--tcl-text-faint);
+  }
+  .tcl-systemmap__inspector-note {
+    margin: 4px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-systemmap__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-systemmap__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-systemmap__link {
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--tcl-accent);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-systemmap__edge,
+    .tcl-systemmap__open {
+      transition: none;
+    }
+  }
+}
