@@ -5,6 +5,7 @@ import {
   cx,
   vars,
   toneVar,
+  Glyph,
   VizOverlay,
   useControllableSelection,
   useControllableSet,
@@ -32,6 +33,8 @@ export interface TreeNode {
   sub?: string;
   /** Inspector detail shown when selected. */
   note?: string;
+  /** Glyph name shown before the label (e.g. `folder` | `typescript`). Decorative. */
+  icon?: string;
   /** Start with this node's subtree collapsed. */
   collapsed?: boolean;
 }
@@ -82,6 +85,7 @@ interface LaidNode {
   value?: number;
   tone?: TreeTone;
   color?: string;
+  icon?: string;
   depth: number;
   sx: number;
   sy: number;
@@ -250,6 +254,7 @@ function buildLayout(
       value: node.value,
       tone: node.tone,
       color: node.color,
+      icon: node.icon,
       depth: n.depth,
       sx: pos.sx,
       sy: pos.sy,
@@ -370,7 +375,14 @@ export function Tree({
                   aria-label={`${n.label}${n.sub ? `, ${n.sub}` : ''}, level ${n.depth}, ${n.ancestry}`}
                   onClick={() => select(n.id)}
                 >
-                  <span className="tcl-tree__node-label">{n.label}</span>
+                  <span className="tcl-tree__heading">
+                    {n.icon && (
+                      <span className="tcl-tree__icon" aria-hidden="true">
+                        <Glyph name={n.icon} />
+                      </span>
+                    )}
+                    <span className="tcl-tree__node-label">{n.label}</span>
+                  </span>
                   {n.sub && <span className="tcl-tree__node-sub">{n.sub}</span>}
                 </button>
                 {n.hasChildren && (

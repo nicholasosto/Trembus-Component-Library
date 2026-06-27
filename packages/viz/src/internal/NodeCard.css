@@ -55,8 +55,21 @@
     letter-spacing: 0.04em;
     color: var(--tcl-text-dim);
   }
-  .tcl-nodecard__label {
+  .tcl-nodecard__heading {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     max-width: 184px;
+  }
+  .tcl-nodecard__icon {
+    flex: none;
+    display: inline-flex;
+    font-size: 15px;
+    line-height: 1;
+    /* monochrome glyphs inherit the node tone; brand marks carry their own color */
+    color: var(--node, var(--tcl-text));
+  }
+  .tcl-nodecard__label {
     overflow: hidden;
     font-weight: 600;
     white-space: nowrap;

@@ -35,19 +35,21 @@ const orgChart: TreeContract = {
   orientation: 'vertical',
 };
 
-// A small file tree — used to show the dendrogram variant.
+// A small file tree — folders + per-file-type glyphs (TS vs JS vs JSON at a glance).
 const fileTree: TreeContract = {
   view: 'tree',
   code: 'repo.packages.viz.src',
   title: 'src',
+  orientation: 'horizontal',
   nodes: [
-    { id: 'src', label: 'src', tone: 'accent' },
-    { id: 'comp', label: 'components', parentId: 'src', tone: 'info' },
-    { id: 'tree', label: 'Tree', parentId: 'comp' },
-    { id: 'line', label: 'Lineage', parentId: 'comp' },
-    { id: 'internal', label: 'internal', parentId: 'src', tone: 'success' },
-    { id: 'overlay', label: 'VizOverlay', parentId: 'internal' },
-    { id: 'hooks', label: 'hooks', parentId: 'internal' },
+    { id: 'src', label: 'src', icon: 'folder', tone: 'accent' },
+    { id: 'comp', label: 'components', parentId: 'src', icon: 'folder', tone: 'info' },
+    { id: 'tree', label: 'Tree.tsx', parentId: 'comp', icon: 'typescript' },
+    { id: 'treecss', label: 'Tree.css', parentId: 'comp', icon: 'file' },
+    { id: 'internal', label: 'internal', parentId: 'src', icon: 'folder', tone: 'success' },
+    { id: 'glyphs', label: 'glyphs.tsx', parentId: 'internal', icon: 'typescript' },
+    { id: 'legacy', label: 'legacy.js', parentId: 'internal', icon: 'javascript' },
+    { id: 'cfg', label: 'tsconfig.json', parentId: 'src', icon: 'json' },
   ],
 };
 
@@ -70,6 +72,9 @@ type Story = StoryObj<typeof meta>;
 
 /** Job: Reveal State — parent→child structure as a tidy node-link layout. */
 export const Default: Story = {};
+
+/** A file tree distinguishing types at a glance — TS vs JS vs JSON vs folders (per-node `icon`). */
+export const FileTree: Story = { args: { data: fileTree } };
 
 /** Job: Afford Action — orientations, the dendrogram variant, and a pre-collapsed subtree. */
 export const States: Story = {

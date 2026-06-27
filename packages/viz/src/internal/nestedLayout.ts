@@ -28,6 +28,8 @@ export interface NestedNodeInput {
   color?: string;
   sub?: string;
   note?: string;
+  /** Explicit glyph name (overrides the kind→glyph default). */
+  icon?: string;
 }
 
 export interface NestedEdgeInput {
@@ -62,6 +64,8 @@ export interface LaidNestedNode {
   kind?: string;
   tone: VizTone;
   color?: string;
+  /** Explicit glyph name passthrough (the consumer applies any kind default). */
+  icon?: string;
   /** A container has children to drill into; a leaf does not. */
   variant: 'leaf' | 'container';
   /** Direct children count — the information-scent badge on a drill target. */
@@ -298,6 +302,7 @@ export function layoutNested(
         kind: n.kind,
         tone,
         color: n.color,
+        icon: n.icon,
         variant: childCount > 0 ? 'container' : 'leaf',
         childCount,
         ports: portsByNode.get(id) ?? [],

@@ -5,6 +5,8 @@ import {
   toneVar,
   VizOverlay,
   NodeCard,
+  Glyph,
+  SYSTEM_KIND_GLYPH,
   layoutNested,
   useDrilldown,
   useControllableSelection,
@@ -33,6 +35,8 @@ export interface SystemNode {
   sub?: string;
   /** Inspector detail shown when selected. */
   note?: string;
+  /** Explicit glyph name (overrides the kind→glyph default), e.g. `typescript`. */
+  icon?: string;
 }
 
 export interface SystemPort {
@@ -271,6 +275,7 @@ export function SystemMap({
           }
           nodes={workingSet.map((n) => {
             const isSelected = n.id === selectedId;
+            const glyphName = n.icon ?? (n.kind ? SYSTEM_KIND_GLYPH[n.kind] : undefined);
             const provided = n.ports.filter((p) => p.direction === 'provided').map((p) => p.label);
             const required = n.ports.filter((p) => p.direction === 'required').map((p) => p.label);
             const portsAria = [
@@ -299,6 +304,7 @@ export function SystemMap({
                   label={n.label}
                   sub={n.sub}
                   stereotype={n.kind ? `«${n.kind}»` : undefined}
+                  icon={glyphName ? <Glyph name={glyphName} /> : undefined}
                   tone={n.tone}
                   color={n.color}
                   variant={n.variant}

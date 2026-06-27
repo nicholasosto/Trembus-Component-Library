@@ -215,6 +215,27 @@ describe('SystemMap', () => {
     }
   });
 
+  it('renders a kind glyph on each node (decorative, aria-hidden)', () => {
+    const { container } = render(<SystemMap data={arch} />);
+    expect(container.querySelector('[data-glyph="server"]')).toBeTruthy(); // alpha = system
+    expect(container.querySelector('[data-glyph="user"]')).toBeTruthy(); // beta = actor
+    expect(container.querySelector('[data-glyph="cloud"]')).toBeTruthy(); // gamma = external
+    // glyphs are decorative — the svg itself is aria-hidden
+    expect(container.querySelector('[data-glyph="server"]')?.getAttribute('aria-hidden')).toBe(
+      'true',
+    );
+  });
+
+  it('lets an explicit node icon override the kind glyph', () => {
+    const d: SystemMapContract = {
+      nodes: [{ id: 'a', label: 'A', kind: 'system', icon: 'database' }],
+      edges: [],
+    };
+    const { container } = render(<SystemMap data={d} />);
+    expect(container.querySelector('[data-glyph="database"]')).toBeTruthy();
+    expect(container.querySelector('[data-glyph="server"]')).toBeNull();
+  });
+
   it('exposes a group role for the figure', () => {
     render(<SystemMap data={arch} />);
     expect(screen.getByRole('group', { name: /system map/i })).toBeInTheDocument();

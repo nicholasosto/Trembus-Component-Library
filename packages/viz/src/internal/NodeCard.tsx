@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { cx } from './cx';
 import { vars } from './vars';
 import { toneVar } from './tone';
@@ -20,6 +21,8 @@ export interface NodeCardProps {
   sub?: string;
   /** Small UML-style stereotype above the label, e.g. `«container»`. */
   stereotype?: string;
+  /** Leading glyph (a kind/type icon) shown before the label. Decorative. */
+  icon?: ReactNode;
   tone?: VizTone;
   /** Explicit color (hex) — overrides `tone`. */
   color?: string;
@@ -56,6 +59,7 @@ export function NodeCard({
   label,
   sub,
   stereotype,
+  icon,
   tone,
   color,
   variant = 'leaf',
@@ -87,7 +91,14 @@ export function NodeCard({
       onClick={onSelect}
     >
       {stereotype && <span className="tcl-nodecard__stereotype">{stereotype}</span>}
-      <span className="tcl-nodecard__label">{label}</span>
+      <span className="tcl-nodecard__heading">
+        {icon && (
+          <span className="tcl-nodecard__icon" aria-hidden="true">
+            {icon}
+          </span>
+        )}
+        <span className="tcl-nodecard__label">{label}</span>
+      </span>
       {sub && <span className="tcl-nodecard__sub">{sub}</span>}
       {visiblePorts.length > 0 && (
         <span className="tcl-nodecard__ports" aria-hidden="true">

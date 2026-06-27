@@ -77,8 +77,21 @@
     background: var(--node, var(--tcl-accent));
     border-radius: var(--tcl-radius-md) 0 0 var(--tcl-radius-md);
   }
-  .tcl-tree__node-label {
+  .tcl-tree__heading {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     max-width: 128px;
+  }
+  .tcl-tree__icon {
+    flex: none;
+    display: inline-flex;
+    font-size: 15px;
+    line-height: 1;
+    /* monochrome glyphs read calm; brand/type marks carry their own color */
+    color: var(--tcl-text-dim);
+  }
+  .tcl-tree__node-label {
     overflow: hidden;
     font-weight: 600;
     white-space: nowrap;

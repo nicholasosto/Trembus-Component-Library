@@ -11,6 +11,23 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/viz 0.2.0] — 2026-06
+
+### Added
+
+- **`SystemMap`** — a nested, drill-down C4 / system-architecture map. The root reads
+  as a Context diagram; opening a container is a semantic-zoom step to that level's
+  children, and deep component-to-component edges aggregate up to the visible level.
+  Includes provided/required interface ports, a breadcrumb orientation spine, and an
+  aria-live inspector that names a node's interfaces plus its internal and
+  cross-boundary connections. New reusable spine pieces: `useDrilldown`, `layoutNested`,
+  `NodeCard`.
+- **Icon glyphs** — an in-package glyph set (node-kind marks, file-type marks, and core
+  UI affordances) so `SystemMap` and `Tree` can distinguish kinds/types at a glance via
+  a `kind → icon` map and a per-node `icon` field. Monochrome glyphs inherit
+  `currentColor`; type/brand marks (TS, JS, React, CSS, HTML) carry their own color.
+  (Seed of a future standalone `@trembus/icons` package.)
+
 ## [0.1.0] — 2026-06
 
 Initial public release of the four packages to npm under the MIT license.

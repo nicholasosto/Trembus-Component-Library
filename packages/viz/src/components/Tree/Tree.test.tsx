@@ -229,6 +229,20 @@ describe('Tree', () => {
     expect(nodeButtons()).toHaveLength(2);
   });
 
+  it('renders a per-node icon glyph (decorative)', () => {
+    const files: TreeContract = {
+      nodes: [
+        { id: 'r', label: 'src', icon: 'folder' },
+        { id: 'a', label: 'App.tsx', parentId: 'r', icon: 'typescript' },
+        { id: 'b', label: 'old.js', parentId: 'r', icon: 'javascript' },
+      ],
+    };
+    const { container } = render(<Tree data={files} />);
+    expect(container.querySelector('[data-glyph="folder"]')).toBeTruthy();
+    expect(container.querySelector('[data-glyph="typescript"]')).toBeTruthy();
+    expect(container.querySelector('[data-glyph="javascript"]')).toBeTruthy();
+  });
+
   it('has no axe violations', async () => {
     const { container } = render(<Tree data={org} />);
     expect(await a11yViolations(container)).toEqual([]);
