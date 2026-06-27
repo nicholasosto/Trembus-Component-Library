@@ -1,0 +1,128 @@
+@layer tcl.components {
+  .tcl-classdiagram {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the viz spine) ── */
+  .tcl-classdiagram__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-classdiagram__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-classdiagram__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-classdiagram__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-classdiagram__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── class nodes: HTML buttons positioned by % over the decorative SVG ── */
+  .tcl-classdiagram__node-wrap {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ── relationships (decorative; the SVG is aria-hidden). Typed via markers. ── */
+  .tcl-classdiagram__edge {
+    fill: none;
+    /* UML connectors must read clearly — a mid-gray, not the faint border tone */
+    stroke: var(--edge, var(--tcl-text-faint));
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    transition: opacity var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-classdiagram__edge.is-dashed {
+    stroke-dasharray: 5 4;
+  }
+  .tcl-classdiagram__edge.is-related {
+    stroke: var(--tcl-accent);
+    stroke-width: 2;
+  }
+  .tcl-classdiagram__edge.is-muted {
+    opacity: 0.22;
+  }
+  .tcl-classdiagram__edge-label,
+  .tcl-classdiagram__mult {
+    fill: var(--tcl-text-dim);
+    font-family: var(--tcl-font-sans);
+    paint-order: stroke;
+    stroke: var(--tcl-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+  .tcl-classdiagram__edge-label {
+    font-size: 11px;
+  }
+  .tcl-classdiagram__mult {
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+  }
+
+  /* ── aria-live inspector ── */
+  .tcl-classdiagram__inspector {
+    min-height: 2.75rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-classdiagram__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-classdiagram__inspector-stereotype {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+    font-family: var(--tcl-font-mono);
+  }
+  .tcl-classdiagram__inspector-members {
+    margin: 2px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-classdiagram__inspector-rels {
+    margin: 3px 0 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-classdiagram__inspector-note {
+    margin: 4px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-classdiagram__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-classdiagram__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-classdiagram__edge {
+      transition: none;
+    }
+  }
+}

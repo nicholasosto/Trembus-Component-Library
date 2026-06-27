@@ -14,6 +14,13 @@ export interface NodeCardPort {
   tone?: VizTone;
 }
 
+export interface NodeCardSection {
+  /** Optional caption above the compartment. */
+  label?: string;
+  /** Pre-formatted member lines (e.g. `+ id: string`). */
+  items: string[];
+}
+
 export interface NodeCardProps {
   /** Primary name — the box text. */
   label: string;
@@ -30,6 +37,8 @@ export interface NodeCardProps {
   variant?: 'leaf' | 'container';
   /** Information-scent text on a drill target, e.g. `5 components`. */
   badge?: string;
+  /** UML-style compartments (e.g. attributes / methods) below the heading. Decorative — detail rides the inspector. */
+  sections?: NodeCardSection[];
   /** Provided / required interfaces shown on the node and named in the SR name. */
   ports?: NodeCardPort[];
   /** Selected (rings + aria-pressed). */
@@ -64,6 +73,7 @@ export function NodeCard({
   color,
   variant = 'leaf',
   badge,
+  sections,
   ports,
   selected,
   emphasized,
@@ -100,6 +110,24 @@ export function NodeCard({
         <span className="tcl-nodecard__label">{label}</span>
       </span>
       {sub && <span className="tcl-nodecard__sub">{sub}</span>}
+      {sections && sections.length > 0 && (
+        <span className="tcl-nodecard__sections" aria-hidden="true">
+          {sections.map((s, i) => (
+            <span className="tcl-nodecard__section" key={i}>
+              {s.label && <span className="tcl-nodecard__section-label">{s.label}</span>}
+              {s.items.length > 0 ? (
+                s.items.map((it, j) => (
+                  <span className="tcl-nodecard__section-item" key={j}>
+                    {it}
+                  </span>
+                ))
+              ) : (
+                <span className="tcl-nodecard__section-empty">—</span>
+              )}
+            </span>
+          ))}
+        </span>
+      )}
       {visiblePorts.length > 0 && (
         <span className="tcl-nodecard__ports" aria-hidden="true">
           {visiblePorts.map((p) => (

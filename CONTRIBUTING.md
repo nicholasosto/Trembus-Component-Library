@@ -78,6 +78,11 @@ assistant, but accurate and useful for humans too).
   three jobs.
 - New behavior needs a test (and, for a fix, a regression test).
 
+## Releasing
+
+Publishing the packages to npm (versioning, the per-package runbook, and the npm
+auth/2FA setup) is documented separately in [`RELEASING.md`](RELEASING.md).
+
 ## License
 
 By contributing, you agree your contributions are licensed under the project's

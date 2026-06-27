@@ -9,7 +9,12 @@ export { useDrilldown } from './useDrilldown';
 export { VizOverlay } from './VizOverlay';
 export type { VizOverlayProps } from './VizOverlay';
 export { NodeCard } from './NodeCard';
-export type { NodeCardProps, NodeCardPort, NodeCardPortDirection } from './NodeCard';
+export type {
+  NodeCardProps,
+  NodeCardPort,
+  NodeCardPortDirection,
+  NodeCardSection,
+} from './NodeCard';
 export { Glyph, GLYPHS, SYSTEM_KIND_GLYPH } from './glyphs';
 export type { GlyphName } from './glyphs';
 export { layoutNested, NESTED_VIEWBOX } from './nestedLayout';

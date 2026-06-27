@@ -11,6 +11,23 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/viz 0.3.0] — 2026-06
+
+### Added
+
+- **`ClassDiagram`** — a UML class diagram. Classes render as compartmented boxes
+  (name + stereotype · attributes · methods, with `+ - # ~` visibility markers)
+  connected by typed relationships whose arrowheads encode the kind: inheritance and
+  realization (hollow triangle), composition (filled diamond), aggregation (hollow
+  diamond), association and dependency (open arrow), with dashed lines for realization
+  and dependency. Selecting a class emphasizes its relationships and reveals its members
+  and relationships (named with UML verbs) in the aria-live inspector.
+
+### Changed
+
+- `NodeCard` (the shared node body) gained UML-style compartments (`sections`), reused
+  by `ClassDiagram` for attribute/method lists.
+
 ## [@trembus/viz 0.2.0] — 2026-06
 
 ### Added

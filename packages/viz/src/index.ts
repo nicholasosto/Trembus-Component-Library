@@ -25,3 +25,15 @@ export type {
   SystemEdge,
   SystemTone,
 } from './components/SystemMap/SystemMap';
+
+export { ClassDiagram } from './components/ClassDiagram/ClassDiagram';
+export type {
+  ClassDiagramProps,
+  ClassDiagramContract,
+  ClassNode,
+  ClassMember,
+  ClassRelation,
+  RelationKind,
+  Visibility,
+  ClassTone,
+} from './components/ClassDiagram/ClassDiagram';
