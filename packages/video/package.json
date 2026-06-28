@@ -11,9 +11,13 @@
     "tc": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@remotion/captions": "4.0.482",
     "@remotion/cli": "4.0.482",
     "@remotion/google-fonts": "4.0.482",
+    "@remotion/transitions": "4.0.482",
     "@trembus/game-viz": "workspace:*",
+    "@trembus/ui": "workspace:*",
+    "prism-react-renderer": "^2.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "remotion": "4.0.482"
