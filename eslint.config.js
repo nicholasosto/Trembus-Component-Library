@@ -45,7 +45,17 @@ export default tseslint.config(
   },
   ...storybook.configs['flat/recommended'],
   {
-    files: ['**/*.config.{ts,js}', 'scripts/**', '.storybook/**'],
+    // Node-side tooling: build configs, scripts, the Storybook config, and the
+    // agent hook/scaffold *.mjs scripts under .codex/ & .agents/ all run under
+    // Node, so give them the Node globals (otherwise `console` & friends trip
+    // `no-undef`). .claude/ is fully ignored above.
+    files: [
+      '**/*.config.{ts,js}',
+      'scripts/**',
+      '.storybook/**',
+      '.codex/**',
+      '.agents/**',
+    ],
     languageOptions: { globals: { ...globals.node } },
   },
 );
