@@ -228,3 +228,5 @@ export type {
   TimelineCategory,
   TimelineTone,
 } from './components/Timeline/Timeline';
+export { FolderTree } from './components/FolderTree/FolderTree';
+export type { FolderTreeProps, FolderNode } from './components/FolderTree/FolderTree';

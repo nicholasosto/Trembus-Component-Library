@@ -1,0 +1,156 @@
+@layer tcl.components {
+  .tcl-folder-tree {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    width: 100%;
+    max-width: 420px;
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── filter box ── */
+  .tcl-folder-tree__filter {
+    width: 100%;
+  }
+
+  /* ── tree surface ── */
+  .tcl-folder-tree__tree {
+    display: flex;
+    flex-direction: column;
+    padding: var(--tcl-space-2);
+    border: 1px solid var(--tcl-border-soft);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+    overflow: auto;
+  }
+
+  .tcl-folder-tree__empty {
+    margin: 0;
+    padding: var(--tcl-space-4);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── row ── */
+  .tcl-folder-tree__item {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    min-height: 30px;
+    padding-block: 3px;
+    padding-inline-end: var(--tcl-space-2);
+    border-radius: var(--tcl-radius-sm);
+    color: var(--tcl-text);
+    cursor: pointer;
+    user-select: none;
+  }
+  .tcl-folder-tree__item:hover {
+    background: var(--tcl-surface-raised);
+  }
+  /* selection = filled tint (distinct from the focus outline below) */
+  .tcl-folder-tree__item[aria-selected='true'] {
+    background: color-mix(in oklab, var(--tcl-accent) 16%, var(--tcl-surface));
+  }
+  .tcl-folder-tree__item:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: -2px;
+  }
+  .tcl-folder-tree__item[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ── twist / chevron ── */
+  .tcl-folder-tree__twist {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    font-size: 14px;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-folder-tree__chevron {
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-folder-tree__item[aria-expanded='true'] .tcl-folder-tree__chevron {
+    transform: rotate(90deg);
+  }
+
+  /* ── file/folder icon ── */
+  .tcl-folder-tree__icon {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-folder-tree__item[data-kind='folder'] .tcl-folder-tree__icon {
+    color: var(--tcl-accent);
+  }
+
+  /* ── label ── */
+  .tcl-folder-tree__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--tcl-text-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tcl-folder-tree__match {
+    padding: 0 1px;
+    border-radius: var(--tcl-radius-sm);
+    background: color-mix(in oklab, var(--tcl-status-warning) 35%, transparent);
+    color: var(--tcl-text);
+  }
+
+  /* ── decorative checkbox (state lives on the row's aria-checked) ── */
+  .tcl-folder-tree__check {
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--tcl-border-strong);
+    border-radius: var(--tcl-radius-sm);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-accent-fg);
+  }
+  .tcl-folder-tree__check-mark {
+    width: 11px;
+    height: 11px;
+    opacity: 0;
+  }
+  .tcl-folder-tree__check[data-state='checked'],
+  .tcl-folder-tree__check[data-state='mixed'] {
+    border-color: var(--tcl-accent);
+    background: var(--tcl-accent);
+  }
+  .tcl-folder-tree__check[data-state='checked'] .tcl-folder-tree__check-mark {
+    opacity: 1;
+  }
+  .tcl-folder-tree__check[data-state='mixed']::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--tcl-accent-fg);
+  }
+
+  /* ── lazy-load error ── */
+  .tcl-folder-tree__error {
+    margin-inline-start: auto;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-status-danger);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-folder-tree__chevron {
+      transition: none;
+    }
+  }
+}
