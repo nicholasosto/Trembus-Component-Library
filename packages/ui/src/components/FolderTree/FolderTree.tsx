@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
-import { Glyph, extToGlyph } from '../../internal/glyphs';
+import { Glyph, extToGlyph } from '@trembus/icons';
 import { Input } from '../Input/Input';
 import { Spinner } from '../Spinner/Spinner';
 import './FolderTree.css';

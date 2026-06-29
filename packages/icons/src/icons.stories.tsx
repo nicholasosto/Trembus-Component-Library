@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { GLYPHS, Glyph } from './glyphs';
+import { GLYPHS, Glyph } from './index';
 
-// A gallery of the in-repo glyph set (the seed of a future @trembus/icons). Not a
-// library component — just a visual index of every registered glyph.
+// A gallery of the shared glyph set. Not a library component — just a visual index
+// of every registered glyph. The token CSS vars resolve from Storybook's globally
+// loaded tokens stylesheet (the icons package itself ships no CSS / token dep).
 function Gallery() {
   const names = Object.keys(GLYPHS);
   return (
@@ -40,7 +41,7 @@ function Gallery() {
 }
 
 const meta = {
-  title: 'Foundations/Glyphs',
+  title: 'Foundations/Icons',
   component: Gallery,
   parameters: { layout: 'padded' },
 } satisfies Meta<typeof Gallery>;
@@ -48,5 +49,5 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Every registered glyph — monochrome marks inherit `currentColor`; type marks carry brand color. */
+/** Every registered glyph — monochrome marks inherit `currentColor`; brand marks carry their own color. */
 export const Default: Story = {};

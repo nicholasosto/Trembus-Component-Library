@@ -30,6 +30,12 @@ const config: StorybookConfig = {
             find: /^@trembus\/tokens$/,
             replacement: fileURLToPath(new URL('../packages/tokens/src/index.ts', import.meta.url)),
           },
+          {
+            // Glyphs render from source so the gallery + ui/viz stories that compose
+            // them need no icons prebuild and stay live on source edits.
+            find: /^@trembus\/icons$/,
+            replacement: fileURLToPath(new URL('../packages/icons/src/index.ts', import.meta.url)),
+          },
         ],
       },
     });

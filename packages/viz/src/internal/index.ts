@@ -15,8 +15,11 @@ export type {
   NodeCardPortDirection,
   NodeCardSection,
 } from './NodeCard';
-export { Glyph, GLYPHS, SYSTEM_KIND_GLYPH } from './glyphs';
-export type { GlyphName } from './glyphs';
+// Glyphs now live in the shared @trembus/icons package (de-duplicated from the old
+// viz/ui internal copies). Re-exported here so viz components keep importing from
+// `../../internal` unchanged.
+export { Glyph, GLYPHS, SYSTEM_KIND_GLYPH } from '@trembus/icons';
+export type { GlyphName } from '@trembus/icons';
 export { layoutNested, NESTED_VIEWBOX } from './nestedLayout';
 export type {
   NestedLayout,

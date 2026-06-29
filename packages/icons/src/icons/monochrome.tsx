@@ -1,0 +1,196 @@
+import type { ReactElement } from 'react';
+import { Svg } from './Svg';
+import type { GlyphProps } from './Svg';
+
+/**
+ * Monochrome glyphs — they paint `currentColor`, so the consumer tints them with
+ * the surrounding text color (a `var(--tcl-*)` token in this design system). Each
+ * is a tree-shakeable named export.
+ */
+
+// ── node / architecture kinds ──
+export const DatabaseIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="database" {...p}>
+    <path d="M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3Z" />
+    <path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
+    <path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" />
+  </Svg>
+);
+export const UserIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="user" {...p}>
+    <circle cx="12" cy="8" r="3.5" />
+    <path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7" />
+  </Svg>
+);
+export const CloudIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="cloud" {...p}>
+    <path d="M7 18a4 4 0 0 1-.5-7.97A5.5 5.5 0 0 1 17 9.5a3.5 3.5 0 0 1 .5 8.5Z" />
+  </Svg>
+);
+export const BoxIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="box" {...p}>
+    <path d="M12 3 20 7.5v9L12 21 4 16.5v-9Z" />
+    <path d="M4 7.5 12 12l8-4.5" />
+    <path d="M12 12v9" />
+  </Svg>
+);
+export const ComponentIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="component" {...p}>
+    <rect x="8" y="5" width="11" height="14" rx="1" />
+    <path d="M8 9.5H5M8 14.5H5" />
+  </Svg>
+);
+export const ServerIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="server" {...p}>
+    <rect x="4" y="5" width="16" height="6" rx="1.5" />
+    <rect x="4" y="13" width="16" height="6" rx="1.5" />
+    <path d="M7.5 8h.01M7.5 16h.01" />
+  </Svg>
+);
+export const GlobeIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="globe" {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18" />
+    <path d="M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z" />
+  </Svg>
+);
+export const ShieldIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="shield" {...p}>
+    <path d="M12 3 5 6v5c0 4.2 2.8 7.6 7 9 4.2-1.4 7-4.8 7-9V6Z" />
+  </Svg>
+);
+export const ZapIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="zap" {...p}>
+    <path d="M13 3 5 13h6l-2 8 8-10h-6Z" />
+  </Svg>
+);
+export const CpuIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="cpu" {...p}>
+    <rect x="7" y="7" width="10" height="10" rx="1" />
+    <rect x="10" y="10" width="4" height="4" />
+    <path d="M10 3v2M14 3v2M10 19v2M14 19v2M3 10h2M3 14h2M19 10h2M19 14h2" />
+  </Svg>
+);
+export const HardDriveIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="harddrive" {...p}>
+    <rect x="3" y="12" width="18" height="8" rx="2" />
+    <path d="M5.5 12 8 5h8l2.5 7" />
+    <path d="M7 16h.01M11 16h.01" />
+  </Svg>
+);
+export const LayersIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="layers" {...p}>
+    <path d="M12 3 3 8l9 5 9-5Z" />
+    <path d="M3 12l9 5 9-5" />
+    <path d="M3 16l9 5 9-5" />
+  </Svg>
+);
+export const NetworkIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="network" {...p}>
+    <circle cx="6" cy="6" r="2.5" />
+    <circle cx="18" cy="6" r="2.5" />
+    <circle cx="12" cy="18" r="2.5" />
+    <path d="M7.6 7.6 10.8 15.8M16.4 7.6 13.2 15.8M8.5 6h7" />
+  </Svg>
+);
+export const QueueIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="queue" {...p}>
+    <rect x="3" y="5" width="18" height="4" rx="1" />
+    <rect x="3" y="11" width="18" height="4" rx="1" />
+    <rect x="3" y="17" width="18" height="2.5" rx="1" />
+  </Svg>
+);
+
+// ── file types (monochrome) ──
+export const FolderIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="folder" {...p}>
+    <path d="M4 6a1 1 0 0 1 1-1h4l2 2h8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z" />
+  </Svg>
+);
+export const FolderOpenIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="folder-open" {...p}>
+    <path d="M4 6a1 1 0 0 1 1-1h4l2 2h8a1 1 0 0 1 1 1v2H4Z" />
+    <path d="M4 10h16l-2 7a1 1 0 0 1-1 .9H5a1 1 0 0 1-1-1Z" />
+  </Svg>
+);
+export const FileIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="file" {...p}>
+    <path d="M7 3h8l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+    <path d="M14 3v5h5" />
+  </Svg>
+);
+export const JsonIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="json" {...p}>
+    <path d="M9 4a3 3 0 0 0-3 3v2a2 2 0 0 1-2 2 2 2 0 0 1 2 2v2a3 3 0 0 0 3 3" />
+    <path d="M15 4a3 3 0 0 1 3 3v2a2 2 0 0 0 2 2 2 2 0 0 0-2 2v2a3 3 0 0 1-3 3" />
+  </Svg>
+);
+export const MarkdownIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="markdown" {...p}>
+    <rect x="2" y="5" width="20" height="14" rx="2" />
+    <path d="M6 15V9l3 3 3-3v6" />
+    <path d="M17 9v4.5M17 13.5l-2-2M17 13.5l2-2" />
+  </Svg>
+);
+export const TerminalIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="terminal" {...p}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M7 9.5 10 12.5 7 15.5M12.5 15.5H16" />
+  </Svg>
+);
+export const ImageIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="image" {...p}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <circle cx="8.5" cy="9.5" r="1.5" />
+    <path d="M21 16.5 15.5 11 5 20.5" />
+  </Svg>
+);
+
+// ── core UI affordances ──
+export const ChevronRightIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="chevron-right" {...p}>
+    <path d="M9 6l6 6-6 6" />
+  </Svg>
+);
+export const ChevronDownIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="chevron-down" {...p}>
+    <path d="M6 9l6 6 6-6" />
+  </Svg>
+);
+export const CloseIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="close" {...p}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </Svg>
+);
+export const CheckIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="check" {...p}>
+    <path d="M5 12.5 9.5 17 19 6.5" />
+  </Svg>
+);
+export const SearchIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="search" {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="M21 21l-4.3-4.3" />
+  </Svg>
+);
+export const ExternalLinkIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="external-link" {...p}>
+    <path d="M14 4h6v6" />
+    <path d="M20 4 11 13" />
+    <path d="M19 14v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+  </Svg>
+);
+export const InfoIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="info" {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v5" />
+    <path d="M12 7.5h.01" />
+  </Svg>
+);
+export const WarningIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="warning" {...p}>
+    <path d="M12 4 2.5 20h19Z" />
+    <path d="M12 10v4" />
+    <path d="M12 17.5h.01" />
+  </Svg>
+);

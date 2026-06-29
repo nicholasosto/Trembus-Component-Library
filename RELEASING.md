@@ -1,7 +1,8 @@
 # Releasing the `@trembus/*` packages
 
-The four libraries — `@trembus/tokens`, `@trembus/ui`, `@trembus/viz`, `@trembus/game-viz`
-— are published to **public npm** under the `@trembus` scope, MIT licensed. (`@trembus/video`
+The five libraries — `@trembus/tokens`, `@trembus/icons`, `@trembus/ui`, `@trembus/viz`,
+`@trembus/game-viz` — are published to **public npm** under the `@trembus` scope, MIT licensed.
+(`@trembus/video`
 and the `demos/*` apps are private and never published.)
 
 ## Versioning — independent, per package

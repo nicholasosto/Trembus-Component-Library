@@ -17,12 +17,13 @@ config for consumers.
 
 ## Packages
 
-Four published packages, MIT-licensed, ESM-only, React 19. Import each package's
+Five published packages, MIT-licensed, ESM-only, React 19. Import each package's
 `./styles.css` once and you're done — no Tailwind, no build-tool config.
 
 | Package                                         | npm                                                                                                           | What it is                                                                                                                                                                                                                       |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`@trembus/tokens`](packages/tokens#readme)     | [![npm](https://img.shields.io/npm/v/@trembus/tokens.svg)](https://www.npmjs.com/package/@trembus/tokens)     | The shared design-token foundation — the `var(--tcl-*)` CSS layer system (light · dark · reliquary + material presets), the type-safe token ontology, the `ComponentContract` type, and an axe a11y test helper. **React-free.** |
+| [`@trembus/icons`](packages/icons#readme)       | [![npm](https://img.shields.io/npm/v/@trembus/icons.svg)](https://www.npmjs.com/package/@trembus/icons)       | The shared glyph set — tree-shakeable inline-SVG icons (node-kind / file-type marks + UI affordances) consumed by `@trembus/ui` and `@trembus/viz`. React-only — no token dep, no stylesheet.                                    |
 | [`@trembus/ui`](packages/ui#readme)             | [![npm](https://img.shields.io/npm/v/@trembus/ui.svg)](https://www.npmjs.com/package/@trembus/ui)             | The component library — primitives (`Box` / `Stack` / `Text` / `Pressable`), form controls, overlays, and Tier-1 data viz. Depends on `@trembus/tokens`.                                                                         |
 | [`@trembus/viz`](packages/viz#readme)           | [![npm](https://img.shields.io/npm/v/@trembus/viz.svg)](https://www.npmjs.com/package/@trembus/viz)           | Tier-2 node-link visualizations — `Tree` (hierarchy via `d3-hierarchy`) and `Lineage` (DAG via `dagre`). Tokens only — never depends on `@trembus/ui`.                                                                           |
 | [`@trembus/game-viz`](packages/game-viz#readme) | [![npm](https://img.shields.io/npm/v/@trembus/game-viz.svg)](https://www.npmjs.com/package/@trembus/game-viz) | Expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates, 3D model thumbnails. A liturgical-gothic idiom over the same contract: _theatrical surface, accessible spine_.                     |
@@ -101,12 +102,13 @@ src/components/<Name>/
 
 ## Repository layout
 
-This is a [pnpm workspace](https://pnpm.io/workspaces). The four packages above live under
+This is a [pnpm workspace](https://pnpm.io/workspaces). The five packages above live under
 `packages/`; two non-published members ride along:
 
 ```
 packages/
   tokens/      @trembus/tokens      — design-token foundation (published)
+  icons/       @trembus/icons       — shared glyph / icon set  (published)
   ui/          @trembus/ui          — component library      (published)
   viz/         @trembus/viz         — Tier-2 node-link viz    (published)
   game-viz/    @trembus/game-viz    — game / cinematic UI     (published)

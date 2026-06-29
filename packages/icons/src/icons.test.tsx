@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
-import { Glyph, GLYPHS, SYSTEM_KIND_GLYPH } from './glyphs';
+import { DatabaseIcon, Glyph, GLYPHS, SYSTEM_KIND_GLYPH, EXT_GLYPH, extToGlyph } from './index';
 
-describe('Glyph', () => {
+describe('icons', () => {
   it('renders a known glyph carrying its data-glyph + aria-hidden', () => {
     const { container } = render(<Glyph name="database" />);
     const svg = container.querySelector('svg');
@@ -15,9 +15,20 @@ describe('Glyph', () => {
     expect(container.querySelector('svg')).toBeNull();
   });
 
+  it('exposes tree-shakeable named components', () => {
+    const { container } = render(<DatabaseIcon />);
+    expect(container.querySelector('[data-glyph="database"]')).toBeTruthy();
+  });
+
   it('every kind in SYSTEM_KIND_GLYPH maps to a real glyph', () => {
     for (const [kind, name] of Object.entries(SYSTEM_KIND_GLYPH)) {
       expect(GLYPHS[name], `kind "${kind}" → "${name}"`).toBeTruthy();
+    }
+  });
+
+  it('every extension in EXT_GLYPH maps to a real glyph', () => {
+    for (const [ext, name] of Object.entries(EXT_GLYPH)) {
+      expect(GLYPHS[name], `ext ".${ext}" → "${name}"`).toBeTruthy();
     }
   });
 
@@ -26,5 +37,12 @@ describe('Glyph', () => {
       const { container } = render(<Glyph name={name} />);
       expect(container.querySelector(`[data-glyph="${name}"]`), name).toBeTruthy();
     }
+  });
+
+  it('infers file-type glyphs from extensions, all resolving to real glyphs', () => {
+    expect(extToGlyph('Button.tsx')).toBe('typescript');
+    expect(extToGlyph('readme.md')).toBe('markdown');
+    expect(extToGlyph('noext')).toBe('file');
+    expect(GLYPHS[extToGlyph('Button.tsx')]).toBeTruthy();
   });
 });

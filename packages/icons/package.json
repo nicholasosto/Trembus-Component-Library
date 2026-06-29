@@ -1,27 +1,17 @@
 {
-  "name": "@trembus/viz",
-  "version": "0.3.1",
-  "description": "Trembus Tier-2 node-link visualizations (Tree, Lineage, SystemMap, ClassDiagram) — the same 3-jobs contract spine as @trembus/ui's Tier-1 viz, with a layout engine (d3-hierarchy for trees, dagre for DAGs), drill-down C4 architecture maps, and UML class diagrams.",
+  "name": "@trembus/icons",
+  "version": "0.1.0",
+  "description": "The Trembus glyph set — hand-authored, normalized 24×24 inline-SVG icons (node/file-type marks + UI affordances) shared by @trembus/ui and @trembus/viz. Pure React components, no stylesheet: monochrome glyphs paint currentColor (the consumer tints via a token); brand marks (TS, JS, …) carry their own color.",
   "type": "module",
   "keywords": [
     "react",
-    "data-visualization",
-    "dataviz",
-    "tree",
-    "org-chart",
-    "dendrogram",
-    "dag",
-    "lineage",
-    "graph",
-    "system-map",
-    "architecture-diagram",
-    "c4",
-    "uml",
-    "class-diagram",
-    "d3-hierarchy",
-    "dagre",
+    "icons",
+    "svg",
+    "glyphs",
+    "currentcolor",
+    "tree-shakeable",
+    "file-type-icons",
     "design-system",
-    "accessibility",
     "trembus"
   ],
   "license": "MIT",
@@ -33,9 +23,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicholasosto/Trembus-Component-Library.git",
-    "directory": "packages/viz"
+    "directory": "packages/icons"
   },
-  "homepage": "https://github.com/nicholasosto/Trembus-Component-Library/tree/main/packages/viz#readme",
+  "homepage": "https://github.com/nicholasosto/Trembus-Component-Library/tree/main/packages/icons#readme",
   "bugs": "https://github.com/nicholasosto/Trembus-Component-Library/issues",
   "publishConfig": {
     "access": "public"
@@ -43,15 +33,12 @@
   "files": [
     "dist"
   ],
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "module": "./dist/index.js",
@@ -63,39 +50,26 @@
     "lint": "eslint .",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
-    "check:contracts": "tsx ../../scripts/check-contracts.ts viz",
-    "verify:exports": "node ../../scripts/verify-exports.mjs --exclude-entrypoints ./styles.css",
-    "validate": "pnpm lint && pnpm typecheck && pnpm check:contracts && pnpm test && pnpm build && pnpm verify:exports",
+    "verify:exports": "node ../../scripts/verify-exports.mjs",
+    "validate": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm verify:exports",
     "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "dependencies": {
-    "@dagrejs/dagre": "^3.0.0",
-    "@trembus/icons": "workspace:^",
-    "@trembus/tokens": "workspace:^",
-    "d3-hierarchy": "^3.1.2"
+    "react": "^19.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/d3-hierarchy": "^3.1.7",
-    "@types/jest-axe": "^3.5.9",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.0.0",
-    "jest-axe": "^9.0.0",
     "jsdom": "^26.0.0",
     "publint": "^0.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tsx": "^4.19.0",
     "typescript": "^5.9.0",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.3.0",

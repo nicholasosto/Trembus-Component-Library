@@ -11,6 +11,43 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/icons 0.1.0] — 2026-06
+
+### Added
+
+- Initial release. The shared **glyph set** — 34 hand-authored, normalized 24×24 inline-SVG icons
+  (node-kind marks, file-type marks, core UI affordances) — extracted from the duplicated copies
+  that lived inside `@trembus/ui` and `@trembus/viz`. A React-only leaf: **no `@trembus/tokens`
+  dependency, no stylesheet, `sideEffects: false`.** Exposes tree-shakeable `*Icon` components
+  (`DatabaseIcon`, `SearchIcon`, …), a `GLYPHS` registry with a render-by-name `<Glyph name>`, and
+  the `SYSTEM_KIND_GLYPH` (C4 kind → glyph) and `EXT_GLYPH` / `extToGlyph` (file-extension → glyph)
+  maps. Monochrome glyphs inherit `currentColor`; brand/type marks (TS, JS, React, CSS, HTML) carry
+  their own color.
+
+## [@trembus/ui 0.3.0] — 2026-06
+
+### Added
+
+- **`Breadcrumb`** (+ `Breadcrumb.Item`), **`NavBar`** (+ `NavBar.Link`), and **`SkipLink`** — the
+  first site-level page-navigation components. Routing-agnostic: links take a plain `href` or wrap a
+  consumer's router link via `asChild`, and the active/current state is styled off
+  `aria-current="page"` (set by an `active` / `current` prop, or by the wrapped router link itself).
+  `SkipLink` is a WCAG 2.4.1 bypass link, visually hidden until focused.
+
+### Changed
+
+- Glyphs now come from the new **`@trembus/icons`** package (FolderTree's file/folder marks); the
+  internal glyph copy (`src/internal/glyphs.tsx`) was removed.
+
+## [@trembus/viz 0.3.1] — 2026-06
+
+### Changed
+
+- Glyphs now come from the new **`@trembus/icons`** package; the internal glyph copy
+  (`src/internal/glyphs.tsx`, the seed of the new package) was removed. The `Glyph` / `GLYPHS` /
+  `SYSTEM_KIND_GLYPH` re-exports from `src/internal` are unchanged, so component behavior and the
+  public API are identical.
+
 ## [@trembus/viz 0.3.0] — 2026-06
 
 ### Added

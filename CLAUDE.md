@@ -6,13 +6,19 @@ First-principles UX: tokens → primitives → components, each carrying a machi
 
 ## Workspace
 
-This repo is a **pnpm workspace** with four **library** packages under `packages/` (plus a fifth
+This repo is a **pnpm workspace** with five **library** packages under `packages/` (plus a sixth
 member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ below):
 
 - **`@trembus/tokens`** (`packages/tokens/`) — the shared design-token foundation: the
   `var(--tcl-*)` token CSS (`src/css/tokens.*.css` + `layers.css`), the type-safe token ontology,
   the color-coded tone vocabulary, the `ComponentContract` type (`@trembus/tokens/contract`), and
   the axe `a11yViolations` helper (`@trembus/tokens/testing`). React-free; exported from source.
+- **`@trembus/icons`** (`packages/icons/`) — the shared glyph set (node-kind / file-type marks +
+  UI affordances) de-duplicated out of `ui` and `viz`. A React-only foundation **leaf**: no
+  `@trembus/tokens` dep, no CSS, `sideEffects:false`. Ships tree-shakeable `*Icon` components + a
+  `GLYPHS` / `<Glyph name>` registry + `SYSTEM_KIND_GLYPH` / `extToGlyph` maps; consumed by `ui`,
+  `viz`, `game-viz`. Lives in `src/icons/` (not `src/components/`), so it sits outside the contract
+  gate. `viz` re-exports it from `src/internal/index.ts`; `ui`'s FolderTree imports it directly.
 - **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; keeps
   re-export shims (`src/tokens`, `src/types/contract`, `src/test/a11y`) so its internal import
   paths and public API are unchanged.
