@@ -71,6 +71,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.0",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@eslint/js": "^9.0.0",
     "@storybook/addon-a11y": "^9.0.0",
     "@storybook/addon-docs": "^9.0.0",
