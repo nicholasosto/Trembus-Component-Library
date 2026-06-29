@@ -1,0 +1,49 @@
+@layer tcl.components {
+  .tcl-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--tcl-text-sm);
+  }
+
+  .tcl-breadcrumb__item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .tcl-breadcrumb__sep {
+    margin: 0 var(--tcl-space-2);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-breadcrumb__link,
+  .tcl-breadcrumb__text,
+  .tcl-breadcrumb__current {
+    padding: var(--tcl-space-1) var(--tcl-space-2);
+    border-radius: var(--tcl-radius-sm);
+    text-decoration: none;
+  }
+
+  .tcl-breadcrumb__link,
+  .tcl-breadcrumb__text {
+    color: var(--tcl-text-dim);
+  }
+
+  a.tcl-breadcrumb__link:hover {
+    color: var(--tcl-text);
+    text-decoration: underline;
+  }
+
+  /* Current crumb — set by our `current` prop OR by a wrapped router link that
+     sets `aria-current="page"` itself (the asChild path). Both are styled here. */
+  .tcl-breadcrumb__current,
+  .tcl-breadcrumb__link[aria-current='page'] {
+    color: var(--tcl-text);
+    font-weight: var(--tcl-weight-medium);
+    text-decoration: none;
+  }
+}

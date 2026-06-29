@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Box, Button, Inline, Text } from '@trembus/ui';
+import { Box, Button, Inline, NavBar, SkipLink, Text } from '@trembus/ui';
 import { useTheme } from '../theme';
 import { NAV_ROUTES } from './nav';
 
@@ -14,6 +14,7 @@ export function Shell() {
 
   return (
     <div className="tcl-root app">
+      <SkipLink href="#main" />
       <Box as="header" surface="raised" border="soft" px={6} py={4} className="app__header">
         <Inline align="center" justify="between" gap={5} wrap>
           <Inline align="baseline" gap={3}>
@@ -25,13 +26,15 @@ export function Shell() {
             </Text>
           </Inline>
 
-          <Inline as="nav" aria-label="Primary" align="center" gap={1} wrap>
+          <NavBar aria-label="Primary">
             {NAV_ROUTES.map((route) => (
-              <NavLink key={route.path} to={route.path} end={route.path === '/'} className="nav-link">
-                {route.label}
-              </NavLink>
+              <NavBar.Link key={route.path} asChild>
+                <NavLink to={route.path} end={route.path === '/'}>
+                  {route.label}
+                </NavLink>
+              </NavBar.Link>
             ))}
-          </Inline>
+          </NavBar>
 
           <Button
             variant="outline"
@@ -45,7 +48,7 @@ export function Shell() {
         </Inline>
       </Box>
 
-      <Box as="main" px={6} py={7} className="app__main">
+      <Box as="main" id="main" tabIndex={-1} px={6} py={7} className="app__main">
         <Outlet />
       </Box>
 

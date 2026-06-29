@@ -230,3 +230,13 @@ export type {
 } from './components/Timeline/Timeline';
 export { FolderTree } from './components/FolderTree/FolderTree';
 export type { FolderTreeProps, FolderNode } from './components/FolderTree/FolderTree';
+export { Breadcrumb } from './components/Breadcrumb/Breadcrumb';
+export type {
+  BreadcrumbProps,
+  BreadcrumbItemProps,
+  BreadcrumbItemData,
+} from './components/Breadcrumb/Breadcrumb';
+export { NavBar } from './components/NavBar/NavBar';
+export type { NavBarProps, NavBarLinkProps } from './components/NavBar/NavBar';
+export { SkipLink } from './components/SkipLink/SkipLink';
+export type { SkipLinkProps } from './components/SkipLink/SkipLink';

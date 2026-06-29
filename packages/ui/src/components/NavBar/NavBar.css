@@ -1,0 +1,41 @@
+@layer tcl.components {
+  .tcl-navbar__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tcl-navbar__item {
+    display: inline-flex;
+  }
+
+  .tcl-navbar__link {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border-radius: var(--tcl-radius-sm);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium);
+    text-decoration: none;
+    transition:
+      color 120ms ease,
+      background-color 120ms ease;
+  }
+
+  .tcl-navbar__link:hover {
+    color: var(--tcl-text);
+    background: var(--tcl-surface-sunken);
+  }
+
+  /* Active destination — set by NavBar.Link's `active` prop OR by a wrapped
+     router link (asChild) that sets aria-current itself. Both styled here. */
+  .tcl-navbar__link[aria-current='page'] {
+    color: var(--tcl-text);
+    background: color-mix(in oklab, var(--tcl-accent) 16%, transparent);
+  }
+}

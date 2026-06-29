@@ -1,0 +1,42 @@
+@layer tcl.components {
+  /* Visually hidden until focused (WCAG 2.4.1 Bypass Blocks). Self-contained:
+     the hidden baseline and the `:focus` reveal live in the SAME layer, so the
+     reveal wins on specificity (`:focus` > base) — it never depends on
+     `tcl.components` being ordered after `tcl.base` (which a bundler's or
+     Storybook's injection order may not guarantee). */
+  .tcl-skip-link {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .tcl-skip-link:focus {
+    position: fixed;
+    top: var(--tcl-space-2);
+    left: var(--tcl-space-2);
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: var(--tcl-space-2) var(--tcl-space-4);
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: nowrap;
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+    font-family: var(--tcl-font-sans);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium);
+    text-decoration: none;
+  }
+}
