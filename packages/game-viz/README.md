@@ -15,8 +15,8 @@ Builds on `@trembus/ui` primitives.
 pnpm add @trembus/game-viz react react-dom
 ```
 
-`react` / `react-dom` are peer dependencies (React 19); `@trembus/ui` and
-`@trembus/tokens` come along automatically.
+`react` / `react-dom` are peer dependencies (React 19); `@trembus/ui`,
+`@trembus/icons`, and `@trembus/tokens` come along automatically.
 
 ## Use
 
@@ -30,7 +30,8 @@ import '@trembus/game-viz/styles.css';
 ```
 
 Components include `Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`,
-`Chronicle`, and `Effigy` (a 3D model thumbnail wrapping Google `<model-viewer>`).
+`Chronicle`, `MediaFrame` (a format-aware media surface — image · audio waveform · 3D turntable ·
+doc glyph), and `Effigy` (a 3D model thumbnail wrapping Google `<model-viewer>`).
 Decorative chrome is `aria-hidden`; interactive bits are real focusable controls;
 motion sits behind `prefers-reduced-motion`.
 

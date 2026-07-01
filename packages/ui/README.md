@@ -53,7 +53,8 @@ your own components.
 **Afford-Action** — `Button`, `IconButton`, `Tabs`, `Menu`.
 
 **Reveal-State** — `Badge`, `Avatar`, `Spinner`, `Skeleton`, `Card`, `Callout`,
-`EmptyState`, `Stat`, `Table`, `Progress`, `Meter`.
+`EmptyState`, `Stat`, `Table`, `Progress`, `Meter`, `AudioWaveform` (audio preview + player),
+`VirtualAssetGrid` (windowed, sectioned single-select tile grid).
 
 **Acknowledge-Input** — `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`,
 `Switch`, `Tooltip`, `Dialog`, `Toast`.

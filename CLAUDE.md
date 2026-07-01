@@ -25,12 +25,14 @@ member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ bel
 - **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
 - **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
-  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Effigy`), titled `Game/*`.
+  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Chronicle`, `Effigy`, `MediaFrame`),
+  titled `Game/*`.
   Liturgical-gothic idiom: HUD frames, character dossiers, episode decks, title plates, 3D model
   thumbnails (`Effigy` wraps Google `<model-viewer>` — the repo's first 3D primitive). UNLIKE
   `@trembus/viz`
   (tokens-only), it **builds on `@trembus/ui`** (composes `Box`/`Stack`/`Inline`/`Text`/`Pressable`
-  - reuses materials), so it depends on both `@trembus/ui` and `@trembus/tokens`. Same 3-jobs
+  - reuses materials), so it depends on `@trembus/ui`, `@trembus/icons`, and `@trembus/tokens` (the
+    `@trembus/icons` dep arrived with `MediaFrame`'s doc/fallback `Glyph` plate). Same 3-jobs
     contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
     `aria-hidden`, interactive bits are real focusable controls, tone-coding always paired with a
     word, motion behind `prefers-reduced-motion`). **Tone-as-text gotcha:** a tone painted as TEXT
@@ -137,8 +139,10 @@ shipped: `demos/soul-steel/` (composes all three packages; see its `README.md`).
 - **Accessibility**: every component test asserts
   `expect(await a11yViolations(container)).toEqual([])` from `@trembus/tokens/testing` (`@trembus/ui`
   keeps a re-export shim at `packages/ui/src/test/a11y.ts`) — it disables page-level axe rules
-  (region / landmark / page-has-heading-one) that false-positive on isolated fragments and portals.
-  `.storybook/preview.tsx` disables the same rules for the browser a11y gate.
+  (region / landmark / page-has-heading-one) that false-positive on isolated fragments and portals,
+  and passes `preload: false` so axe doesn't hang ~10s trying to load `<audio>`/`<video>` media in
+  jsdom (the async media rules never apply to a fragment anyway). `.storybook/preview.tsx` disables
+  the same page-level rules for the browser a11y gate.
 - **Compose from primitives** (`@trembus/ui`): `Box` (Surface), `Stack`/`Inline` (Relation),
   `Text` (Mark), `Pressable` (Affordance — owns the interaction FSM → `data-state`). Compound
   components use `Object.assign(Root, { Sub })`. `asChild` uses `packages/ui/src/utils/Slot`.
