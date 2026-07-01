@@ -1,0 +1,174 @@
+@layer tcl.components {
+  .tcl-audio-waveform {
+    /* --wave-tone / --frac are set inline from the tone prop + playback state. */
+    --wave-muted: color-mix(in oklab, var(--wave-tone) 34%, var(--tcl-surface-sunken));
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'toggle body'
+      'toggle status';
+    align-items: center;
+    column-gap: var(--tcl-space-3);
+    row-gap: var(--tcl-space-1);
+    padding: var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* Job #3 — the whole surface shows it holds focus. */
+  .tcl-audio-waveform:focus-within {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .tcl-audio-waveform--compact {
+    display: block;
+    padding: var(--tcl-space-1);
+  }
+
+  /* ── transport ─────────────────────────────────────────────────────── */
+  .tcl-audio-waveform__toggle {
+    grid-area: toggle;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-raised);
+    color: var(--wave-tone);
+    cursor: pointer;
+  }
+
+  .tcl-audio-waveform__toggle:hover {
+    background: var(--tcl-surface-hover);
+  }
+
+  .tcl-audio-waveform__toggle[aria-pressed='true'] {
+    background: var(--wave-tone);
+    color: var(--tcl-accent-fg);
+    border-color: var(--wave-tone);
+  }
+
+  .tcl-audio-waveform__toggle svg {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    fill: currentColor;
+  }
+
+  /* ── body: waveform + readout ──────────────────────────────────────── */
+  .tcl-audio-waveform__body {
+    grid-area: body;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-1);
+    min-inline-size: 0;
+  }
+
+  .tcl-audio-waveform__wave {
+    position: relative;
+    block-size: 3rem;
+    inline-size: 100%;
+  }
+
+  .tcl-audio-waveform--compact .tcl-audio-waveform__wave {
+    block-size: 2.25rem;
+  }
+
+  .tcl-audio-waveform__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .tcl-audio-waveform__bars--base {
+    fill: var(--wave-muted);
+  }
+
+  .tcl-audio-waveform__bars--played {
+    fill: var(--wave-tone);
+  }
+
+  /* A dormant placeholder waveform reads as inert, not "played". */
+  .tcl-audio-waveform[data-placeholder] .tcl-audio-waveform__bars--base {
+    fill: color-mix(in oklab, var(--wave-tone) 22%, var(--tcl-surface-sunken));
+  }
+
+  /* Compact thumbnails have no playhead, so paint the bars in full tone. */
+  .tcl-audio-waveform--compact .tcl-audio-waveform__bars--base {
+    fill: var(--wave-tone);
+  }
+
+  .tcl-audio-waveform--compact[data-placeholder] .tcl-audio-waveform__bars--base {
+    fill: var(--wave-muted);
+  }
+
+  .tcl-audio-waveform__playhead {
+    position: absolute;
+    inset-block: -2px;
+    inline-size: 2px;
+    left: var(--frac, 0%);
+    background: var(--wave-tone);
+    border-radius: var(--tcl-radius-full);
+    transform: translateX(-1px);
+    pointer-events: none;
+    transition: left var(--tcl-dur-fast) linear;
+  }
+
+  /* Job #3 caveat — no animated playhead when the user asked for less motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-audio-waveform__playhead {
+      transition: none;
+    }
+  }
+
+  /* The scrubber is a transparent focusable layer over the waveform. */
+  .tcl-audio-waveform__scrubber {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    border-radius: var(--tcl-radius-sm);
+    touch-action: none;
+  }
+
+  .tcl-audio-waveform__scrubber:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* ── readout + status ──────────────────────────────────────────────── */
+  .tcl-audio-waveform__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--tcl-space-2);
+  }
+
+  .tcl-audio-waveform__time {
+    color: var(--tcl-text-dim);
+    white-space: nowrap;
+  }
+
+  .tcl-audio-waveform__label {
+    color: var(--tcl-text);
+    min-inline-size: 0;
+  }
+
+  .tcl-audio-waveform__status {
+    grid-area: status;
+    min-block-size: 1rem;
+  }
+
+  .tcl-audio-waveform__status:empty {
+    display: none;
+  }
+
+  .tcl-audio-waveform__audio {
+    display: none;
+  }
+}

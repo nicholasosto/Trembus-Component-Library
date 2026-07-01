@@ -126,6 +126,9 @@ importers:
       '@google/model-viewer':
         specifier: ^4.3.1
         version: 4.3.1(three@0.183.2)
+      '@trembus/icons':
+        specifier: workspace:^
+        version: link:../icons
       '@trembus/tokens':
         specifier: workspace:^
         version: link:../tokens

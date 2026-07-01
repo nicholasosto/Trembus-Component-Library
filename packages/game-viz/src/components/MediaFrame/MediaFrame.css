@@ -1,0 +1,139 @@
+@layer tcl.components {
+  .tcl-media-frame {
+    --mf-tone: var(--tcl-accent);
+
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--mf-tone) 30%, var(--tcl-border));
+    border-radius: var(--tcl-radius-md);
+    background: color-mix(in oklab, var(--mf-tone) 8%, var(--tcl-surface-sunken));
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+  }
+
+  .tcl-media-frame[data-tone='info'] {
+    --mf-tone: var(--tcl-status-info);
+  }
+  .tcl-media-frame[data-tone='success'] {
+    --mf-tone: var(--tcl-status-success);
+  }
+  .tcl-media-frame[data-tone='warning'] {
+    --mf-tone: var(--tcl-status-warning);
+  }
+  .tcl-media-frame[data-tone='danger'] {
+    --mf-tone: var(--tcl-status-danger);
+  }
+  .tcl-media-frame[data-tone='neutral'] {
+    --mf-tone: var(--tcl-status-neutral);
+  }
+
+  /* interactive frame = a real <button>; reset its chrome and lift on hover/focus */
+  .tcl-media-frame--interactive {
+    padding: 0;
+    text-align: start;
+    font: inherit;
+    cursor: pointer;
+  }
+  .tcl-media-frame--interactive:hover {
+    border-color: color-mix(in oklab, var(--mf-tone) 55%, var(--tcl-border));
+  }
+  .tcl-media-frame--interactive:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Effigy owns its own frame + reticle — MediaFrame only bounds it. */
+  .tcl-media-frame--effigy {
+    border: 0;
+    border-radius: 0;
+    background: none;
+    overflow: visible;
+  }
+
+  .tcl-media-frame__inner {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .tcl-media-frame__img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .tcl-media-frame__skeleton {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: 0;
+  }
+
+  /* audio thumbnail — centre the compact waveform in the frame */
+  .tcl-media-frame[data-medium='audio'],
+  .tcl-media-frame[data-medium='audio'] .tcl-media-frame__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--tcl-space-2);
+  }
+  .tcl-media-frame__audio {
+    inline-size: 100%;
+    border: 0;
+    background: none;
+  }
+
+  /* doc / fallback glyph plate */
+  .tcl-media-frame__plate {
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .tcl-media-frame__glyph {
+    inline-size: 42%;
+    block-size: 42%;
+    color: var(--mf-tone);
+  }
+
+  /* decorative bracket corners (Reliquary idiom) */
+  .tcl-media-frame__brackets {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .tcl-media-frame__bracket {
+    position: absolute;
+    inline-size: 14px;
+    block-size: 14px;
+    border: 0 solid var(--mf-tone);
+    pointer-events: none;
+  }
+  .tcl-media-frame__bracket.is-tl {
+    top: -1px;
+    left: -1px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+  }
+  .tcl-media-frame__bracket.is-tr {
+    top: -1px;
+    right: -1px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+  .tcl-media-frame__bracket.is-bl {
+    bottom: -1px;
+    left: -1px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+  }
+  .tcl-media-frame__bracket.is-br {
+    bottom: -1px;
+    right: -1px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+  }
+}

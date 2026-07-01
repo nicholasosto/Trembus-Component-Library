@@ -15,6 +15,13 @@ const PAGE_LEVEL_RULES = {
 
 /** Run axe over a component fragment and return only real (component-scope) violations. */
 export async function a11yViolations(element: Element): Promise<Violations> {
-  const results = await axe(element, { rules: PAGE_LEVEL_RULES });
+  const results = await axe(element, {
+    rules: PAGE_LEVEL_RULES,
+    // Don't preload external assets. It only feeds page/media-level async rules
+    // (no-autoplay-audio, css-orientation-lock) that don't apply to an isolated
+    // fragment — and in jsdom the media/CSS never resolves, so preloading a
+    // component that renders <audio>/<video> hangs axe until it times out.
+    preload: false,
+  });
   return results.violations;
 }

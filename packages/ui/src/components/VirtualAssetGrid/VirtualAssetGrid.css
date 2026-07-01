@@ -1,0 +1,110 @@
+@layer tcl.components {
+  .tcl-virtual-asset-grid {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* The scroll container IS the listbox. No padding, so the measured content-box
+     width equals the exact tile area (JS owns the column math from it). */
+  .tcl-virtual-asset-grid__scroller {
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    scroll-behavior: auto; /* keyboard scroll-into-view must be instant so focus-after-mount holds */
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border-soft);
+    border-radius: var(--tcl-radius-md);
+  }
+
+  .tcl-virtual-asset-grid__scroller:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Sticky counted subhead — pins within its own section (role=group), so section
+     N's subhead releases exactly as section N+1's arrives. Opaque so tiles don't
+     bleed under it. */
+  .tcl-virtual-asset-grid__subhead {
+    position: sticky;
+    top: 0;
+    z-index: var(--tcl-z-sticky);
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-1);
+    /* Fixed border-box height (mirrors the JS SUBHEAD_H), so the windowing model and
+       the real CSS flow always agree regardless of the group label content. */
+    box-sizing: border-box;
+    block-size: var(--tcl-vag-sh, 34px);
+    overflow: hidden;
+    padding: 0 var(--tcl-space-3);
+    background: var(--tcl-surface);
+    border-bottom: 1px solid var(--tcl-border-soft);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+  }
+
+  /* Single-line — a long/multi-line label can never grow the fixed-height subhead. */
+  .tcl-virtual-asset-grid__subhead-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .tcl-virtual-asset-grid__subhead-count {
+    color: var(--tcl-text-faint);
+    font-weight: var(--tcl-weight-regular);
+  }
+
+  .tcl-virtual-asset-grid__subhead-count::before {
+    content: '·';
+    margin-inline-end: var(--tcl-space-1);
+  }
+
+  /* height is set inline = the section's full tiles height, preserving scroll geometry. */
+  .tcl-virtual-asset-grid__canvas {
+    position: relative;
+  }
+
+  .tcl-virtual-asset-grid__tile {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: var(--tcl-vag-tw);
+    height: var(--tcl-vag-th);
+    box-sizing: border-box;
+    border-radius: var(--tcl-radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    /* transform: translate(x, y) is set inline per tile. */
+  }
+
+  /* Focus ring — kept distinct from the selection tint (never conflate the two). */
+  .tcl-virtual-asset-grid__tile:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: -2px;
+  }
+
+  /* Selection — a filled tint + inset accent stroke, NOT the focus outline. */
+  .tcl-virtual-asset-grid__tile[aria-selected='true'] {
+    background: color-mix(in oklab, var(--tcl-accent) 16%, var(--tcl-surface));
+    box-shadow: inset 0 0 0 2px var(--tcl-accent);
+  }
+
+  .tcl-virtual-asset-grid__empty {
+    padding: var(--tcl-space-6);
+    color: var(--tcl-text-dim);
+    text-align: center;
+    font-size: var(--tcl-text-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-virtual-asset-grid__tile {
+      transition: none;
+    }
+  }
+}

@@ -11,6 +11,35 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.4.0] — 2026-07
+
+### Added
+
+- **`AudioWaveform`** — an audio preview + player: a rendered waveform (from a `peaks` array or a lazy
+  Web Audio decode) with a play/pause transport (`aria-pressed`), a keyboard-operable scrubber
+  (`role=slider`; arrow / Home / End / PageUp-Down), and a current-time / duration readout. Loading and
+  decode-error are surfaced visually **and** via an `aria-live` region; a `compact` mode renders a
+  waveform-only thumbnail. Never autoplays, and the playhead honours `prefers-reduced-motion`.
+- **`VirtualAssetGrid`** — a windowed, responsive, sectioned single-select tile grid that renders only the
+  visible tiles of a large (10k+) dataset. Groups items into sticky counted section subheads (`groupBy` +
+  `groupOrder`), owns 2D roving-tabindex arrow navigation (moving by the live column count, across section
+  boundaries), and exposes a `role=listbox` of focusable `role=option` tiles with controlled / uncontrolled
+  selection. Windowing is dependency-free; `virtualize={false}` renders the full tree (print / small sets).
+
+## [@trembus/game-viz 0.2.0] — 2026-07
+
+### Added
+
+- **`MediaFrame`** — one format-aware media surface for an asset: an `<img>` poster for images, a compact
+  `AudioWaveform` for audio, an `Effigy` turntable for loadable 3D (glTF / GLB) or a pre-rendered poster for
+  formats `<model-viewer>` cannot load (`.fbx` / `.blend` / `.rbxm` / `.obj`), a `Glyph` plate for documents,
+  and a tone-tinted `Skeleton` while loading or when there is no source. The bracket-cornered frame is
+  decorative (`aria-hidden`); `interactive` promotes the frame to a real focusable button (`onActivate`).
+
+### Changed
+
+- Added **`@trembus/icons`** as a dependency (for the document / fallback `Glyph` plate).
+
 ## [@trembus/icons 0.1.0] — 2026-06
 
 ### Added

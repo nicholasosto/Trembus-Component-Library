@@ -240,3 +240,7 @@ export { NavBar } from './components/NavBar/NavBar';
 export type { NavBarProps, NavBarLinkProps } from './components/NavBar/NavBar';
 export { SkipLink } from './components/SkipLink/SkipLink';
 export type { SkipLinkProps } from './components/SkipLink/SkipLink';
+export { AudioWaveform } from './components/AudioWaveform/AudioWaveform';
+export type { AudioWaveformProps } from './components/AudioWaveform/AudioWaveform';
+export { VirtualAssetGrid } from './components/VirtualAssetGrid/VirtualAssetGrid';
+export type { VirtualAssetGridProps } from './components/VirtualAssetGrid/VirtualAssetGrid';

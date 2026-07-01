@@ -45,3 +45,10 @@ export type {
   ChronicleTone,
   ChronicleContract,
 } from './components/Chronicle/Chronicle';
+export { MediaFrame } from './components/MediaFrame/MediaFrame';
+export type {
+  MediaFrameProps,
+  MediaFrameData,
+  MediaMedium,
+  MediaFrameTone,
+} from './components/MediaFrame/MediaFrame';

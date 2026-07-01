@@ -1,6 +1,6 @@
 {
   "name": "@trembus/game-viz",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Trembus expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates. Builds on @trembus/ui primitives + the 3-jobs contract; theatrical surface, accessible spine.",
   "type": "module",
   "keywords": [
@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@google/model-viewer": "^4.3.1",
+    "@trembus/icons": "workspace:^",
     "@trembus/tokens": "workspace:^",
     "@trembus/ui": "workspace:^"
   },
