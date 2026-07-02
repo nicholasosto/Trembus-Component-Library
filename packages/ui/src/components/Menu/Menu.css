@@ -21,13 +21,68 @@
     cursor: pointer;
     user-select: none;
   }
+  /* Items are moved with programmatic .focus() during roving, so highlight on
+     :focus (not only :focus-visible, which browsers may skip for programmatic
+     focus — e.g. the first item after opening the menu with a mouse click). */
   .tcl-menu__item:hover:not(.is-disabled),
-  .tcl-menu__item:focus-visible {
+  .tcl-menu__item:focus {
     background: var(--tcl-surface-hover);
   }
   .tcl-menu__item.is-disabled {
     color: var(--tcl-text-faint);
     cursor: not-allowed;
+  }
+
+  /* ── titled header ── */
+  .tcl-menu__label {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    margin-bottom: var(--tcl-space-1);
+    border-bottom: 1px solid var(--tcl-border);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    user-select: none;
+  }
+
+  /* ── section divider ── */
+  .tcl-menu__separator {
+    height: 1px;
+    margin: var(--tcl-space-2) 0;
+    background: var(--tcl-border);
+  }
+
+  /* ── submenu ── */
+  .tcl-menu__sub {
+    position: relative;
+  }
+  .tcl-menu--sub {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    z-index: 1;
+    margin-left: var(--tcl-space-1);
+  }
+  /* Collision flip: MenuSubContent toggles this on when opening to the right would
+     overflow the viewport, so the submenu opens to the LEFT of its trigger row.
+     Same-specificity single class declared after `.tcl-menu--sub`, so it wins. */
+  .tcl-menu--sub-left {
+    right: 100%;
+    left: auto;
+    margin-right: var(--tcl-space-1);
+    margin-left: 0;
+  }
+  .tcl-menu__subtrigger {
+    /* room for the disclosure caret pushed to the trailing edge */
+    padding-right: var(--tcl-space-2);
+  }
+  .tcl-menu__subcaret {
+    margin-left: auto;
+    padding-left: var(--tcl-space-3);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
   }
 
   @keyframes tcl-menu-in {

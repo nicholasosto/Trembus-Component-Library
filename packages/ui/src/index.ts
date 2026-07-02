@@ -64,6 +64,11 @@ export type {
   MenuTriggerProps,
   MenuContentProps,
   MenuItemProps,
+  MenuLabelProps,
+  MenuSeparatorProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
+  MenuSubContentProps,
 } from './components/Menu/Menu';
 export { Textarea } from './components/Textarea/Textarea';
 export type { TextareaProps } from './components/Textarea/Textarea';
@@ -244,3 +249,10 @@ export { AudioWaveform } from './components/AudioWaveform/AudioWaveform';
 export type { AudioWaveformProps } from './components/AudioWaveform/AudioWaveform';
 export { VirtualAssetGrid } from './components/VirtualAssetGrid/VirtualAssetGrid';
 export type { VirtualAssetGridProps } from './components/VirtualAssetGrid/VirtualAssetGrid';
+export { Toolbar } from './components/Toolbar/Toolbar';
+export type {
+  ToolbarProps,
+  ToolbarButtonProps,
+  ToolbarSeparatorProps,
+  ToolbarGroupProps,
+} from './components/Toolbar/Toolbar';

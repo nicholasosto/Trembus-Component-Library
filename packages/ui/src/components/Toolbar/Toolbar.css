@@ -1,0 +1,99 @@
+@layer tcl.components {
+  .tcl-toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-1);
+    padding: var(--tcl-space-1);
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    box-shadow: var(--tcl-elevation-1);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+  .tcl-toolbar--vertical {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* ── group ── */
+  .tcl-toolbar__group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-1);
+  }
+  .tcl-toolbar--vertical .tcl-toolbar__group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* ── separator ── */
+  .tcl-toolbar__separator {
+    flex: none;
+    align-self: stretch;
+    background: var(--tcl-border);
+  }
+  .tcl-toolbar--horizontal .tcl-toolbar__separator {
+    width: 1px;
+    min-height: 1.25rem;
+    margin-inline: var(--tcl-space-1);
+  }
+  .tcl-toolbar--vertical .tcl-toolbar__separator {
+    height: 1px;
+    min-width: 1.25rem;
+    margin-block: var(--tcl-space-1);
+  }
+
+  /* ── button ── */
+  .tcl-toolbar__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tcl-space-2);
+    min-width: 32px;
+    height: 32px;
+    padding-inline: var(--tcl-space-2);
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: var(--tcl-radius-sm);
+    background: transparent;
+    color: var(--tcl-text-dim);
+    font: inherit;
+    font-size: var(--tcl-text-base);
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-toolbar__button:hover:not(:disabled),
+  .tcl-toolbar__button[aria-expanded='true'],
+  .tcl-toolbar__button[aria-pressed='true'] {
+    background: var(--tcl-surface-hover);
+    color: var(--tcl-text);
+  }
+  .tcl-toolbar__button:active:not(:disabled) {
+    transform: translateY(0.5px) scale(0.98);
+  }
+  .tcl-toolbar__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Accent = the emphasized primary action. Tone-as-fill → label uses the
+     accent foreground token, never --tcl-text (which fails contrast on gold). */
+  .tcl-toolbar__button--accent {
+    background: var(--tcl-accent);
+    color: var(--tcl-accent-fg);
+    border-color: var(--tcl-accent);
+  }
+  .tcl-toolbar__button--accent:hover:not(:disabled),
+  .tcl-toolbar__button--accent[aria-expanded='true'] {
+    background: color-mix(in oklab, var(--tcl-accent) 86%, #000);
+    border-color: color-mix(in oklab, var(--tcl-accent) 86%, #000);
+    color: var(--tcl-accent-fg);
+  }
+}
