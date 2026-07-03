@@ -1,0 +1,309 @@
+@layer tcl.components {
+  .tcl-strata {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the viz spine) ── */
+  .tcl-strata__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-strata__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-strata__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-strata__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-strata__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* the strata canvas must stay square so % button positions track the SVG */
+  .tcl-strata__canvas {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* ── decorative geology (the SVG is aria-hidden) ── */
+  .tcl-strata__guide {
+    fill: none;
+    stroke: var(--tcl-border);
+    stroke-dasharray: 2 6;
+    opacity: 0.55;
+  }
+  .tcl-strata__hub {
+    fill: var(--tcl-surface-sunken);
+    stroke: var(--tcl-border);
+  }
+
+  /* Arc fill = tokens-only continuous intensity: the tone mixed over the sunken
+     surface, fading with distance from bedrock (--mix set per depth inline). */
+  .tcl-strata__arc {
+    fill: color-mix(
+      in oklab,
+      var(--arc, var(--tcl-accent)) var(--mix, 20%),
+      var(--tcl-surface-sunken)
+    );
+    stroke: var(--tcl-border);
+    stroke-width: 1;
+    transition:
+      fill var(--tcl-dur-fast) var(--tcl-ease-calm),
+      opacity var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-strata__arc[data-kind='conjecture'] {
+    stroke: var(--tcl-border-strong);
+    stroke-dasharray: 5 4;
+    fill: color-mix(in oklab, var(--arc, var(--tcl-accent)) 8%, var(--tcl-surface-sunken));
+  }
+  /* a gap is hollow ground — dashed outline only, no stratum fill */
+  .tcl-strata__arc[data-kind='gap'] {
+    stroke: var(--tcl-border-strong);
+    stroke-dasharray: 3 5;
+    fill: var(--tcl-surface);
+  }
+  .tcl-strata__arc.is-cone,
+  .tcl-strata__arc.is-selected {
+    fill: color-mix(
+      in oklab,
+      var(--arc, var(--tcl-accent)) var(--mix-hi, 40%),
+      var(--tcl-surface-sunken)
+    );
+    stroke: var(--arc, var(--tcl-accent));
+  }
+  .tcl-strata__arc[data-kind='gap'].is-cone,
+  .tcl-strata__arc[data-kind='gap'].is-selected {
+    fill: var(--tcl-surface);
+  }
+  .tcl-strata__arc.is-selected {
+    stroke-width: 2.5;
+  }
+  .tcl-strata__arc.is-cone {
+    stroke-width: 1.75;
+  }
+  /* only the decorative rock dims — never the focusable buttons or their names */
+  .tcl-strata__arc.is-muted {
+    opacity: 0.45;
+  }
+
+  /* arc labels: text token + bg halo so they read on any mix, both themes */
+  .tcl-strata__arc-label {
+    fill: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+    font-size: 11.5px;
+    paint-order: stroke;
+    stroke: var(--tcl-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+  .tcl-strata__arc-label[data-kind='gap'],
+  .tcl-strata__arc-label[data-kind='conjecture'] {
+    font-style: italic;
+    fill: var(--tcl-text-dim);
+  }
+  .tcl-strata__arc-label.is-muted {
+    opacity: 0.6;
+  }
+
+  /* support connectors — revealed for the selected principle only */
+  .tcl-strata__link {
+    fill: none;
+    stroke: var(--tcl-text-faint);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    transition: opacity var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-strata__link.is-active {
+    stroke: var(--tcl-accent);
+    opacity: 1;
+  }
+  .tcl-strata__link.is-gap {
+    stroke-dasharray: 3 4;
+  }
+
+  /* ── hub label (decorative duplicate of the head title, centered) ── */
+  .tcl-strata__hub-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 19%;
+    transform: translate(-50%, -50%);
+    font-size: var(--tcl-text-sm);
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--tcl-text);
+    pointer-events: none;
+  }
+
+  /* ── core-sample markers: the focusable buttons at each arc's centroid ── */
+  .tcl-strata__node {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+    transform: translate(-50%, -50%);
+    appearance: none;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 1;
+    color: var(--tcl-text-dim);
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-strata__node::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--tcl-surface-raised);
+    border: 2px solid var(--node, var(--tcl-accent));
+    box-shadow: var(--tcl-elevation-1);
+  }
+  .tcl-strata__node[data-kind='conjecture']::before {
+    border-style: dashed;
+  }
+  .tcl-strata__node[data-kind='gap']::before {
+    border-style: dashed;
+    border-color: var(--tcl-border-strong);
+    background: var(--tcl-surface);
+  }
+  .tcl-strata__node > span {
+    position: relative;
+    pointer-events: none;
+  }
+  .tcl-strata__node:hover {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  /* selection reads in-key: the arc's OWN tone, spaced off the canvas like the spine */
+  .tcl-strata__node.is-cone {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 3px var(--node, var(--tcl-accent));
+  }
+  .tcl-strata__node.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--node, var(--tcl-accent));
+  }
+  .tcl-strata__node.is-selected::before {
+    background: var(--node, var(--tcl-accent));
+  }
+  /* focus ring stays distinct from the selection ring */
+  .tcl-strata__node:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── legend: dashed vocabulary stated in words ── */
+  .tcl-strata__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-strata__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-1);
+  }
+  .tcl-strata__swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: color-mix(in oklab, var(--tcl-accent) 24%, var(--tcl-surface-sunken));
+    border: 1.5px solid var(--tcl-border-strong);
+  }
+  .tcl-strata__swatch[data-kind='conjecture'] {
+    border-style: dashed;
+    background: color-mix(in oklab, var(--tcl-accent) 8%, var(--tcl-surface-sunken));
+  }
+  .tcl-strata__swatch[data-kind='gap'] {
+    border-style: dashed;
+    background: var(--tcl-surface);
+  }
+
+  /* ── aria-live inspector ── */
+  .tcl-strata__inspector {
+    min-height: 2.75rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-strata__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-strata__inspector-sub,
+  .tcl-strata__inspector-kind {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+  }
+  .tcl-strata__inspector-flow {
+    margin: 2px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-strata__inspector-conn {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-strata__inspector-note {
+    margin: 4px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-strata__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-strata__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-strata__arc,
+    .tcl-strata__link,
+    .tcl-strata__node {
+      transition: none;
+    }
+    .tcl-strata__node:hover {
+      transform: translate(-50%, -50%);
+    }
+  }
+}

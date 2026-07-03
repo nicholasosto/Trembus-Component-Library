@@ -37,3 +37,10 @@ export type {
   Visibility,
   ClassTone,
 } from './components/ClassDiagram/ClassDiagram';
+export { Strata } from './components/Strata/Strata';
+export type {
+  StrataProps,
+  StrataContract,
+  StrataPrinciple,
+  StrataTone,
+} from './components/Strata/Strata';
