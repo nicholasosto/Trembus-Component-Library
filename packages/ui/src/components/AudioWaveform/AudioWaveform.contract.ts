@@ -16,7 +16,7 @@ export const audioWaveformContract: ComponentContract = {
     },
     acknowledgeInput: {
       satisfiedBy:
-        'seeking moves the playhead immediately and updates aria-valuenow/valuetext; the play button reflects element state via aria-pressed; the surface shows a focus ring on focus-within. It never autoplays, and the playhead transition sits behind prefers-reduced-motion.',
+        'seeking moves the playhead immediately and updates aria-valuenow/valuetext; a pointer click/tap (or drag-release) on the waveform also begins playback from that point when `playOnClick` is set (the default), while keyboard seeks move the playhead without starting sound; the play button reflects element state via aria-pressed; the surface shows a focus ring on focus-within. It never autoplays on mount, and the playhead transition sits behind prefers-reduced-motion.',
       story: 'Interaction',
     },
   },

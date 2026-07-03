@@ -11,7 +11,7 @@ import './AudioWaveform.css';
 export type AudioWaveformTone = FillBarTone;
 
 export interface AudioWaveformProps {
-  /** Audio source URL (or data URI). Never autoplays. */
+  /** Audio source URL (or data URI). Never autoplays on mount. */
   src: string;
   /**
    * Pre-computed, normalized (0–1) amplitude bars. When omitted the component
@@ -28,6 +28,14 @@ export interface AudioWaveformProps {
   autoLoadPeaks?: boolean;
   /** Waveform-only: no transport, no scrubber — a presentational thumbnail. */
   compact?: boolean;
+  /**
+   * When set (the default), a pointer click/tap — or a drag-release — on the
+   * waveform seeks to that point AND begins playback from there. Set `false`
+   * to make pointer seeks move the playhead only, without starting sound.
+   * Keyboard seeks never auto-play regardless, and this is ignored in
+   * `compact` mode (there is no scrubber).
+   */
+  playOnClick?: boolean;
   /** Called when playback starts. */
   onPlay?: () => void;
   /** Called when playback pauses. */
@@ -94,8 +102,11 @@ function Bars({ bars }: { bars: number[] }): ReactElement {
  * / decode-error both visually and through an `aria-live` region. It **Affords
  * Action** with a real focusable play/pause `<button>` (`aria-pressed`) and a
  * keyboard-operable scrubber (`role=slider`), and **Acknowledges Input** by
- * moving the playhead the instant you seek. It never autoplays; any playhead
- * motion is CSS that respects `prefers-reduced-motion`.
+ * moving the playhead the instant you seek — and, when `playOnClick` is set
+ * (the default), a pointer click/tap on the waveform both seeks and starts
+ * playback from that point. It never autoplays on mount (only a user gesture
+ * starts sound) and keyboard seeks move the playhead without starting playback;
+ * any playhead motion is CSS that respects `prefers-reduced-motion`.
  */
 export function AudioWaveform({
   src,
@@ -105,6 +116,7 @@ export function AudioWaveform({
   tone = 'accent',
   autoLoadPeaks = false,
   compact = false,
+  playOnClick = true,
   onPlay,
   onPause,
   className,
@@ -187,17 +199,22 @@ export function AudioWaveform({
         ? 'Waveform unavailable'
         : '';
 
+  // Start playback without toggling — shared by the play button and click-to-play.
+  // A blocked/failed play() rejects; swallow it and let the media events keep the
+  // button state honest.
+  const startPlayback = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const p = audio.play() as Promise<void> | undefined;
+    if (p && typeof p.catch === 'function') p.catch(() => undefined);
+  }, []);
+
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (audio.paused) {
-      // A blocked/failed play() rejects; keep the button state honest via events.
-      const p = audio.play() as Promise<void> | undefined;
-      if (p && typeof p.catch === 'function') p.catch(() => undefined);
-    } else {
-      audio.pause();
-    }
-  }, []);
+    if (audio.paused) startPlayback();
+    else audio.pause();
+  }, [startPlayback]);
 
   const seekTo = useCallback(
     (seconds: number) => {
@@ -270,7 +287,21 @@ export function AudioWaveform({
     [dragging, seekToClientX],
   );
 
-  const endDrag = useCallback((e: PointerEvent<HTMLDivElement>) => {
+  // A genuine pointer release ends the scrub. Because it's a user-initiated
+  // gesture, begin playback from wherever the scrub landed — a click/tap plays
+  // from the clicked point, a drag plays from its final position — unless the
+  // consumer opted out via `playOnClick={false}`. Never mid-drag (that would
+  // stutter) and never on pointer-cancel; keyboard seeks never auto-play.
+  const onScrubberPointerUp = useCallback(
+    (e: PointerEvent<HTMLDivElement>) => {
+      e.currentTarget.releasePointerCapture?.(e.pointerId);
+      setDragging(false);
+      if (playOnClick) startPlayback();
+    },
+    [playOnClick, startPlayback],
+  );
+
+  const onScrubberPointerCancel = useCallback((e: PointerEvent<HTMLDivElement>) => {
     e.currentTarget.releasePointerCapture?.(e.pointerId);
     setDragging(false);
   }, []);
@@ -328,8 +359,8 @@ export function AudioWaveform({
           onKeyDown={onScrubberKeyDown}
           onPointerDown={onScrubberPointerDown}
           onPointerMove={onScrubberPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
+          onPointerUp={onScrubberPointerUp}
+          onPointerCancel={onScrubberPointerCancel}
         />
       )}
     </div>

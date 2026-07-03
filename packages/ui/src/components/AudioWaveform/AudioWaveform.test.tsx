@@ -46,10 +46,59 @@ beforeAll(() => {
       this.__ct = v;
     },
   });
+
+  // jsdom doesn't implement pointer capture (and can throw for synthetic pointer
+  // ids); stub to inert no-ops so the scrubber's capture calls don't blow up.
+  Object.defineProperty(HTMLElement.prototype, 'setPointerCapture', {
+    configurable: true,
+    writable: true,
+    value: () => undefined,
+  });
+  Object.defineProperty(HTMLElement.prototype, 'releasePointerCapture', {
+    configurable: true,
+    writable: true,
+    value: () => undefined,
+  });
 });
 beforeEach(() => {
   paused = true;
 });
+
+/**
+ * jsdom gives every element a zero-size rect, which trips the scrubber's
+ * `rect.width <= 0` guard. Give the waveform a real box so a pointer clientX
+ * maps to a fraction of the track. Returns the pixel width used.
+ */
+function mockWaveBox(container: HTMLElement, width = 200): number {
+  const wave = container.querySelector('.tcl-audio-waveform__wave') as HTMLElement;
+  vi.spyOn(wave, 'getBoundingClientRect').mockReturnValue({
+    x: 0,
+    y: 0,
+    left: 0,
+    top: 0,
+    right: width,
+    bottom: 48,
+    width,
+    height: 48,
+    toJSON: () => ({}),
+  } as DOMRect);
+  return width;
+}
+
+type PointerName = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointercancel';
+
+/**
+ * Fire a pointer event carrying a real `clientX`. jsdom's pointer-event
+ * constructor drops `clientX` from `fireEvent`'s init (the scrubber would then
+ * seek to NaN), so force it onto the native event before dispatch.
+ */
+function firePointer(el: Element, type: PointerName, clientX: number): void {
+  const evt = new Event(type, { bubbles: true, cancelable: true });
+  Object.defineProperty(evt, 'clientX', { value: clientX, configurable: true });
+  Object.defineProperty(evt, 'clientY', { value: 0, configurable: true });
+  Object.defineProperty(evt, 'pointerId', { value: 1, configurable: true });
+  fireEvent(el, evt);
+}
 
 describe('AudioWaveform', () => {
   it('reveals the label, a play button, and a scrubber slider', () => {
@@ -123,6 +172,104 @@ describe('AudioWaveform', () => {
 
     fireEvent.keyDown(slider, { key: 'Home' });
     expect(slider).toHaveAttribute('aria-valuenow', '0');
+  });
+
+  it('click-to-play: a pointer tap on the waveform seeks there and starts playback', () => {
+    const onPlay = vi.fn();
+    const { container } = render(
+      <AudioWaveform src="clip.wav" label="Clip A" peaks={PEAKS} duration={120} onPlay={onPlay} />,
+    );
+    mockWaveBox(container); // 200px wide
+    const slider = screen.getByRole('slider');
+    const playSpy = vi.spyOn(HTMLMediaElement.prototype, 'play');
+
+    // Tap dead-centre → 50% → 60s, then release.
+    firePointer(slider, 'pointerdown', 100);
+    firePointer(slider, 'pointerup', 100);
+
+    expect(slider).toHaveAttribute('aria-valuenow', '60');
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(onPlay).toHaveBeenCalledTimes(1);
+    playSpy.mockRestore();
+  });
+
+  it('drag-release starts playback from the final scrubbed position, not the start', () => {
+    const { container } = render(
+      <AudioWaveform src="clip.wav" label="Clip A" peaks={PEAKS} duration={120} />,
+    );
+    mockWaveBox(container);
+    const slider = screen.getByRole('slider');
+    const playSpy = vi.spyOn(HTMLMediaElement.prototype, 'play');
+
+    firePointer(slider, 'pointerdown', 20); // 10% → 12s
+    firePointer(slider, 'pointermove', 160); // drag to 80% → 96s
+    // Playback must not start mid-drag.
+    expect(playSpy).not.toHaveBeenCalled();
+    firePointer(slider, 'pointerup', 160);
+
+    expect(slider).toHaveAttribute('aria-valuenow', '96');
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    playSpy.mockRestore();
+  });
+
+  it('a cancelled pointer scrub seeks but does not start playback', () => {
+    const onPlay = vi.fn();
+    const { container } = render(
+      <AudioWaveform src="clip.wav" label="Clip A" peaks={PEAKS} duration={120} onPlay={onPlay} />,
+    );
+    mockWaveBox(container);
+    const slider = screen.getByRole('slider');
+    const playSpy = vi.spyOn(HTMLMediaElement.prototype, 'play');
+
+    firePointer(slider, 'pointerdown', 100);
+    firePointer(slider, 'pointercancel', 100);
+
+    expect(slider).toHaveAttribute('aria-valuenow', '60'); // still seeks on the way down
+    expect(playSpy).not.toHaveBeenCalled();
+    expect(onPlay).not.toHaveBeenCalled();
+    playSpy.mockRestore();
+  });
+
+  it('keyboard seeking never starts playback (auto-play is pointer-only)', () => {
+    const onPlay = vi.fn();
+    render(
+      <AudioWaveform src="clip.wav" label="Clip A" peaks={PEAKS} duration={120} onPlay={onPlay} />,
+    );
+    const slider = screen.getByRole('slider');
+    const playSpy = vi.spyOn(HTMLMediaElement.prototype, 'play');
+
+    fireEvent.keyDown(slider, { key: 'ArrowRight' });
+    fireEvent.keyDown(slider, { key: 'End' });
+
+    expect(slider).toHaveAttribute('aria-valuenow', '120');
+    expect(playSpy).not.toHaveBeenCalled();
+    expect(onPlay).not.toHaveBeenCalled();
+    playSpy.mockRestore();
+  });
+
+  it('playOnClick={false} makes a pointer tap seek only — no playback', () => {
+    const onPlay = vi.fn();
+    const { container } = render(
+      <AudioWaveform
+        src="clip.wav"
+        label="Clip A"
+        peaks={PEAKS}
+        duration={120}
+        playOnClick={false}
+        onPlay={onPlay}
+      />,
+    );
+    mockWaveBox(container);
+    const slider = screen.getByRole('slider');
+    const playSpy = vi.spyOn(HTMLMediaElement.prototype, 'play');
+
+    firePointer(slider, 'pointerdown', 50); // 25% → 30s
+    firePointer(slider, 'pointerup', 50);
+
+    expect(slider).toHaveAttribute('aria-valuenow', '30');
+    expect(playSpy).not.toHaveBeenCalled();
+    expect(onPlay).not.toHaveBeenCalled();
+    playSpy.mockRestore();
   });
 
   it('renders compact mode as a presentational thumbnail with no controls', () => {

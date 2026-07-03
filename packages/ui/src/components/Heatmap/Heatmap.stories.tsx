@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { Heatmap } from './Heatmap';
@@ -79,5 +80,150 @@ export const Interaction: Story = {
     await userEvent.click(cell);
     await expect(cell).toHaveAttribute('aria-pressed', 'true');
     await expect(canvas.getByText(/Apr 28 · 92%/)).toBeInTheDocument();
+  },
+};
+
+/**
+ * Per-column tone — each metric colors off its own ramp (`columnTones`) so reads,
+ * writes, and errors read distinctly. Values share one domain, so the built-in
+ * single-tone legend is turned off (a multi-tone matrix is best paired with a
+ * consumer legend or none).
+ */
+export const TwoToneColumns: Story = {
+  args: {
+    showScale: false,
+    data: {
+      view: 'heatmap',
+      code: 'assets.io.by-kind',
+      title: 'Asset I/O by kind — reads · writes · errors',
+      caption: 'Each column on its own tone ramp; values 0–100.',
+      showValues: true,
+      columns: ['Reads', 'Writes', 'Errors'],
+      columnTones: ['success', 'info', 'danger'],
+      rows: [
+        { label: 'textures/', cells: [92, 40, 6] },
+        { label: 'audio/', cells: [61, 55, 18] },
+        { label: 'models/', cells: [74, 33, 2] },
+        { label: 'shaders/', cells: [48, 71, 27] },
+      ],
+    },
+  },
+};
+
+/** The Asset-Studio "impact constellation": entity-kind impact columns on the accent
+ *  ramp + a trailing lineage column on a second tone, decisions as SELECTABLE ROWS,
+ *  built-in inspector + scale OFF, clicking a row drives the consumer's own drawer. */
+const decisions: HeatmapContract = {
+  view: 'heatmap',
+  code: 'assets.decisions.constellation',
+  title: 'Decision impact — entity kinds × lineage',
+  columns: ['Player', 'Enemy', 'Ability', 'World', 'Lineage'],
+  columnTones: ['accent', 'accent', 'accent', 'accent', 'info'],
+  rows: [
+    {
+      id: 'd-01',
+      label: 'AS-14 Rename SoulCard',
+      display: (
+        <>
+          <span style={{ color: 'var(--tcl-accent)' }}>AS-14</span> Rename SoulCard
+        </>
+      ),
+      sub: 'accepted',
+      cells: [0.9, 0.2, 0.6, 0.3, 0.7],
+    },
+    {
+      id: 'd-02',
+      label: 'AS-21 Split ability registry',
+      display: (
+        <>
+          <span style={{ color: 'var(--tcl-accent)' }}>AS-21</span> Split registry
+        </>
+      ),
+      sub: 'proposed',
+      cells: [0.4, 0.5, 0.95, 0.6, 0.8],
+    },
+    {
+      id: 'd-03',
+      label: 'AS-08 Merge world tiles',
+      display: (
+        <>
+          <span style={{ color: 'var(--tcl-accent)' }}>AS-08</span> Merge world tiles
+        </>
+      ),
+      sub: 'accepted',
+      cells: [0.2, 0.3, 0.25, 0.9, 0.4],
+    },
+    {
+      id: 'd-04',
+      label: 'AS-30 Enemy tier rebalance',
+      display: (
+        <>
+          <span style={{ color: 'var(--tcl-accent)' }}>AS-30</span> Enemy rebalance
+        </>
+      ),
+      sub: 'in review',
+      cells: [0.3, 0.92, 0.5, 0.45, 0.55],
+    },
+  ],
+};
+
+function ConstellationDemo() {
+  const [sel, setSel] = useState<string | undefined>('d-02');
+  const selected = decisions.rows.find((r) => r.id === sel);
+  return (
+    <div style={{ display: 'grid', gap: 'var(--tcl-space-4)' }}>
+      <Heatmap
+        data={decisions}
+        selectionMode="row"
+        selectedRowId={sel}
+        onSelectRow={setSel}
+        showInspector={false}
+        showScale={false}
+      />
+      <aside
+        style={{
+          padding: 'var(--tcl-space-3) var(--tcl-space-4)',
+          background: 'var(--tcl-surface)',
+          border: '1px solid var(--tcl-border)',
+          borderLeft: '3px solid var(--tcl-accent)',
+          borderRadius: 'var(--tcl-radius-md)',
+        }}
+      >
+        {selected ? (
+          <>
+            <p style={{ margin: 0, fontWeight: 600 }}>{selected.label}</p>
+            <p
+              style={{
+                margin: '4px 0 0',
+                color: 'var(--tcl-text-dim)',
+                fontSize: 'var(--tcl-text-sm)',
+              }}
+            >
+              Status: {selected.sub} · consumer-owned drawer
+            </p>
+          </>
+        ) : (
+          <p style={{ margin: 0, color: 'var(--tcl-text-faint)' }}>Select a decision.</p>
+        )}
+      </aside>
+    </div>
+  );
+}
+
+/**
+ * Row-select master-detail: `selectionMode="row"` turns each decision into one
+ * focusable button (whole-row click, `aria-current` + accent rail); the built-in
+ * inspector/scale are off and a click updates the consumer's own panel below.
+ */
+export const RowSelect: Story = {
+  name: 'Row select (master-detail)',
+  render: () => <ConstellationDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('button', { name: /AS-08 Merge world tiles/ });
+    await expect(row).not.toHaveAttribute('aria-current');
+    await userEvent.click(row);
+    await expect(row).toHaveAttribute('aria-current', 'true');
+    await expect(canvas.getByText(/Status: accepted/)).toBeInTheDocument();
   },
 };

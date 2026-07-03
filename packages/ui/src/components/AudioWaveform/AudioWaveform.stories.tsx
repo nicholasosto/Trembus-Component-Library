@@ -136,10 +136,32 @@ export const States: Story = {
 };
 
 /**
- * Job: Acknowledge Input — seek with the mouse or the keyboard (focus the
- * waveform, then Arrow keys / Home / End / PageUp-Down). The playhead moves
- * immediately and aria-valuetext updates. Never autoplays.
+ * Job: Acknowledge Input — click (or tap) anywhere on the waveform to seek
+ * there AND start playback from that point; drag to scrub and release to play
+ * from where you land. Or seek with the keyboard (focus the waveform, then
+ * Arrow keys / Home / End / PageUp-Down) — keyboard seeks move the playhead
+ * WITHOUT auto-playing. Never autoplays on mount.
  */
 export const Interaction: Story = {
-  args: { label: 'Seek me — drag or arrow-key', peaks: PEAKS_B, duration: 8, tone: 'accent' },
+  args: {
+    label: 'Click to play from here — or drag / arrow-key',
+    peaks: PEAKS_B,
+    duration: 8,
+    tone: 'accent',
+  },
+};
+
+/**
+ * Opt out of click-to-play with `playOnClick={false}`: a pointer click/tap
+ * still seeks (moving the playhead), but never starts playback — use the play
+ * button to begin sound. Keyboard seeks behave identically to the default.
+ */
+export const SeekOnly: Story = {
+  args: {
+    label: 'Seek only — click won’t auto-play',
+    peaks: PEAKS_A,
+    duration: 8,
+    tone: 'info',
+    playOnClick: false,
+  },
 };
