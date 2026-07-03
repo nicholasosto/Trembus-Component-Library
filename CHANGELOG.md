@@ -11,6 +11,39 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/viz 0.4.0] — 2026-07
+
+### Added
+
+- **`Strata`** — a concentric first-principles visualization. Radial depth encodes
+  dependency layering: bedrock axioms (no `restsOn`) fill the innermost ring, and every
+  principle layers outward at its longest support chain. Deliberately strata-with-DAG-links,
+  not a sunburst — `restsOn` is many-to-many, so arcs settle near their foundations via a
+  wrap-safe circular barycenter in an overlap-free slice grid. A `restsOn` reference to an
+  id that doesn't exist auto-materializes a dashed **gap** arc in the ring beneath its
+  shallowest referencer (undiscovered supports surfaced as discovery opportunities, never
+  errors), and `conjecture: true` shares the dashed "still negotiable" vocabulary. Selecting
+  an arc lights its foundation cone and its load cone — everything that would collapse with
+  it — and names both in the aria-live inspector; every arc, gaps included, is a focusable
+  core-sample button over the decorative SVG. Deep maps compress their rings but never
+  escape the plot box; support cycles degrade deterministically (a principle that declared
+  `restsOn` never presents as bedrock).
+
+## [@trembus/ui 0.5.0] — 2026-07
+
+### Added
+
+- **`Toolbar`** (+ `Toolbar.Button` / `Toolbar.Group` / `Toolbar.Separator`) — a
+  `role="toolbar"` command bar with focus-aware roving tabindex. A `Toolbar.Button` can
+  act as a `Menu` trigger, composing the compact icon-bar → pop-up → submenu
+  progressive-disclosure command bar.
+
+### Changed
+
+- **`Menu`** extended for command bars: `Menu.Sub` / `Menu.SubTrigger` / `Menu.SubContent`
+  nested submenus, `Menu.Label` + `Menu.Separator` grouping, and `side="top"` upward
+  opening with collision-flip for bottom-docked bars.
+
 ## [@trembus/ui 0.4.0] — 2026-07
 
 ### Added

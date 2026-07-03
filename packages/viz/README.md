@@ -5,11 +5,16 @@
 [![Storybook](https://img.shields.io/badge/Storybook-live-ff4785?logo=storybook&logoColor=white)](https://nicholasosto.github.io/Trembus-Component-Library/)
 
 Trembus Tier-2 node-link visualizations — `Tree` (strict hierarchy via
-`d3-hierarchy`) and `Lineage` (directed graph / DAG via `@dagrejs/dagre`). The
-same "3 UI jobs" contract spine as `@trembus/ui`'s Tier-1 viz, with a layout
-engine. Depends on `@trembus/tokens` only — never on `@trembus/ui`.
+`d3-hierarchy`), `Lineage` (directed graph / DAG via `@dagrejs/dagre`),
+`SystemMap` (nested drill-down C4 / architecture map), `ClassDiagram` (UML
+class diagram with typed relationship arrowheads), and `Strata` (concentric
+first-principles strata — bedrock axioms innermost, principles layer outward by
+dependency; dangling `restsOn` references auto-materialize dashed **gap** arcs,
+undiscovered supports surfaced as discovery opportunities). The same "3 UI
+jobs" contract spine as `@trembus/ui`'s Tier-1 viz, with a layout engine.
+Depends on `@trembus/tokens` only — never on `@trembus/ui`.
 
-**🔭 [Browse `Tree` + `Lineage` in the live Storybook →](https://nicholasosto.github.io/Trembus-Component-Library/)**
+**🔭 [Browse the Tier-2 gallery in the live Storybook →](https://nicholasosto.github.io/Trembus-Component-Library/)**
 
 ```sh
 pnpm add @trembus/viz react react-dom

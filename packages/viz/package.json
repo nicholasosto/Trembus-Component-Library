@@ -1,7 +1,7 @@
 {
   "name": "@trembus/viz",
-  "version": "0.3.1",
-  "description": "Trembus Tier-2 node-link visualizations (Tree, Lineage, SystemMap, ClassDiagram) — the same 3-jobs contract spine as @trembus/ui's Tier-1 viz, with a layout engine (d3-hierarchy for trees, dagre for DAGs), drill-down C4 architecture maps, and UML class diagrams.",
+  "version": "0.4.0",
+  "description": "Trembus Tier-2 node-link visualizations (Tree, Lineage, SystemMap, ClassDiagram, Strata) — the same 3-jobs contract spine as @trembus/ui's Tier-1 viz, with a layout engine (d3-hierarchy for trees, dagre for DAGs), drill-down C4 architecture maps, UML class diagrams, and concentric first-principles strata.",
   "type": "module",
   "keywords": [
     "react",
@@ -18,6 +18,9 @@
     "c4",
     "uml",
     "class-diagram",
+    "strata",
+    "first-principles",
+    "concentric",
     "d3-hierarchy",
     "dagre",
     "design-system",

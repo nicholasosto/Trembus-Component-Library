@@ -193,8 +193,12 @@ Mirror the schema as a TS type so ONE contract renders in both the static HTML k
 Title these `Visualizations/*` in Storybook. Tier-1 (deterministic layout, no heavy deps) lives
 in `@trembus/ui`; **Tier-2** (node-link graphs needing a layout engine) lives in the sibling
 **`@trembus/viz`** package — `Tree` (strict hierarchy via `d3-hierarchy`; org-chart / file-tree /
-dendrogram) and `Lineage` (directed-graph / DAG via `@dagrejs/dagre`; pipeline · data-lineage ·
-dependency · genealogy) both shipped. Tier-2 reuses the same viz
+dendrogram), `Lineage` (directed-graph / DAG via `@dagrejs/dagre`; pipeline · data-lineage ·
+dependency · genealogy), `SystemMap` (nested drill-down C4 map), `ClassDiagram` (UML), and
+`Strata` (concentric first-principles strata: radius = dependency depth via longest support
+chain; dangling `restsOn` refs auto-materialize dashed GAP arcs — discovery opportunities, never
+errors; NO ring-thickness floor, rings compress so deep maps never escape the plot box) all
+shipped. Tier-2 reuses the same viz
 spine via `packages/viz/src/internal/` (`VizOverlay` = decorative aria-hidden `preserveAspectRatio`
 SVG edges + HTML `<button>` nodes positioned by `%`; `useControllableSelection`/`useControllableSet`;
 the aria-live inspector). Mirror each Tier-2 contract as a VG schema too (`tree.schema.json`).
