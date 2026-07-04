@@ -110,6 +110,15 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
   `SYSTEM_KIND_GLYPH` re-exports from `src/internal` are unchanged, so component behavior and the
   public API are identical.
 
+## [@trembus/ui 0.2.0] — 2026-06
+
+### Added
+
+- **`FolderTree`** — the library's first WAI-ARIA `role="tree"` file explorer: nested
+  folder nodes, roving-tabindex keyboard navigation, search/filter, tri-state checkboxes
+  (`aria-checked` on the row), and lazy-loaded children. _(Entry backfilled 2026-07 —
+  this release predated changelog discipline.)_
+
 ## [@trembus/viz 0.3.0] — 2026-06
 
 ### Added

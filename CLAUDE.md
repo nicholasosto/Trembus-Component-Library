@@ -69,6 +69,12 @@ License at 4+). See `packages/video/README.md`.
 - `pnpm dev` — Storybook (docs + playground) on :6006.
 - `pnpm check:contracts` — enforce the 3-jobs contract per component.
 
+**Workflow skills** (`.claude/skills/`, readable by any agent): `/new-component` scaffolds;
+**`/finish-component <Name>`** runs the quality loop (visual verify both themes → parallel
+adversarial review → fixes WITH regression tests → re-gate) — the done-bar for component
+work; **`/release <pkg>`** executes `RELEASING.md` end to end (enforced CHANGELOG entry,
+roster docs sync, publish order, git tag + GitHub Release). RELEASING.md stays canonical.
+
 ## Visual preview — Claude drives Storybook live
 
 Boot Storybook through the **Claude_Preview MCP**, not Bash: `preview_start({name:'storybook'})`

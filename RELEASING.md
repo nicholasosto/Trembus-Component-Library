@@ -5,6 +5,10 @@ The five libraries — `@trembus/tokens`, `@trembus/icons`, `@trembus/ui`, `@tre
 (`@trembus/video`
 and the `demos/*` apps are private and never published.)
 
+> **This file is the canonical checklist.** Claude executes it end to end via the
+> **`/release`** skill (`.claude/skills/release/SKILL.md`) — including the two steps
+> history shows get skipped by hand: the CHANGELOG entry and the docs-roster sync.
+
 ## Versioning — independent, per package
 
 Packages are versioned **independently** and follow [SemVer](https://semver.org). A release
@@ -44,6 +48,28 @@ npm view @trembus/<pkg> version
 (e.g. on `@trembus/tokens`) to a real `^x.y.z` range during packing; plain `npm publish` would
 ship a broken `workspace:^` in the published `package.json`.
 
+## Docs sync — part of the release, not an afterthought
+
+When a release changes a package's public surface (new component, new compound part,
+renamed prop), sync ALL FOUR doc surfaces in the release commit — each has gone stale
+before (the Tier-2 roster once lagged two releases behind):
+
+1. `packages/<pkg>/package.json` — `description` + `keywords` (the npm search surface).
+2. `packages/<pkg>/README.md` — the component roster paragraph + Storybook browse line.
+3. Root `README.md` — the package table row.
+4. `CLAUDE.md` **and** `AGENTS.md` — near-twin files, update **both**: the workspace
+   package list, the relevant roster (Tier-2 / Game / command-bar…), and any new gotchas.
+
+Tier-2 viz components also mirror their contract as a Visual Grammar schema in the
+canonical kit (see CLAUDE.md → Visualizations).
+
+## Multi-package releases — publish order
+
+Publish dependencies before dependents so the `workspace:^` rewrites resolve to versions
+that exist on the registry:
+
+**tokens → icons → ui → viz → game-viz**
+
 ## Authentication — 2FA, security keys, and automation tokens
 
 npm 2FA on this account is satisfied by a **WebAuthn security key**, which works for the npm
@@ -77,4 +103,14 @@ long-lived bypass token.
   on a fresh clone needs tokens built first.
 - **attw / ESM-only.** Packages are ESM-only; `verify:exports` runs `attw --profile esm-only`.
   The `node16 (from CJS)` row is expected to warn and is ignored.
-- **No git tags** are used today; if you start tagging, use `@trembus/<pkg>@X.Y.Z`.
+
+## Tags + GitHub Releases — per-version notes on GitHub
+
+Every release gets a git tag and a GitHub Release whose notes are the package's
+CHANGELOG section (adopted 2026-07; earlier versions are deliberately not retro-tagged):
+
+```sh
+git tag "@trembus/<pkg>@X.Y.Z" && git push origin "@trembus/<pkg>@X.Y.Z"
+awk '/^## \[@trembus\/<pkg> X.Y.Z\]/{f=1;next} /^## /{f=0} f' CHANGELOG.md > /tmp/notes.md
+gh release create "@trembus/<pkg>@X.Y.Z" --title "@trembus/<pkg> X.Y.Z" --notes-file /tmp/notes.md
+```
