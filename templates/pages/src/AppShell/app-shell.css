@@ -1,0 +1,41 @@
+/* @trembus-template app-shell v1.0.0 · app-shell.css (style) · chrome is template-owned — edit only inside @tcl-slot regions; re-apply via the trembus-template skill */
+
+/* App-shell chrome. Tokens-only (var(--tcl-*)) so the page re-themes with the
+   library. Deliberately UNLAYERED — app chrome sits above the library's @layer
+   cascade without fighting it. The component look comes entirely from the
+   @trembus/* packages; this file only styles the frame around them. */
+
+body {
+  margin: 0;
+  background: var(--tcl-bg);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell__header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.app-shell__main {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+}
+
+.app-shell__brand {
+  font-family: var(--tcl-font-display);
+  font-size: var(--tcl-text-xl);
+  letter-spacing: var(--tcl-tracking-caps, 0.06em);
+  text-transform: uppercase;
+}
+
+/* @tcl-slot:app-custom-styles START — app-owned: add page/app chrome below. */
+/* @tcl-slot:app-custom-styles END */

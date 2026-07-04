@@ -1,0 +1,22 @@
+{
+  "name": "@trembus-templates/pages",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Copy-and-own reference PAGE templates (AppShell, WorkflowBoard). NOT a library: no 3-jobs contracts; off the validate gate via off-gate script names (tc). Stories DO join build:storybook + test:stories via the root glob. Full check: `pnpm templates:check` from the root. Each template's version lives in its template.json manifest, not here.",
+  "scripts": {
+    "tc": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@trembus/ui": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@storybook/react-vite": "^9.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "storybook": "^9.0.0",
+    "typescript": "^5.9.0"
+  }
+}

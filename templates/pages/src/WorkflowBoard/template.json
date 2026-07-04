@@ -1,0 +1,47 @@
+{
+  "name": "workflow-board",
+  "title": "WorkflowBoard",
+  "version": "1.0.0",
+  "description": "Workflow working surface: DataStatusBar freshness header + title row with a board toolbar + Switch-toggled RunHistory log + Card-wrapped Swimlane board. Selecting a run time-travels the diagram to that run's state (applyRun is inlined — the page is self-contained). Data arrives via props typed entirely from @trembus/ui; no new library API.",
+  "files": [
+    {
+      "path": "WorkflowBoard.tsx",
+      "copyAs": "WorkflowBoard.tsx",
+      "role": "main",
+      "required": true,
+      "destinationHint": "a pages/views dir (src/pages/ or src/routes/); single self-contained file — no companion css or hook"
+    }
+  ],
+  "slots": [
+    {
+      "name": "toolbar-actions",
+      "file": "WorkflowBoard.tsx",
+      "purpose": "Board commands next to the Run history switch. Default renders a labelled Toolbar with a Refresh button when onRefresh is provided.",
+      "context": ["onRefresh"]
+    },
+    {
+      "name": "inspector",
+      "file": "WorkflowBoard.tsx",
+      "purpose": "Details card for the selected run (status, note, output links by default).",
+      "context": ["runsVisible", "selectedRun", "workflow", "runs"]
+    }
+  ],
+  "dependencies": {
+    "@trembus/ui": ">=0.5.0"
+  },
+  "setup": [
+    "import '@trembus/ui/styles.css' once at the app entry",
+    "render inside a .tcl-root / themed shell (the AppShell template pairs well)",
+    "author the workflow SwimlaneContract with NO per-step status — runs supply it"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-04",
+      "changes": [
+        "Initial template: DataStatusBar header, toolbar + Switch-toggled RunHistory, time-travelling Swimlane (inlined applyRun), selected-run inspector slot."
+      ],
+      "migration": null
+    }
+  ]
+}

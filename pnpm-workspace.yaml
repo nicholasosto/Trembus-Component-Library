@@ -5,3 +5,8 @@ packages:
   # gate via off-gate script names (dev/build:site/tc) + the eslint/prettier
   # ignores below, mirroring the packages/video precedent.
   - 'demos/*'
+  # Page templates — copy-and-own reference PAGES (AppShell, WorkflowBoard, …)
+  # iterated here, then copied into consuming apps by the trembus-template skill.
+  # Off the `validate` gate via off-gate script names (tc) + the eslint ignore;
+  # their stories DO join the root Storybook globs (build:storybook + test:stories).
+  - 'templates/*'

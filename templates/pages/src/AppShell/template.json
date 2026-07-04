@@ -1,0 +1,92 @@
+{
+  "name": "app-shell",
+  "title": "AppShell",
+  "version": "1.0.0",
+  "description": "Site navigation shell: SkipLink + sticky header (brand · primary NavBar · header actions with a ThemeToggle) + main content region + footer. Router-agnostic — the nav-links slot ships plain NavBar.Link anchors with the asChild router recipe in the slot comment.",
+  "files": [
+    {
+      "path": "AppShell.tsx",
+      "copyAs": "AppShell.tsx",
+      "role": "main",
+      "required": true,
+      "destinationHint": "app layout dir (src/app/ or src/components/layout/); keep the three files together — AppShell.tsx imports ./useTheme and ./app-shell.css"
+    },
+    {
+      "path": "useTheme.ts",
+      "copyAs": "useTheme.ts",
+      "role": "hook",
+      "required": false,
+      "skipIf": "the app already has a theme controller — then rewire ThemeToggle (or replace it) in the header-actions slot",
+      "destinationHint": "next to AppShell.tsx"
+    },
+    {
+      "path": "app-shell.css",
+      "copyAs": "app-shell.css",
+      "role": "style",
+      "required": true,
+      "destinationHint": "next to AppShell.tsx; imported by AppShell.tsx (Vite/bundler). For Next.js app router, import it from the root layout instead."
+    }
+  ],
+  "slots": [
+    {
+      "name": "brand",
+      "file": "AppShell.tsx",
+      "purpose": "Product name + optional tagline in the header.",
+      "context": []
+    },
+    {
+      "name": "nav-links",
+      "file": "AppShell.tsx",
+      "purpose": "Primary navigation links inside the NavBar. Plain NavBar.Link anchors by default; router apps use the asChild recipe in the slot comment.",
+      "context": []
+    },
+    {
+      "name": "header-actions",
+      "file": "AppShell.tsx",
+      "purpose": "Right-side header controls. Defaults to the exported ThemeToggle.",
+      "context": ["ThemeToggle"]
+    },
+    {
+      "name": "main-content",
+      "file": "AppShell.tsx",
+      "purpose": "The page body. Defaults to rendering the children prop; router apps put their outlet here.",
+      "context": ["children"]
+    },
+    {
+      "name": "footer-content",
+      "file": "AppShell.tsx",
+      "purpose": "Footer text/links.",
+      "context": []
+    },
+    {
+      "name": "theme-storage-key",
+      "file": "useTheme.ts",
+      "purpose": "The localStorage key persisting the theme choice.",
+      "context": []
+    },
+    {
+      "name": "app-custom-styles",
+      "file": "app-shell.css",
+      "purpose": "App-added chrome rules appended after the template's.",
+      "context": []
+    }
+  ],
+  "dependencies": {
+    "@trembus/ui": ">=0.5.0"
+  },
+  "setup": [
+    "import '@trembus/ui/styles.css' once at the app entry (before app css)",
+    "render <AppShell> at the app root; it supplies the .tcl-root wrapper itself",
+    "theme is data-theme on <html> — set an initial value in index.html to avoid a flash if desired"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-04",
+      "changes": [
+        "Initial template: SkipLink + sticky header (brand/nav/actions) + main + footer, ThemeToggle + SSR-safe useTheme, tokens-only chrome css."
+      ],
+      "migration": null
+    }
+  ]
+}

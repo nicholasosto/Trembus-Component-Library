@@ -3,7 +3,13 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   framework: { name: '@storybook/react-vite', options: {} },
-  stories: ['../packages/*/src/**/*.stories.@(ts|tsx)'],
+  // templates/* joining this glob also enrolls their stories in the vitest
+  // `storybook` project (test:stories — CI browser + axe gate) and the public
+  // Pages gallery: reference pages must stay compile- AND axe-clean.
+  stories: [
+    '../packages/*/src/**/*.stories.@(ts|tsx)',
+    '../templates/*/src/**/*.stories.@(ts|tsx)',
+  ],
   // Storybook 9: controls/actions/viewport/interactions are in core — do NOT add
   // addon-essentials. Docs blocks live in @storybook/addon-docs.
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y', '@storybook/addon-vitest'],
