@@ -11,6 +11,20 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.6.0] — 2026-07
+
+### Changed
+
+- **`Heatmap`** — row selection + per-column tones: `selectionMode="row"` makes each row a
+  single focusable button (a CSS-subgrid whole-row control carrying `aria-current`, with a
+  selection rail distinct from the focus ring); `columnTones` gives each metric column its
+  own tone ramp; rows take a stable `id` (for `selectionMode="row"`, falling back to the
+  index — never the label) and a rich `display` ReactNode for the row header while `label`
+  stays the string accessible name; `showInspector` / `showScale` toggle the chrome.
+- **`AudioWaveform`** — `playOnClick` (default `true`): clicking/scrubbing the waveform
+  seeks AND starts playback in one gesture; pass `playOnClick={false}` for the previous
+  seek-only behavior. Never fires mid-drag and still never autoplays on mount.
+
 ## [@trembus/viz 0.4.0] — 2026-07
 
 ### Added
