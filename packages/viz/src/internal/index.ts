@@ -5,6 +5,7 @@ export { toneVar, toneFg } from './tone';
 export type { VizTone } from './tone';
 export { useControllableSelection } from './useControllableSelection';
 export { useControllableSet } from './useControllableSet';
+export { useControllableMap } from './useControllableMap';
 export { useDrilldown } from './useDrilldown';
 export { VizOverlay } from './VizOverlay';
 export type { VizOverlayProps } from './VizOverlay';

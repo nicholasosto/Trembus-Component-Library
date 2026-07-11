@@ -33,6 +33,22 @@ const ages: TimelineContract = {
   ],
 };
 
+function mockElementScrollTo(): { scrollTo: ReturnType<typeof vi.fn>; restore: () => void } {
+  const scrollTo = vi.fn();
+  const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollTo');
+  Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+    configurable: true,
+    value: scrollTo,
+  });
+  return {
+    scrollTo,
+    restore: () => {
+      if (original) Object.defineProperty(HTMLElement.prototype, 'scrollTo', original);
+      else Reflect.deleteProperty(HTMLElement.prototype, 'scrollTo');
+    },
+  };
+}
+
 describe('Timeline', () => {
   it('renders the header and a button per event with a date·title·category name', () => {
     render(<Timeline data={ages} />);
@@ -71,6 +87,7 @@ describe('Timeline', () => {
     await user.click(rite);
     expect(onSelect).toHaveBeenCalledWith('rite');
     expect(rite).toHaveAttribute('aria-pressed', 'false');
+    expect(rite).toHaveAttribute('tabindex', '0');
     expect(screen.getByRole('button', { name: '0 A.V.: The First Pact — Pacts' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -89,6 +106,94 @@ describe('Timeline', () => {
       'aria-pressed',
       'true',
     );
+  });
+
+  it('uses roving tabindex and Arrow/Home/End keys to select and focus events', async () => {
+    const user = userEvent.setup();
+    render(<Timeline data={ages} />);
+    const pact = screen.getByRole('button', { name: '0 A.V.: The First Pact — Pacts' });
+    const rite = screen.getByRole('button', { name: 'XII A.V.: The Silent Rite — Wars' });
+    const war = screen.getByRole('button', { name: 'CCXI A.V.: War of Cold Coasts — Wars' });
+
+    expect(pact).toHaveAttribute('tabindex', '0');
+    expect(rite).toHaveAttribute('tabindex', '-1');
+    pact.focus();
+
+    await user.keyboard('{ArrowRight}');
+    expect(rite).toHaveFocus();
+    expect(rite).toHaveAttribute('aria-pressed', 'true');
+    expect(rite).toHaveAttribute('tabindex', '0');
+    expect(pact).toHaveAttribute('tabindex', '-1');
+
+    await user.keyboard('{End}');
+    expect(war).toHaveFocus();
+    expect(war).toHaveAttribute('aria-pressed', 'true');
+
+    await user.keyboard('{ArrowLeft}');
+    expect(rite).toHaveFocus();
+    await user.keyboard('{Home}');
+    expect(pact).toHaveFocus();
+    expect(pact).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('scrolls selected events without smooth motion when reduced motion is requested', () => {
+    const scroll = mockElementScrollTo();
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+
+    try {
+      render(<Timeline data={ages} defaultSelectedId="war" />);
+      expect(scroll.scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }));
+    } finally {
+      vi.unstubAllGlobals();
+      scroll.restore();
+    }
+  });
+
+  it('preserves roving focus and scroll position across equivalent controlled data rerenders', async () => {
+    const scroll = mockElementScrollTo();
+    const onSelect = vi.fn();
+    const user = userEvent.setup();
+
+    try {
+      const { rerender } = render(<Timeline data={ages} selectedId="pact" onSelect={onSelect} />);
+      const pact = screen.getByRole('button', { name: '0 A.V.: The First Pact — Pacts' });
+      const rite = screen.getByRole('button', { name: 'XII A.V.: The Silent Rite — Wars' });
+      pact.focus();
+      await user.keyboard('{ArrowRight}');
+      expect(rite).toHaveFocus();
+      expect(rite).toHaveAttribute('tabindex', '0');
+      expect(scroll.scrollTo).toHaveBeenCalledTimes(1);
+
+      rerender(
+        <Timeline
+          data={{
+            ...ages,
+            categories: ages.categories?.map((category) => ({ ...category })),
+            events: ages.events.map((event) => ({ ...event })),
+          }}
+          selectedId="pact"
+          onSelect={onSelect}
+        />,
+      );
+
+      expect(rite).toHaveFocus();
+      expect(rite).toHaveAttribute('tabindex', '0');
+      expect(scroll.scrollTo).toHaveBeenCalledTimes(1);
+    } finally {
+      scroll.restore();
+    }
   });
 
   it('disables Previous on the first event', () => {
@@ -116,6 +221,27 @@ describe('Timeline', () => {
     const buttons = screen.getAllByRole('button', { name: 'I: Repeat' });
     await user.click(buttons[1]);
     expect(onSelect).toHaveBeenCalledWith('e1');
+  });
+
+  it('keeps the first authored event when explicit ids are duplicated', () => {
+    const { container } = render(
+      <Timeline
+        data={{
+          events: [
+            { id: 'duplicate', at: 20, dateLabel: 'XX', label: 'First authored' },
+            { id: 'duplicate', at: 1, dateLabel: 'I', label: 'Earlier duplicate' },
+            { id: 'unique', at: 30, dateLabel: 'XXX', label: 'Unique' },
+          ],
+        }}
+        selectedId="duplicate"
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'XX: First authored' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.queryByRole('button', { name: 'I: Earlier duplicate' })).not.toBeInTheDocument();
+    expect(container.querySelectorAll('.tcl-timeline__event')).toHaveLength(2);
   });
 
   it('shows an empty message when there are no events', () => {

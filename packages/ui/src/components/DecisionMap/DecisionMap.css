@@ -1,0 +1,390 @@
+@layer tcl.components {
+  .tcl-decision-map {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header ── */
+  .tcl-decision-map__header {
+    display: flex;
+    flex-wrap: wrap; /* the status chip drops below the title on narrow cards instead of overflowing */
+    align-items: flex-start;
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+  }
+  .tcl-decision-map__heading {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .tcl-decision-map__title {
+    margin: 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-decision-map__context {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-decision-map__status {
+    flex: none;
+    margin-top: 2px;
+    padding: 2px var(--tcl-space-3);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+    border: 1px solid color-mix(in oklab, var(--tcl-status-info) 55%, var(--tcl-border));
+    border-radius: var(--tcl-radius-full);
+  }
+  .tcl-decision-map__status[data-status='decided'] {
+    border-color: color-mix(in oklab, var(--tcl-status-success) 55%, var(--tcl-border));
+  }
+
+  /* ── option cards ── */
+  .tcl-decision-map__options {
+    display: grid;
+    /* min(100%, …) so a container narrower than a card can't force horizontal overflow */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    gap: var(--tcl-space-4);
+    align-items: stretch;
+  }
+  .tcl-decision-map__option {
+    /* button reset */
+    appearance: none;
+    margin: 0;
+    padding: var(--tcl-space-4);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    /* transparent-mix tint auto-adapts per theme (tone tokens flip with data-theme) */
+    background: color-mix(
+      in oklab,
+      var(--option-tone, var(--tcl-status-neutral)) 5%,
+      var(--tcl-surface)
+    );
+    border: 1px solid var(--tcl-border);
+    border-top: 3px solid var(--option-tone, var(--tcl-status-neutral));
+    border-radius: var(--tcl-radius-md);
+    box-shadow: var(--tcl-elevation-1);
+    transition:
+      box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-decision-map__option:hover {
+    border-color: var(--tcl-border-strong);
+    box-shadow: var(--tcl-elevation-2);
+  }
+  .tcl-decision-map__option:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  .tcl-decision-map__option[data-recommended] {
+    border-color: color-mix(in oklab, var(--tcl-accent) 45%, var(--tcl-border));
+  }
+  /* the decided winner keeps a success ring; NON-chosen siblings are never dimmed */
+  .tcl-decision-map__option[data-chosen] {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 3px var(--tcl-status-success);
+  }
+  .tcl-decision-map__option.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-accent);
+  }
+  /* A selected/chosen card that also takes keyboard focus must keep the
+     AA-contrast focus ring — the accent/success rings can dip below the 3:1
+     focus-indicator bar, and the state rules would otherwise win on order. */
+  .tcl-decision-map__option.is-selected:focus-visible,
+  .tcl-decision-map__option[data-chosen]:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-decision-map__topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-decision-map__letter {
+    font-family: var(--tcl-font-display, var(--tcl-font-mono));
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    /* accent-as-text falls back to --tcl-text (see toneInk); other tones keep their hue */
+    color: var(--option-ink, var(--tcl-text));
+  }
+  .tcl-decision-map__ribbon {
+    align-self: flex-start;
+    padding: 1px var(--tcl-space-2);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    font-weight: var(--tcl-weight-semibold);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    /* accent as a TINT behind --tcl-text ink — never accent-colored text (AA) */
+    color: var(--tcl-text);
+    background: color-mix(in oklab, var(--tcl-accent) 12%, transparent);
+    border: 1px solid color-mix(in oklab, var(--tcl-accent) 45%, var(--tcl-border));
+    border-radius: var(--tcl-radius-sm);
+  }
+  .tcl-decision-map__ribbon[data-strength='strong'] {
+    font-weight: var(--tcl-weight-bold);
+    background: color-mix(in oklab, var(--tcl-accent) 18%, transparent);
+  }
+  .tcl-decision-map__ribbon[data-strength='lean'] {
+    background: transparent;
+  }
+  .tcl-decision-map__label {
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: var(--tcl-leading-tight, 1.25);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tcl-decision-map__summary {
+    font-size: var(--tcl-text-xs);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tcl-decision-map__confidence {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-decision-map__confidence-track {
+    flex: 1 1 auto;
+    height: 6px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    overflow: hidden;
+  }
+  .tcl-decision-map__confidence-fill {
+    display: block;
+    height: 100%;
+    width: var(--value, 0%);
+    border-radius: inherit;
+    background: var(--option-tone, var(--tcl-accent));
+  }
+  .tcl-decision-map__confidence-value {
+    flex: none;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+
+  .tcl-decision-map__chips,
+  .tcl-decision-map__tally {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-decision-map__tally {
+    margin-top: auto;
+  }
+  .tcl-decision-map__chip,
+  .tcl-decision-map__tally-item {
+    padding: 1px var(--tcl-space-2);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    font-weight: var(--tcl-weight-semibold);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+  }
+  .tcl-decision-map__chip[data-kind='chosen'] {
+    color: var(--tcl-status-success);
+    border-color: color-mix(in oklab, var(--tcl-status-success) 60%, var(--tcl-border));
+  }
+  /* tally buckets: the count word is IN the chip, so tone never rides alone */
+  .tcl-decision-map__tally-item[data-bucket='benefit'] {
+    color: var(--tcl-status-success);
+    border-color: color-mix(in oklab, var(--tcl-status-success) 60%, var(--tcl-border));
+  }
+  .tcl-decision-map__tally-item[data-bucket='caution'] {
+    color: var(--tcl-status-warning);
+    border-color: color-mix(in oklab, var(--tcl-status-warning) 60%, var(--tcl-border));
+  }
+  .tcl-decision-map__tally-item[data-bucket='risk'] {
+    color: var(--tcl-status-danger);
+    border-color: color-mix(in oklab, var(--tcl-status-danger) 60%, var(--tcl-border));
+  }
+
+  /* ── consequence cascade ── */
+  .tcl-decision-map__cascade {
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface-raised);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-decision-map__cascade-title {
+    margin: 0 0 var(--tcl-space-3);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-decision-map__cascade-hint,
+  .tcl-decision-map__none {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-decision-map__chain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+  }
+  /* second/third-order tiers indent behind a connector rail; the visual indent
+     caps at depth 3 — deeper tiers still render, flat (data never dropped) */
+  .tcl-decision-map__chain[data-depth='1'],
+  .tcl-decision-map__chain[data-depth='2'],
+  .tcl-decision-map__chain[data-depth='3'] {
+    margin: var(--tcl-space-2) 0 0 var(--tcl-space-3);
+    padding-left: var(--tcl-space-4);
+    border-left: 1px solid var(--tcl-border);
+  }
+  .tcl-decision-map__chain[data-depth='1'] > .tcl-decision-map__consequence::before,
+  .tcl-decision-map__chain[data-depth='2'] > .tcl-decision-map__consequence::before,
+  .tcl-decision-map__chain[data-depth='3'] > .tcl-decision-map__consequence::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--tcl-space-4));
+    top: 0.85em;
+    width: var(--tcl-space-3);
+    border-top: 1px solid var(--tcl-border);
+  }
+  .tcl-decision-map__consequence {
+    position: relative;
+    padding: var(--tcl-space-1) 0 var(--tcl-space-1) var(--tcl-space-3);
+    border-left: 3px solid var(--consequence-tone, var(--tcl-status-neutral));
+  }
+  /* the Visual Grammar plasticity vocabulary: dashed = still negotiable —
+     always paired with the likelihood word chip */
+  .tcl-decision-map__consequence[data-likelihood='possible'],
+  .tcl-decision-map__consequence[data-likelihood='unlikely'] {
+    border-left-style: dashed;
+  }
+  .tcl-decision-map__consequence[data-likelihood='possible']
+    > .tcl-decision-map__consequence-row
+    > .tcl-decision-map__chip[data-kind='likelihood'],
+  .tcl-decision-map__consequence[data-likelihood='unlikely']
+    > .tcl-decision-map__consequence-row
+    > .tcl-decision-map__chip[data-kind='likelihood'] {
+    border-style: dashed;
+  }
+  .tcl-decision-map__consequence-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-decision-map__consequence-label {
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-medium, 500);
+  }
+  .tcl-decision-map__chip[data-kind='valence'] {
+    color: var(--consequence-ink, var(--tcl-text-dim));
+    border-color: color-mix(
+      in oklab,
+      var(--consequence-tone, var(--tcl-border)) 60%,
+      var(--tcl-border)
+    );
+  }
+  .tcl-decision-map__consequence-detail {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--tcl-text-xs);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── inspector ── */
+  .tcl-decision-map__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-accent);
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-decision-map__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-decision-map__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-decision-map__inspector-rec {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    font-weight: var(--tcl-weight-medium, 500);
+  }
+  .tcl-decision-map__inspector-decided {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-decision-map__inspector-tally {
+    margin: var(--tcl-space-2) 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-decision-map__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-decision-map__empty {
+    margin: 0;
+    padding: var(--tcl-space-6);
+    text-align: center;
+    color: var(--tcl-text-faint);
+    font-size: var(--tcl-text-sm);
+    border: 1px dashed var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-decision-map__option {
+      transition: none;
+    }
+  }
+}

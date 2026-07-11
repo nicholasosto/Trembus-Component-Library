@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { cx, vars, toneVar, VizOverlay, useControllableSelection } from '../../internal';
 import type { VizTone } from '../../internal';
 import './Strata.css';
@@ -424,6 +425,19 @@ export function Strata({
   className,
 }: StrataProps) {
   const [selectedId, select] = useControllableSelection(selProp, defaultSelectedId, onSelect);
+  const [rovingId, setRovingId] = useState<string | undefined>(
+    () => selProp ?? defaultSelectedId,
+  );
+  const previousSelectedIdProp = useRef(selProp);
+
+  // Selection and keyboard focus may intentionally diverge for a controlled
+  // component whose parent has not accepted onSelect yet. Re-seed roving focus
+  // only when the primitive external selectedId value actually changes.
+  useLayoutEffect(() => {
+    if (previousSelectedIdProp.current === selProp) return;
+    previousSelectedIdProp.current = selProp;
+    setRovingId(selProp);
+  }, [selProp]);
 
   const { arcs, links, fwd, rev, labelOf, maxDepth, ringRadii, hasConjecture, hasGap } = useMemo(
     () => buildLayout(data.principles),
@@ -442,6 +456,46 @@ export function Strata({
 
   const hasSelection = cones.all.size > 0;
   const selected = arcs.find((a) => a.id === selectedId);
+  const tabbableId = arcs.some((a) => a.id === rovingId)
+    ? rovingId
+    : (selected?.id ?? arcs[0]?.id);
+
+  // A radial map has no single semantic axis, so either arrow-key pair walks
+  // the deterministic arc order. Selection follows focus (automatic
+  // activation), keeping the inspector and aria-pressed state in sync.
+  const onNodeKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number): void => {
+    let nextIndex: number;
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextIndex = (index + 1) % arcs.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextIndex = (index - 1 + arcs.length) % arcs.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = arcs.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    const nextArc = arcs[nextIndex];
+    if (!nextArc) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const nodes = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+      '.tcl-strata__node',
+    );
+    nodes?.item(nextIndex).focus();
+    setRovingId(nextArc.id);
+    select(nextArc.id);
+  };
 
   const nameIds = (ids: Set<string> | undefined): string =>
     [...(ids ?? [])].map((id) => labelOf.get(id) ?? id).join(', ');
@@ -541,7 +595,7 @@ export function Strata({
                   {data.title}
                 </div>
               )}
-              {arcs.map((a) => {
+              {arcs.map((a, index) => {
                 const isSelected = a.id === selectedId;
                 const onCone = cones.all.has(a.id);
                 return (
@@ -562,7 +616,12 @@ export function Strata({
                     data-depth={a.depth}
                     aria-pressed={isSelected}
                     aria-label={arcName(a)}
-                    onClick={() => select(a.id)}
+                    tabIndex={a.id === tabbableId ? 0 : -1}
+                    onClick={() => {
+                      setRovingId(a.id);
+                      select(a.id);
+                    }}
+                    onKeyDown={(event) => onNodeKeyDown(event, index)}
                   >
                     {a.kind === 'gap' && <span aria-hidden="true">?</span>}
                   </button>

@@ -31,7 +31,9 @@ import '@trembus/game-viz/styles.css';
 
 Components include `Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`,
 `Chronicle`, `MediaFrame` (a format-aware media surface — image · audio waveform · 3D turntable ·
-doc glyph), and `Effigy` (a 3D model thumbnail wrapping Google `<model-viewer>`).
+doc glyph), `Effigy` (a 3D model thumbnail wrapping Google `<model-viewer>`), and
+`Constellation` (a gothic star-chart skin over the `@trembus/viz` `TalentTree` — the
+first `game-viz → viz` dependency).
 Decorative chrome is `aria-hidden`; interactive bits are real focusable controls;
 motion sits behind `prefers-reduced-motion`.
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { cx } from '../../utils/cx';
 import { clampPct, toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -131,8 +132,15 @@ function buildLayout(data: TimelineContract): Layout {
 
   // Chronological order drives placement, alternation, and prev/next. Stable for
   // equal dates (preserve authored order via the original index as a tiebreak).
+  const seenExplicitIds = new Set<string>();
   const ordered = raw
     .map((event, i) => ({ event, i }))
+    .filter(({ event }) => {
+      if (event.id === undefined) return true;
+      if (seenExplicitIds.has(event.id)) return false;
+      seenExplicitIds.add(event.id);
+      return true;
+    })
     .sort((a, b) => a.event.at - b.event.at || a.i - b.i);
 
   const scale = data.scale ?? 'ordinal';
@@ -184,8 +192,10 @@ export function Timeline({
   className,
 }: TimelineProps) {
   const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
+  const [rovingId, setRovingId] = useState<string | undefined>(defaultSelectedId ?? selProp);
   const selectedId = selProp ?? internal;
   const select = (id: string): void => {
+    setRovingId(id);
     if (selProp === undefined) setInternal(id);
     onSelect?.(id);
   };
@@ -194,26 +204,64 @@ export function Timeline({
   const { events, width, axisFrom, axisTo } = layout;
 
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const eventRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectedIndex = events.findIndex((e) => e.id === selectedId);
   const selected = selectedIndex >= 0 ? events[selectedIndex] : undefined;
+  const selectedEventId = selected?.id;
+  const selectedCardX = selected?.cardX;
   const hasContent = events.length > 0;
+  const rovingIndex = events.findIndex((e) => e.id === rovingId);
+  const tabStopIndex = rovingIndex >= 0 ? rovingIndex : selectedIndex >= 0 ? selectedIndex : 0;
+
+  // External controlled selection changes should move the tab stop too. A
+  // keyboard move awaiting a controlled update keeps its own roving target.
+  useEffect(() => {
+    if (selectedEventId !== undefined) setRovingId(selectedEventId);
+  }, [selectedEventId]);
 
   // Keep the selected event in view as selection moves (e.g. via prev/next).
   useEffect(() => {
     const el = scrollerRef.current;
-    if (!el || !selected || typeof el.scrollTo !== 'function') return;
-    const left = selected.cardX - (el.clientWidth - CARD_W) / 2;
+    if (!el || selectedCardX === undefined || typeof el.scrollTo !== 'function') return;
+    const left = selectedCardX - (el.clientWidth - CARD_W) / 2;
+    const reduceMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     try {
-      el.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+      el.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? 'auto' : 'smooth' });
     } catch {
       /* jsdom / unsupported — keeping the selection in view is a progressive enhancement */
     }
-  }, [selected]);
+  }, [selectedEventId, selectedCardX]);
 
   const stepBy = (delta: number): void => {
     const next = selectedIndex < 0 ? (delta > 0 ? 0 : events.length - 1) : selectedIndex + delta;
     const target = events[next];
     if (target) select(target.id);
+  };
+
+  const selectAndFocus = (index: number): void => {
+    const target = events[index];
+    if (!target) return;
+    select(target.id);
+    eventRefs.current[index]?.focus();
+  };
+
+  const handleEventKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number): void => {
+    let nextIndex: number | undefined;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextIndex = Math.min(events.length - 1, index + 1);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextIndex = Math.max(0, index - 1);
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = events.length - 1;
+    }
+
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    selectAndFocus(nextIndex);
   };
 
   const categories = data.categories ?? [];
@@ -293,12 +341,16 @@ export function Timeline({
               role="group"
               aria-label={data.title ?? 'Timeline'}
             >
-              {events.map((p) => {
+              {events.map((p, eventIndex) => {
                 const isSelected = p.id === selectedId;
+                const isTabStop = eventIndex === tabStopIndex;
                 const name = `${p.dateText}: ${p.event.label}${p.categoryLabel ? ` — ${p.categoryLabel}` : ''}`;
                 return (
                   <button
                     key={p.id}
+                    ref={(node) => {
+                      eventRefs.current[eventIndex] = node;
+                    }}
                     type="button"
                     data-event-id={p.id}
                     className={cx(
@@ -316,7 +368,9 @@ export function Timeline({
                     })}
                     aria-pressed={isSelected}
                     aria-label={name}
+                    tabIndex={isTabStop ? 0 : -1}
                     onClick={() => select(p.id)}
+                    onKeyDown={(event) => handleEventKeyDown(event, eventIndex)}
                   >
                     <span className="tcl-timeline__date">{p.dateText}</span>
                     {p.event.sub && <span className="tcl-timeline__sub">{p.event.sub}</span>}

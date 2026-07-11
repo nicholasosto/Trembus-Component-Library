@@ -37,6 +37,13 @@ const config: StorybookConfig = {
             replacement: fileURLToPath(new URL('../packages/tokens/src/index.ts', import.meta.url)),
           },
           {
+            // game-viz's Constellation composes the viz TalentTree; from published dist its
+            // per-component `import './X.css'` side-effects don't reach Storybook, so the
+            // skinned component would render unstyled. Source resolution injects that CSS.
+            find: /^@trembus\/viz$/,
+            replacement: fileURLToPath(new URL('../packages/viz/src/index.ts', import.meta.url)),
+          },
+          {
             // Glyphs render from source so the gallery + ui/viz stories that compose
             // them need no icons prebuild and stay live on source edits.
             find: /^@trembus\/icons$/,

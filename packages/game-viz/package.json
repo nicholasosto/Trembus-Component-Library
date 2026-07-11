@@ -1,13 +1,15 @@
 {
   "name": "@trembus/game-viz",
-  "version": "0.2.0",
-  "description": "Trembus expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates. Builds on @trembus/ui primitives + the 3-jobs contract; theatrical surface, accessible spine.",
+  "version": "0.3.0",
+  "description": "Trembus expressive game / cinematic UI — HUD frames, character dossiers, episode decks, title plates, and a gothic talent-tree star-chart. Builds on @trembus/ui primitives and the @trembus/viz spine + the 3-jobs contract; theatrical surface, accessible spine.",
   "type": "module",
   "keywords": [
     "react",
     "game-ui",
     "hud",
     "cinematic",
+    "talent-tree",
+    "skill-tree",
     "component-library",
     "design-system",
     "model-viewer",
@@ -67,7 +69,8 @@
     "@google/model-viewer": "^4.3.1",
     "@trembus/icons": "workspace:^",
     "@trembus/tokens": "workspace:^",
-    "@trembus/ui": "workspace:^"
+    "@trembus/ui": "workspace:^",
+    "@trembus/viz": "workspace:^"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.0",

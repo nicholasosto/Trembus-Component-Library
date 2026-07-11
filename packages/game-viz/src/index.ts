@@ -52,3 +52,10 @@ export type {
   MediaMedium,
   MediaFrameTone,
 } from './components/MediaFrame/MediaFrame';
+
+export { Constellation } from './components/Constellation/Constellation';
+export type {
+  ConstellationProps,
+  ConstellationContract,
+  ConstellationTone,
+} from './components/Constellation/Constellation';

@@ -11,16 +11,30 @@ export const strataContract: ComponentContract = {
     },
     affordAction: {
       satisfiedBy:
-        'every arc — established, conjecture, or gap — is a focusable HTML core-sample button at its centroid carrying the accessible name (label + sub + layer + kind) over the decorative aria-hidden SVG; a text legend states the dashed vocabulary in words, and the live inspector names each selection’s direct supports both ways.',
+        'every arc — established, conjecture, or gap — is an HTML core-sample button at its centroid carrying the accessible name (label + sub + layer + kind) over the decorative aria-hidden SVG; roving tabindex leaves one Tab stop (the selected or first arc initially, then the most recently clicked or keyboard-reached arc), and an external selectedId change re-seeds that stop; a text legend states the dashed vocabulary in words.',
       story: 'States',
     },
     acknowledgeInput: {
       satisfiedBy:
-        'click or Enter/Space selects an arc (aria-pressed), rings it in its own tone, highlights its foundation cone (everything beneath it) and its load cone (everything that would collapse with it), reveals its direct support connectors, and announces layer, foundation/load counts, named rests-on/supports lists, and notes in an aria-live inspector.',
+        'click or Enter/Space selects an arc (aria-pressed); either Arrow-key pair roves, selects, and focuses in deterministic arc order, with Home/End jumping to the bounds; selection rings the arc in its own tone, highlights its foundation and load cones, reveals direct support connectors, and announces layer, counts, named rests-on/supports lists, and notes in an aria-live inspector.',
       story: 'Interaction',
     },
   },
-  a11y: { role: 'group', keyboard: ['Tab', 'Enter', 'Space'], focusRing: true },
+  a11y: {
+    role: 'group',
+    keyboard: [
+      'Tab',
+      'Enter',
+      'Space',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
+    ],
+    focusRing: true,
+  },
   tokensUsed: [
     '--tcl-accent',
     '--tcl-status-*',

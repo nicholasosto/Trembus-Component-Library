@@ -41,11 +41,11 @@ describe('Swimlane', () => {
   });
 
   it('honors defaultSelectedId (uncontrolled)', () => {
-    render(<Swimlane data={flow} defaultSelectedId="draft" />);
-    expect(screen.getByRole('button', { name: 'Claude: Draft — Active' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
+    const { container } = render(<Swimlane data={flow} defaultSelectedId="draft" />);
+    const draft = screen.getByRole('button', { name: 'Claude: Draft — Active' });
+    expect(draft).toHaveAttribute('aria-pressed', 'true');
+    expect(draft).toHaveAttribute('tabindex', '0');
+    expect(container.querySelectorAll('.tcl-swimlane__step[tabindex="0"]')).toHaveLength(1);
   });
 
   it('is controllable: onSelect fires but selection does not change without a new prop', async () => {
@@ -55,12 +55,70 @@ describe('Swimlane', () => {
     const draft = screen.getByRole('button', { name: 'Claude: Draft — Active' });
     await user.click(draft);
     expect(onSelect).toHaveBeenCalledWith('draft');
+    expect(draft).toHaveAttribute('tabindex', '0');
     // controlled → still selected on "ask", not "draft"
     expect(draft).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('button', { name: 'You: Ask — Done' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
+  });
+
+  it('roves with arrow keys and Home/End while selecting the focused step', async () => {
+    const onSelect = vi.fn();
+    const user = userEvent.setup();
+    const { container } = render(
+      <Swimlane data={flow} defaultSelectedId="ask" onSelect={onSelect} />,
+    );
+    const ask = screen.getByRole('button', { name: 'You: Ask — Done' });
+    const draft = screen.getByRole('button', { name: 'Claude: Draft — Active' });
+    const review = screen.getByRole('button', { name: 'You: Review — Pending' });
+
+    ask.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(draft).toHaveFocus();
+    expect(draft).toHaveAttribute('tabindex', '0');
+    expect(draft).toHaveAttribute('aria-pressed', 'true');
+
+    await user.keyboard('{End}');
+    expect(review).toHaveFocus();
+    await user.keyboard('{Home}');
+    expect(ask).toHaveFocus();
+    await user.keyboard('{ArrowLeft}');
+    expect(review).toHaveFocus();
+    expect(container.querySelectorAll('.tcl-swimlane__step[tabindex="0"]')).toHaveLength(1);
+    expect(onSelect).toHaveBeenLastCalledWith('review');
+  });
+
+  it('keeps controlled roving focus stable across equivalent data rerenders', async () => {
+    const onSelect = vi.fn();
+    const user = userEvent.setup();
+    const { rerender } = render(<Swimlane data={flow} selectedId="ask" onSelect={onSelect} />);
+    const ask = screen.getByRole('button', { name: 'You: Ask — Done' });
+    const draft = screen.getByRole('button', { name: 'Claude: Draft — Active' });
+
+    ask.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(draft).toHaveFocus();
+    expect(draft).toHaveAttribute('tabindex', '0');
+    expect(draft).toHaveAttribute('aria-pressed', 'false');
+    expect(onSelect).toHaveBeenLastCalledWith('draft');
+
+    rerender(
+      <Swimlane
+        data={{
+          ...flow,
+          lanes: flow.lanes.map((lane) => ({ ...lane })),
+          steps: flow.steps.map((step) => ({ ...step })),
+        }}
+        selectedId="ask"
+        onSelect={onSelect}
+      />,
+    );
+
+    expect(draft).toHaveFocus();
+    expect(draft).toHaveAttribute('tabindex', '0');
+    expect(ask).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('falls back to the index — not the label — for steps with no id', async () => {

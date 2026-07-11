@@ -95,6 +95,26 @@ export interface HeatmapProps {
 
 const fmt = (v: number, unit?: string): string => `${Math.round(v * 100) / 100}${unit ?? ''}`;
 
+const fmtRowValue = (value: number | null | undefined, unit?: string): string =>
+  value == null || !Number.isFinite(value) ? 'no data' : fmt(value, unit);
+
+const rowAccessibleName = (row: HeatmapRow, columns: string[], unit?: string): string => {
+  const identity = `${row.label}${row.sub ? ` · ${row.sub}` : ''}`;
+  const values = columns.map((column, ci) => `${column}: ${fmtRowValue(row.cells[ci], unit)}`);
+  return [identity, ...values].join(', ');
+};
+
+/** Explicit row ids are selection identities in row mode; first authored row wins a collision. */
+const dedupeRowsByExplicitId = (rows: HeatmapRow[]): HeatmapRow[] => {
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    if (row.id === undefined) return true;
+    if (seen.has(row.id)) return false;
+    seen.add(row.id);
+    return true;
+  });
+};
+
 export function Heatmap({
   data,
   selectionMode = 'cell',
@@ -124,7 +144,11 @@ export function Heatmap({
     onSelectRow?.(id);
   };
 
-  const { columns, rows, unit, stops, tone = 'accent', columnTones } = data;
+  const { columns, rows: authoredRows, unit, stops, tone = 'accent', columnTones } = data;
+  const rows = useMemo(
+    () => (rowMode ? dedupeRowsByExplicitId(authoredRows) : authoredRows),
+    [rowMode, authoredRows],
+  );
 
   const [lo, hi] = useMemo(() => {
     const vs = rows
@@ -136,7 +160,7 @@ export function Heatmap({
   }, [rows, data.min, data.max]);
 
   const sortedStops = useMemo(
-    () => (stops ? [...stops].sort((a, b) => a.at - b.at) : null),
+    () => (stops && stops.length > 0 ? [...stops].sort((a, b) => a.at - b.at) : null),
     [stops],
   );
 
@@ -179,7 +203,7 @@ export function Heatmap({
   // by the visible inspector's text content.
   const announce = rowMode
     ? selectedRow
-      ? `${selectedRow.label}${selectedRow.sub ? ` · ${selectedRow.sub}` : ''} selected`
+      ? `${rowAccessibleName(selectedRow, columns, unit)} selected`
       : ''
     : selectedCell
       ? `${selectedCell.row.label}, ${selectedCell.col}: ${fmt(selectedCell.value, unit)}`
@@ -229,7 +253,9 @@ export function Heatmap({
                 <span
                   key={`cell-${ri}-${ci}`}
                   className="tcl-heatmap__cell tcl-heatmap__cell--empty"
-                  aria-hidden="true"
+                  role={rowMode ? undefined : 'img'}
+                  aria-label={rowMode ? undefined : `${row.label}, ${col}: no data`}
+                  aria-hidden={rowMode || undefined}
                   title={`${row.label}, ${col}: no data`}
                 />
               );
@@ -276,7 +302,7 @@ export function Heatmap({
                 type="button"
                 className={cx('tcl-heatmap__row', isSelected && 'is-selected')}
                 aria-current={isSelected ? 'true' : undefined}
-                aria-label={row.sub ? `${row.label} · ${row.sub}` : row.label}
+                aria-label={rowAccessibleName(row, columns, unit)}
                 onClick={() => selectRow(rid)}
               >
                 {head}
@@ -324,15 +350,25 @@ export function Heatmap({
       )}
 
       {showInspector ? (
-        <div className="tcl-heatmap__inspector" aria-live="polite">
+        <div className="tcl-heatmap__inspector" aria-live="polite" aria-atomic="true">
           {rowMode ? (
             selectedRow ? (
-              <p className="tcl-heatmap__inspector-title">
-                {selectedRow.label}
-                {selectedRow.sub && (
-                  <span className="tcl-heatmap__inspector-sub"> · {selectedRow.sub}</span>
-                )}
-              </p>
+              <>
+                <p className="tcl-heatmap__inspector-title">
+                  {selectedRow.label}
+                  {selectedRow.sub && (
+                    <span className="tcl-heatmap__inspector-sub"> · {selectedRow.sub}</span>
+                  )}
+                </p>
+                <dl className="tcl-heatmap__inspector-values">
+                  {columns.map((column, ci) => (
+                    <div key={`inspector-${ci}`} className="tcl-heatmap__inspector-pair">
+                      <dt>{column}</dt>
+                      <dd>{fmtRowValue(selectedRow.cells[ci], unit)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
             ) : (
               <p className="tcl-heatmap__inspector-hint">Select a row to inspect it.</p>
             )
@@ -353,7 +389,7 @@ export function Heatmap({
         </div>
       ) : (
         // Chrome hidden, but selection still reaches assistive tech.
-        <div className="tcl-heatmap__sr-live" aria-live="polite">
+        <div className="tcl-heatmap__sr-live" aria-live="polite" aria-atomic="true">
           {announce}
         </div>
       )}

@@ -256,3 +256,18 @@ export type {
   ToolbarSeparatorProps,
   ToolbarGroupProps,
 } from './components/Toolbar/Toolbar';
+export { DecisionMap } from './components/DecisionMap/DecisionMap';
+export type {
+  DecisionMapProps,
+  DecisionMapContract,
+  DecisionMapOption,
+  DecisionMapConsequence,
+  DecisionMapRecommendation,
+  DecisionMapTone,
+  DecisionMapStatus,
+  DecisionMapStrength,
+  DecisionMapLikelihood,
+  DecisionMapHorizon,
+  DecisionMapEffort,
+  DecisionMapReversibility,
+} from './components/DecisionMap/DecisionMap';

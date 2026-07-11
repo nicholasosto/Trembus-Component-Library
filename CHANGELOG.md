@@ -11,6 +11,72 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.7.0] — 2026-07-11
+
+### Added
+
+- **`DecisionMap`** — a Tier-1 "before the call" decision visualization. Option cards carry a
+  recommendation ribbon (word + strength), a clamped confidence bar with its printed %,
+  effort / reversibility ("door type") word chips, and a benefit/caution/risk tally; selecting a
+  card unrolls its first- and second-order **consequence cascade** with a likelihood word on
+  every edge, tone rails, and dashed "still-negotiable" rails for possible/unlikely effects. A
+  `status: 'decided'` + `decidedId` state renders the at-rest ledger view for a locked-in call.
+  Lenient parse, strict render (only `title` / option `label` required; unknown enums degrade to
+  safe defaults; ids uniquified first-wins; confidence clamped once and reused for bar + print +
+  aria). Each card is a focusable button with a composed accessible-name sentence and an
+  aria-live inspector.
+
+### Changed
+
+- **`Brief`** — new `headingLevel` prop (1–6, default 2) so the document title and section
+  headings slot into the host page's heading hierarchy — needed to compose `Brief` inside
+  example pages without breaking heading order.
+- **`Hub`**, **`Swimlane`**, **`Timeline`** — keyboard navigation upgraded to a **roving
+  tabindex**: one Tab stop, Arrow keys move focus and selection together (2-D for
+  Swimlane/Timeline), Home/End jump to the ends. Timeline's prev/next controls still provide the
+  same chronological step.
+- **`Timeline`** — duplicate explicit event ids now resolve first-authored-wins before layout,
+  and selection scroll respects `prefers-reduced-motion`.
+- **`Heatmap`** — in `selectionMode="row"` the row button's accessible name now enumerates every
+  column/value pair with its unit; duplicate explicit row ids resolve first-authored-wins;
+  no-data cells are named placeholders.
+
+## [@trembus/viz 0.5.0] — 2026-07-11
+
+### Added
+
+- **`TalentTree`** — a game skill-tree: a prerequisite DAG of multi-rank talents you spend a
+  points budget into. Its lead job is **afford-action** (a viz-roster first) — allocation _is_ the
+  component. Click / Enter / Space raises a rank where the prerequisites (including rank
+  prerequisites like "Fireball at rank 3"), the tier gate, and the budget allow; Shift+click, `-`,
+  or Delete safely removes one and can never orphan an allocated dependent or break a tier gate
+  (a full-recheck simulation). Authored tiers with a derived fallback (tier = longest
+  prerequisite chain), locked / available / allocated / maxed states (distinguished by border
+  shape, not colour alone), met vs unmet edges with rank numerals, a hand-rolled `role="meter"`
+  points budget, and an aria-live inspector that states every reason in words. Controlled or
+  uncontrolled via `allocated` / `defaultAllocated` / `onAllocatedChange`; `readOnly` displays a
+  finished build. Lenient parse, strict render (duplicate ids first-wins, dangling requires
+  dropped, cycles broken, a non-finite budget treated as unlimited, never throws). Adds the
+  `--tcl-talenttree-accent` skin hook, read via fallback and never declared on the component root
+  so a skin can remap it from an ancestor.
+
+### Changed
+
+- **`Strata`** — keyboard navigation upgraded to a **roving tabindex**: either Arrow-key pair
+  roves, selects, and focuses in deterministic arc order with Home/End jumping to the bounds, and
+  an external `selectedId` change re-seeds the single Tab stop.
+
+## [@trembus/game-viz 0.3.0] — 2026-07-11
+
+### Added
+
+- **`Constellation`** — the liturgical-gothic skin over the viz `TalentTree`, framing the talent
+  DAG as a night star-chart (reliquary-dark plate, HUD corner brackets, display-serif title, an
+  optional designation tab) and re-tinting the whole tree accent through the
+  `--tcl-talenttree-accent` hook per `data-tone`, while per-node tones still override. The
+  interactive spine is the TalentTree's, passed straight through — theatrical surface, accessible
+  spine. This is the first **`@trembus/game-viz → @trembus/viz`** dependency.
+
 ## [@trembus/ui 0.6.0] — 2026-07
 
 ### Changed

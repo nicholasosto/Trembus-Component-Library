@@ -10,7 +10,9 @@ Trembus Tier-2 node-link visualizations — `Tree` (strict hierarchy via
 class diagram with typed relationship arrowheads), and `Strata` (concentric
 first-principles strata — bedrock axioms innermost, principles layer outward by
 dependency; dangling `restsOn` references auto-materialize dashed **gap** arcs,
-undiscovered supports surfaced as discovery opportunities). The same "3 UI
+undiscovered supports surfaced as discovery opportunities), and `TalentTree` (a
+game skill-tree — a prerequisite DAG of multi-rank talents with tier gates and a
+full points-budget allocation engine; lead job **afford-action**). The same "3 UI
 jobs" contract spine as `@trembus/ui`'s Tier-1 viz, with a layout engine.
 Depends on `@trembus/tokens` only — never on `@trembus/ui`.
 

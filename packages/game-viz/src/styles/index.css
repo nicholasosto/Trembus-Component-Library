@@ -1,11 +1,13 @@
 /* ════════════════════════════════════════════════════════════
    @trembus/game-viz — style entry. Import this ONCE in a consumer app:
        import '@trembus/game-viz/styles.css';
-   Unlike @trembus/viz (tokens-only), game-viz BUILDS ON @trembus/ui:
-   it composes ui primitives (Box/Stack/Text/Pressable/Badge/Button),
-   so it pulls the full @trembus/ui style entry — which itself declares
-   the @layer cascade order and the shared @trembus/tokens foundation.
+   game-viz BUILDS ON @trembus/ui (it composes ui primitives —
+   Box/Stack/Text/Pressable/Badge/Button) AND, since the Constellation
+   skin wraps the @trembus/viz TalentTree, on @trembus/viz too. Each of
+   those style entries declares the same @layer cascade order over the
+   shared @trembus/tokens foundation, so importing both is idempotent.
    Each game-viz component opens `@layer tcl.components` and bundles
    alongside via its own side-effect import.
    ════════════════════════════════════════════════════════════ */
 @import '@trembus/ui/styles.css';
+@import '@trembus/viz/styles.css';

@@ -11,7 +11,7 @@ export const swimlaneContract: ComponentContract = {
     },
     affordAction: {
       satisfiedBy:
-        'every step is a focusable HTML `<button>` carrying its accessible name (actor · step · status); selecting one inspects its status, note, and handoff targets in the panel, and lights its connectors.',
+        'every step is a focusable HTML `<button>` carrying its accessible name (actor · step · status); one step is in the Tab order and Arrow keys plus Home/End move through the diagram; selecting one inspects its status, note, and handoff targets in the panel, and lights its connectors.',
       story: 'States',
     },
     acknowledgeInput: {
@@ -20,7 +20,21 @@ export const swimlaneContract: ComponentContract = {
       story: 'Interaction',
     },
   },
-  a11y: { role: 'group', keyboard: ['Tab', 'Enter', 'Space'], focusRing: true },
+  a11y: {
+    role: 'group',
+    keyboard: [
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
+      'Enter',
+      'Space',
+    ],
+    focusRing: true,
+  },
   tokensUsed: [
     '--tcl-accent',
     '--tcl-status-*',

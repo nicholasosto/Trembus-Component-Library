@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { cx } from '../../utils/cx';
 import './Hub.css';
 
@@ -162,6 +163,82 @@ export function Hub({
   const centerY = 1.5 * h;
 
   const slots = useMemo(() => resolveSlots(data.domains), [data.domains]);
+  const focusableDomains = useMemo(() => {
+    const seen = new Set<string>();
+    return data.domains.filter((domain) => {
+      if (seen.has(domain.id) || !slots.has(domain.id)) return false;
+      seen.add(domain.id);
+      return true;
+    });
+  }, [data.domains, slots]);
+  const focusableIds = useMemo(
+    () => focusableDomains.map((domain) => domain.id),
+    [focusableDomains],
+  );
+  const [rovingId, setRovingId] = useState<string | undefined>(() => {
+    if (selProp && focusableIds.includes(selProp)) return selProp;
+    if (defaultSelectedId && focusableIds.includes(defaultSelectedId)) return defaultSelectedId;
+    return focusableIds[0];
+  });
+  const tileRefs = useRef(new Map<string, HTMLButtonElement>());
+  const previousControlledId = useRef(selProp);
+
+  useEffect(() => {
+    const controlledSelectionChanged = previousControlledId.current !== selProp;
+    previousControlledId.current = selProp;
+    const controlledTarget = selProp && focusableIds.includes(selProp) ? selProp : undefined;
+
+    if (controlledSelectionChanged && controlledTarget) {
+      const focusIsInHub = [...tileRefs.current.values()].includes(
+        document.activeElement as HTMLButtonElement,
+      );
+      setRovingId(controlledTarget);
+      if (focusIsInHub) tileRefs.current.get(controlledTarget)?.focus();
+      return;
+    }
+
+    setRovingId((current) => {
+      if (current && focusableIds.includes(current)) return current;
+      return controlledTarget ?? focusableIds[0];
+    });
+  }, [focusableIds, selProp]);
+
+  const activeRovingId =
+    rovingId && focusableIds.includes(rovingId)
+      ? rovingId
+      : selProp && focusableIds.includes(selProp)
+        ? selProp
+        : focusableIds[0];
+
+  const moveFocus = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number): void => {
+    if (focusableDomains.length === 0) return;
+
+    let nextIndex: number | undefined;
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextIndex = (index + 1) % focusableDomains.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextIndex = (index - 1 + focusableDomains.length) % focusableDomains.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = focusableDomains.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    const nextId = focusableDomains[nextIndex]?.id;
+    if (!nextId) return;
+    setRovingId(nextId);
+    tileRefs.current.get(nextId)?.focus();
+  };
   const selected = data.domains.find((d) => d.id === selectedId);
 
   return (
@@ -187,7 +264,10 @@ export function Hub({
           <div className="tcl-hub__stats">
             {data.stats.map((s, i) => (
               <div key={i} className="tcl-hub__stat">
-                <span className="tcl-hub__stat-value" style={s.color ? { color: s.color } : undefined}>
+                <span
+                  className="tcl-hub__stat-value"
+                  style={s.color ? { color: s.color } : undefined}
+                >
                   {s.value}
                 </span>
                 <span className="tcl-hub__stat-label">{s.label}</span>
@@ -203,7 +283,7 @@ export function Hub({
         aria-label={data.tagline ?? data.brand ?? 'Domain map'}
         style={{ width: containerW, height: containerH }}
       >
-        {data.domains.map((d) => {
+        {focusableDomains.map((d, focusIndex) => {
           const slot = slots.get(d.id);
           if (!slot) return null;
           const { x, y } = slotXY(slot, w, h);
@@ -212,13 +292,30 @@ export function Hub({
             <button
               key={d.id}
               type="button"
-              className={cx('tcl-hub__tile', `tcl-hub__tile--${d.kind}`, isSelected && 'is-selected')}
+              className={cx(
+                'tcl-hub__tile',
+                `tcl-hub__tile--${d.kind}`,
+                isSelected && 'is-selected',
+              )}
               style={{ left: centerX + x - w / 2, top: centerY + y - h / 2, width: w, height: h }}
               aria-pressed={isSelected}
               aria-label={`${d.name}, ${d.tag}, ${d.status}`}
-              onClick={() => select(d.id)}
+              tabIndex={d.id === activeRovingId ? 0 : -1}
+              ref={(node) => {
+                if (node) tileRefs.current.set(d.id, node);
+                else tileRefs.current.delete(d.id);
+              }}
+              onClick={() => {
+                setRovingId(d.id);
+                select(d.id);
+              }}
+              onKeyDown={(event) => moveFocus(event, focusIndex)}
             >
-              <span className="tcl-hub__dot" style={d.dot ? { color: d.dot } : undefined} aria-hidden="true" />
+              <span
+                className="tcl-hub__dot"
+                style={d.dot ? { color: d.dot } : undefined}
+                aria-hidden="true"
+              />
               <span className="tcl-hub__tag">{d.tag}</span>
               <span className="tcl-hub__name">{d.name}</span>
               <span className="tcl-hub__tile-sub">{d.sub}</span>

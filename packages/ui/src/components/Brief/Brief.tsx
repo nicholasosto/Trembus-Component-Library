@@ -85,10 +85,23 @@ export interface BriefContract {
 
 export interface BriefProps {
   data: BriefContract;
+  /** Heading rank for the document title (default `2`); section headings use the next rank. */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Section ids collapsed initially (everything expanded otherwise). */
   defaultCollapsed?: string[];
   className?: string;
 }
+
+type HeadingLevel = NonNullable<BriefProps['headingLevel']>;
+
+const HEADING_TAG: Record<HeadingLevel, `h${HeadingLevel}`> = {
+  1: 'h1',
+  2: 'h2',
+  3: 'h3',
+  4: 'h4',
+  5: 'h5',
+  6: 'h6',
+};
 
 const KIND_LABEL: Record<string, string> = {
   claude: 'Claude',
@@ -253,7 +266,7 @@ function SectionBody({ kind, section }: { kind: SectionKind; section: BriefSecti
   );
 }
 
-export function Brief({ data, defaultCollapsed, className }: BriefProps) {
+export function Brief({ data, headingLevel = 2, defaultCollapsed, className }: BriefProps) {
   const uid = useId();
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(defaultCollapsed));
 
@@ -268,6 +281,8 @@ export function Brief({ data, defaultCollapsed, className }: BriefProps) {
   const kind = data.kind ?? 'spec';
   const title = data.title ?? data.id ?? 'Untitled';
   const sections = data.sections ?? [];
+  const TitleHeading = HEADING_TAG[headingLevel];
+  const SectionHeading = HEADING_TAG[Math.min(6, headingLevel + 1) as HeadingLevel];
 
   return (
     <article className={cx('tcl-brief', className)} data-kind={kind} aria-label={title}>
@@ -276,7 +291,7 @@ export function Brief({ data, defaultCollapsed, className }: BriefProps) {
           <span className="tcl-brief__kind">{KIND_LABEL[kind] ?? kind}</span>
           {data.id && <span className="tcl-brief__id">{data.id}</span>}
         </div>
-        <h2 className="tcl-brief__title">{title}</h2>
+        <TitleHeading className="tcl-brief__title">{title}</TitleHeading>
         {data.summary && <p className="tcl-brief__summary">{data.summary}</p>}
         {data.meta && data.meta.length > 0 && (
           <div className="tcl-brief__meta">
@@ -310,7 +325,7 @@ export function Brief({ data, defaultCollapsed, className }: BriefProps) {
               data-state={open ? 'open' : 'collapsed'}
             >
               <div className="tcl-brief__section-head">
-                <h3 className="tcl-brief__section-h">
+                <SectionHeading className="tcl-brief__section-h">
                   <button
                     type="button"
                     className="tcl-brief__toggle"
@@ -321,7 +336,7 @@ export function Brief({ data, defaultCollapsed, className }: BriefProps) {
                     <span className="tcl-brief__chevron" aria-hidden="true" />
                     {heading}
                   </button>
-                </h3>
+                </SectionHeading>
                 <span className="tcl-brief__section-kind">{SECTION_LABEL[k] ?? k}</span>
               </div>
               <div id={regionId} className="tcl-brief__section-body" hidden={!open}>

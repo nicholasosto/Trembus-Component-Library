@@ -44,3 +44,13 @@ export type {
   StrataPrinciple,
   StrataTone,
 } from './components/Strata/Strata';
+export { TalentTree } from './components/TalentTree/TalentTree';
+export type {
+  TalentTreeProps,
+  TalentTreeContract,
+  TalentTreeTone,
+  TalentTier,
+  TalentNode,
+  TalentRequirement,
+  TalentStatus,
+} from './components/TalentTree/TalentTree';

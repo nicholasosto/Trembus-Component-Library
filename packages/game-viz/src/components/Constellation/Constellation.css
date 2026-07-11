@@ -1,0 +1,152 @@
+@layer tcl.components {
+  .tcl-constellation {
+    /* the skin lever: re-tint the framed TalentTree's accent in one place */
+    --tcl-talenttree-accent: var(--tcl-accent);
+    position: relative;
+    padding: var(--tcl-space-5);
+    background: radial-gradient(
+      120% 140% at 50% -8%,
+      color-mix(in oklab, var(--tcl-talenttree-accent) 10%, var(--tcl-surface-sunken)) 0%,
+      var(--tcl-surface-sunken) 62%
+    );
+    border: 1px solid color-mix(in oklab, var(--tcl-talenttree-accent) 32%, var(--tcl-border));
+    border-radius: var(--tcl-radius-lg);
+    box-shadow: var(--tcl-elevation-2);
+    overflow: hidden;
+  }
+
+  /* Explicit for every tone the `tone` prop accepts (accent is also the root default). */
+  .tcl-constellation[data-tone='accent'] {
+    --tcl-talenttree-accent: var(--tcl-accent);
+  }
+  .tcl-constellation[data-tone='danger'] {
+    --tcl-talenttree-accent: var(--tcl-status-danger);
+  }
+  .tcl-constellation[data-tone='info'] {
+    --tcl-talenttree-accent: var(--tcl-status-info);
+  }
+  .tcl-constellation[data-tone='success'] {
+    --tcl-talenttree-accent: var(--tcl-status-success);
+  }
+  .tcl-constellation[data-tone='warning'] {
+    --tcl-talenttree-accent: var(--tcl-status-warning);
+  }
+  .tcl-constellation[data-tone='neutral'] {
+    --tcl-talenttree-accent: var(--tcl-status-neutral);
+  }
+
+  /* faint star-field — decorative, aria-hidden, shimmer behind reduced-motion */
+  .tcl-constellation__field {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(
+        1.5px 1.5px at 12% 18%,
+        color-mix(in oklab, var(--tcl-talenttree-accent) 60%, transparent) 0,
+        transparent 100%
+      ),
+      radial-gradient(
+        1px 1px at 34% 62%,
+        color-mix(in oklab, var(--tcl-text) 28%, transparent) 0,
+        transparent 100%
+      ),
+      radial-gradient(
+        1.5px 1.5px at 68% 26%,
+        color-mix(in oklab, var(--tcl-text) 22%, transparent) 0,
+        transparent 100%
+      ),
+      radial-gradient(
+        1px 1px at 84% 72%,
+        color-mix(in oklab, var(--tcl-talenttree-accent) 48%, transparent) 0,
+        transparent 100%
+      ),
+      radial-gradient(
+        1px 1px at 52% 88%,
+        color-mix(in oklab, var(--tcl-text) 20%, transparent) 0,
+        transparent 100%
+      );
+    opacity: 0.5;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .tcl-constellation__field {
+      animation: tcl-constellation-twinkle 6s var(--tcl-ease-calm) infinite alternate;
+    }
+  }
+  @keyframes tcl-constellation-twinkle {
+    from {
+      opacity: 0.34;
+    }
+    to {
+      opacity: 0.6;
+    }
+  }
+
+  /* corner brackets — the HUD reticle vocabulary (aria-hidden geometry) */
+  .tcl-constellation__bracket {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    border: 2px solid color-mix(in oklab, var(--tcl-talenttree-accent) 55%, var(--tcl-border));
+  }
+  .tcl-constellation__bracket[data-corner='tl'] {
+    top: 8px;
+    left: 8px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .tcl-constellation__bracket[data-corner='tr'] {
+    top: 8px;
+    right: 8px;
+    border-left: 0;
+    border-bottom: 0;
+  }
+  .tcl-constellation__bracket[data-corner='bl'] {
+    bottom: 8px;
+    left: 8px;
+    border-right: 0;
+    border-top: 0;
+  }
+  .tcl-constellation__bracket[data-corner='br'] {
+    bottom: 8px;
+    right: 8px;
+    border-left: 0;
+    border-top: 0;
+  }
+
+  /* designation tab (text stays on --tcl-text-dim; the tone rides the border) */
+  .tcl-constellation__designation {
+    position: relative;
+    display: inline-block;
+    margin-bottom: var(--tcl-space-4);
+    padding: 2px var(--tcl-space-3);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+    border: 1px solid color-mix(in oklab, var(--tcl-talenttree-accent) 42%, var(--tcl-border));
+    border-radius: var(--tcl-radius-sm);
+  }
+
+  .tcl-constellation__tree {
+    position: relative;
+  }
+
+  /* liturgical display type on the framed TalentTree's title + tier rail labels */
+  .tcl-constellation__tree .tcl-talent-tree__title {
+    font-family: var(--tcl-font-display, var(--tcl-font-sans));
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    font-size: var(--tcl-text-xl);
+  }
+  .tcl-constellation__tree .tcl-talent-tree__rail-label {
+    font-family: var(--tcl-font-display, var(--tcl-font-mono));
+  }
+  /* unlit tiles darken to sit on the night plate; allocated/maxed/locked keep their
+     state tints (viz's per-state selectors are more specific and win). */
+  .tcl-constellation__tree .tcl-talent-tree__tile {
+    background: color-mix(in oklab, var(--tcl-bg) 82%, var(--tcl-surface));
+  }
+}

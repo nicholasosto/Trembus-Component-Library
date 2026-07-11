@@ -25,14 +25,17 @@ member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ bel
 - **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
 - **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
-  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Chronicle`, `Effigy`, `MediaFrame`),
-  titled `Game/*`.
+  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Chronicle`, `Effigy`, `MediaFrame`,
+  `Constellation`), titled `Game/*`.
   Liturgical-gothic idiom: HUD frames, character dossiers, episode decks, title plates, 3D model
   thumbnails (`Effigy` wraps Google `<model-viewer>` — the repo's first 3D primitive). UNLIKE
   `@trembus/viz`
   (tokens-only), it **builds on `@trembus/ui`** (composes `Box`/`Stack`/`Inline`/`Text`/`Pressable`
-  - reuses materials), so it depends on `@trembus/ui`, `@trembus/icons`, and `@trembus/tokens` (the
-    `@trembus/icons` dep arrived with `MediaFrame`'s doc/fallback `Glyph` plate). Same 3-jobs
+  - reuses materials) and now **`@trembus/viz`** too, so it depends on `@trembus/ui`, `@trembus/viz`,
+    `@trembus/icons`, and `@trembus/tokens` (the `@trembus/icons` dep arrived with `MediaFrame`'s
+    doc/fallback `Glyph` plate; the `@trembus/viz` dep arrived with `Constellation`, the gothic skin
+    over the viz `TalentTree` — the first `game-viz → viz` edge, needing a `/^@trembus\/viz$/` source
+    alias in `.storybook/main.ts` or the skinned component renders unstyled). Same 3-jobs
     contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
     `aria-hidden`, interactive bits are real focusable controls, tone-coding always paired with a
     word, motion behind `prefers-reduced-motion`). **Tone-as-text gotcha:** a tone painted as TEXT
@@ -227,13 +230,18 @@ Title these `Visualizations/*` in Storybook. Tier-1 (deterministic layout, no he
 in `@trembus/ui`; **Tier-2** (node-link graphs needing a layout engine) lives in the sibling
 **`@trembus/viz`** package — `Tree` (strict hierarchy via `d3-hierarchy`; org-chart / file-tree /
 dendrogram), `Lineage` (directed-graph / DAG via `@dagrejs/dagre`; pipeline · data-lineage ·
-dependency · genealogy), `SystemMap` (nested drill-down C4 map), `ClassDiagram` (UML), and
+dependency · genealogy), `SystemMap` (nested drill-down C4 map), `ClassDiagram` (UML),
 `Strata` (concentric first-principles strata: radius = dependency depth via longest support
 chain; dangling `restsOn` refs auto-materialize dashed GAP arcs — discovery opportunities, never
-errors; NO ring-thickness floor, rings compress so deep maps never escape the plot box) all
-shipped. Tier-2 reuses the same viz
+errors; NO ring-thickness floor, rings compress so deep maps never escape the plot box), and
+`TalentTree` (a game skill-tree: prerequisite DAG + multi-rank nodes + tier gates + a points-budget
+**allocation engine** with safe deallocation that never orphans a dependent; lead job
+**afford-action** — a viz first; the `--tcl-talenttree-accent` skin hook is read via fallback and
+never declared on the component root, so `game-viz`'s `Constellation` can remap it from an ancestor)
+all shipped. Tier-2 reuses the same viz
 spine via `packages/viz/src/internal/` (`VizOverlay` = decorative aria-hidden `preserveAspectRatio`
-SVG edges + HTML `<button>` nodes positioned by `%`; `useControllableSelection`/`useControllableSet`;
+SVG edges + HTML `<button>` nodes positioned by `%`;
+`useControllableSelection`/`useControllableSet`/`useControllableMap` (the id→rank allocation map);
 the aria-live inspector). Mirror each Tier-2 contract as a VG schema too (`tree.schema.json`).
 
 **The Tier-1 viz spine** (Hub · BarChart · LineChart · DonutChart · Heatmap): lead job is

@@ -201,6 +201,27 @@
     font-size: var(--tcl-text-sm);
     color: var(--tcl-text-faint);
   }
+  .tcl-heatmap__inspector-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+    margin: var(--tcl-space-2) 0 0;
+  }
+  .tcl-heatmap__inspector-pair {
+    display: inline-flex;
+    gap: var(--tcl-space-1);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .tcl-heatmap__inspector-pair dt {
+    color: var(--tcl-text-dim);
+  }
+  .tcl-heatmap__inspector-pair dd {
+    margin: 0;
+    color: var(--tcl-text);
+    font-weight: var(--tcl-weight-semibold);
+  }
   .tcl-heatmap__inspector-value {
     font-family: var(--tcl-font-mono);
     font-variant-numeric: tabular-nums;

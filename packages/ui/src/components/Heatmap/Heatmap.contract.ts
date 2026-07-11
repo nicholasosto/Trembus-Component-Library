@@ -11,12 +11,12 @@ export const heatmapContract: ComponentContract = {
     },
     affordAction: {
       satisfiedBy:
-        'every populated cell is a focusable button; in selectionMode="row" each row is instead one focusable button that selects the whole row (a master-detail target), leaving cells decorative. No-data cells render as a hatched, non-interactive placeholder.',
+        'every populated cell is a focusable button; in selectionMode="row" each row is instead one focusable button whose accessible name enumerates every column/value pair with its unit, leaving cells decorative and resolving duplicate explicit row ids first-authored-wins. No-data cells are named, non-interactive placeholders in cell mode.',
       story: 'States',
     },
     acknowledgeInput: {
       satisfiedBy:
-        'click or Enter/Space selects a cell (aria-pressed) or a row (aria-current="true" + accent rail), and reveals the selection in a live (aria-live) inspector — which stays a hidden live region even when the visible inspector/scale are turned off so the consumer can drive its own drawer without losing screen-reader feedback.',
+        'click or Enter/Space selects a cell (aria-pressed) or a row (aria-current="true" + accent rail), and reveals the selection in a live inspector; row inspection exposes every column/value pair, and the full announcement remains available when visible chrome is off.',
       story: 'Interaction',
     },
   },

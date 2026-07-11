@@ -22,8 +22,19 @@ const doc: BriefContract = {
 describe('Brief', () => {
   it('reveals the title and section content', () => {
     render(<Brief data={doc} />);
-    expect(screen.getByRole('heading', { name: 'Test guide' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Test guide', level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Commands', level: 3 })).toBeInTheDocument();
     expect(screen.getByText('pnpm dev')).toBeInTheDocument();
+  });
+
+  it('supports a custom title rank and caps section headings at h6', () => {
+    const { rerender } = render(<Brief data={doc} headingLevel={1} />);
+    expect(screen.getByRole('heading', { name: 'Test guide', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Commands', level: 2 })).toBeInTheDocument();
+
+    rerender(<Brief data={doc} headingLevel={6} />);
+    expect(screen.getByRole('heading', { name: 'Test guide', level: 6 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Commands', level: 6 })).toBeInTheDocument();
   });
 
   it('coerces bare-string items to text', () => {

@@ -1,0 +1,457 @@
+@layer tcl.components {
+  /* --tcl-talenttree-accent is THE skin lever: every met edge, the meter fill, tier
+     labels, and each node's default tone read it via `var(--tcl-talenttree-accent,
+     var(--tcl-accent))`. It is deliberately NOT declared on this root — declaring it
+     here would shadow a skin's value set on an ancestor (the Timeline/Chronicle hook
+     pattern) — so standalone use falls back to --tcl-accent and game-viz Constellation
+     can remap it per data-tone from the wrapper. Per-node `tone` overrides via --node. */
+  .tcl-talent-tree {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the viz spine) ── */
+  .tcl-talent-tree__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-talent-tree__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-talent-tree__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-talenttree-accent, var(--tcl-accent));
+  }
+  .tcl-talent-tree__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-talent-tree__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── points budget meter (hand-rolled — viz cannot import ui's Meter) ── */
+  .tcl-talent-tree__budget {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-3);
+  }
+  .tcl-talent-tree__budget-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    overflow: hidden;
+  }
+  .tcl-talent-tree__budget-fill {
+    display: block;
+    height: 100%;
+    width: var(--fill, 0%);
+    background: var(--tcl-talenttree-accent, var(--tcl-accent));
+    border-radius: inherit;
+    transition: width var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-talent-tree__budget[data-over] .tcl-talent-tree__budget-fill {
+    background: var(--tcl-status-danger);
+  }
+  .tcl-talent-tree__budget-text {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+    white-space: nowrap;
+  }
+  .tcl-talent-tree__budget[data-over] .tcl-talent-tree__budget-text {
+    color: var(--tcl-status-danger);
+  }
+  .tcl-talent-tree__budget-text--plain {
+    margin: 0;
+  }
+
+  /* ── decorative geology: tier rails (the SVG is aria-hidden) ── */
+  .tcl-talent-tree__rail {
+    stroke: var(--tcl-border);
+    stroke-dasharray: 2 6;
+    opacity: 0.5;
+  }
+  .tcl-talent-tree__rail-label {
+    fill: var(--tcl-text-dim);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+  .tcl-talent-tree__rail-gate {
+    fill: var(--tcl-text-faint);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+  .tcl-talent-tree__rail-gate.is-met {
+    fill: color-mix(in oklab, var(--tcl-status-success) 78%, var(--tcl-text));
+  }
+
+  /* ── prerequisite edges. met = solid accent; unmet = dashed faint; the arrowhead
+        inherits the edge stroke via context-stroke on the marker path. ── */
+  .tcl-talent-tree__edge {
+    fill: none;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    transition: stroke var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-talent-tree__edge.is-met {
+    stroke: var(--tcl-talenttree-accent, var(--tcl-accent));
+  }
+  .tcl-talent-tree__edge.is-unmet {
+    stroke: color-mix(in oklab, var(--tcl-border-strong) 72%, transparent);
+    stroke-dasharray: 4 4;
+  }
+  .tcl-talent-tree__edge.is-active {
+    stroke-width: 3;
+  }
+  .tcl-talent-tree__edge-num {
+    fill: var(--tcl-text);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    paint-order: stroke;
+    stroke: var(--tcl-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  /* ── nodes: the focusable talent tiles (a11y spine over the decorative SVG) ── */
+  .tcl-talent-tree__node {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    margin: 0;
+    padding: 0;
+    transform: translate(-50%, -50%);
+    appearance: none;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    cursor: pointer;
+    transition: transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-talent-tree__node[aria-disabled='true'] {
+    cursor: default;
+  }
+  .tcl-talent-tree__tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    border: 2px solid var(--tcl-border-strong);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    box-shadow: var(--tcl-elevation-1);
+    transition:
+      background var(--tcl-dur-fast) var(--tcl-ease-calm),
+      border-color var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-talent-tree__glyph {
+    display: grid;
+    place-items: center;
+    margin-top: -4px; /* leave room for the pip row at the bottom */
+  }
+  .tcl-talent-tree__glyph svg {
+    width: 22px;
+    height: 22px;
+  }
+  .tcl-talent-tree__initial {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  /* rank pips — filled up to the current rank (aria-hidden; the name carries "rank R of M") */
+  .tcl-talent-tree__pips {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 3px;
+  }
+  .tcl-talent-tree__pip {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--tcl-border-strong);
+  }
+  .tcl-talent-tree__pip[data-on] {
+    background: var(--node, var(--tcl-talenttree-accent, var(--tcl-accent)));
+  }
+  .tcl-talent-tree__pip-count {
+    font-family: var(--tcl-font-mono);
+    font-size: 9px;
+    line-height: 1;
+    color: var(--tcl-text-dim);
+  }
+
+  .tcl-talent-tree__node-label {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    width: 118px;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 11.5px;
+    line-height: 1.2;
+    color: var(--tcl-text);
+    pointer-events: none;
+  }
+
+  /* ── state vocabulary (shape differs, not color alone; readable in both themes) ── */
+  .tcl-talent-tree__node[data-state='available'] .tcl-talent-tree__tile {
+    border-color: color-mix(
+      in oklab,
+      var(--node, var(--tcl-talenttree-accent, var(--tcl-accent))) 45%,
+      var(--tcl-border-strong)
+    );
+  }
+  .tcl-talent-tree__node[data-state='allocated'] .tcl-talent-tree__tile {
+    border-color: var(--node, var(--tcl-talenttree-accent, var(--tcl-accent)));
+    background: color-mix(
+      in oklab,
+      var(--node, var(--tcl-talenttree-accent, var(--tcl-accent))) 12%,
+      var(--tcl-surface-raised)
+    );
+  }
+  .tcl-talent-tree__node[data-state='maxed'] .tcl-talent-tree__tile {
+    border-color: var(--node, var(--tcl-talenttree-accent, var(--tcl-accent)));
+    background: color-mix(
+      in oklab,
+      var(--node, var(--tcl-talenttree-accent, var(--tcl-accent))) 18%,
+      var(--tcl-surface-raised)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--node, var(--tcl-talenttree-accent, var(--tcl-accent))),
+      0 0 12px -2px
+        color-mix(
+          in oklab,
+          var(--node, var(--tcl-talenttree-accent, var(--tcl-accent))) 55%,
+          transparent
+        );
+  }
+  .tcl-talent-tree__node[data-state='locked'] .tcl-talent-tree__tile {
+    border-style: dashed;
+    border-color: var(--tcl-border-strong);
+    background: var(--tcl-surface-sunken);
+    color: var(--tcl-text-dim);
+    box-shadow: none;
+  }
+
+  /* the "+" affordance reveals on hover/focus for an allocatable node */
+  .tcl-talent-tree__node[data-state='available'] .tcl-talent-tree__tile::after,
+  .tcl-talent-tree__node[data-state='allocated'] .tcl-talent-tree__tile::after {
+    content: '+';
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 16px;
+    height: 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 13px;
+    line-height: 1;
+    /* solid tone fill → the tone's own -fg (white for status tones); --tcl-accent-fg
+       is tuned for gold and fails AA on info/danger/warning/success fills. */
+    color: var(--node-fg, var(--tcl-accent-fg));
+    background: var(--node, var(--tcl-talenttree-accent, var(--tcl-accent)));
+    opacity: 0;
+    transform: scale(0.6);
+    transition:
+      opacity var(--tcl-dur-fast) var(--tcl-ease-calm),
+      transform var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-talent-tree__node[data-state='available']:hover .tcl-talent-tree__tile::after,
+  .tcl-talent-tree__node[data-state='available']:focus-visible .tcl-talent-tree__tile::after,
+  .tcl-talent-tree__node[data-state='allocated']:hover .tcl-talent-tree__tile::after,
+  .tcl-talent-tree__node[data-state='allocated']:focus-visible .tcl-talent-tree__tile::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .tcl-talent-tree__node:hover {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  /* selection ring reads in-key (the node's own tone), spaced off the canvas like the
+     spine; the focus ring is the dedicated token, declared LAST so it wins while focused. */
+  .tcl-talent-tree__node.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--node, var(--tcl-talenttree-accent, var(--tcl-accent)));
+  }
+  .tcl-talent-tree__node:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  /* ── legend: the state vocabulary stated in words (color never carries meaning alone) ── */
+  .tcl-talent-tree__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-talent-tree__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-1);
+  }
+  .tcl-talent-tree__swatch {
+    width: 13px;
+    height: 13px;
+    border-radius: 4px;
+    border: 2px solid var(--tcl-border-strong);
+    background: var(--tcl-surface-raised);
+  }
+  .tcl-talent-tree__swatch[data-state='available'] {
+    border-color: color-mix(
+      in oklab,
+      var(--tcl-talenttree-accent, var(--tcl-accent)) 45%,
+      var(--tcl-border-strong)
+    );
+  }
+  .tcl-talent-tree__swatch[data-state='allocated'] {
+    border-color: var(--tcl-talenttree-accent, var(--tcl-accent));
+    background: color-mix(
+      in oklab,
+      var(--tcl-talenttree-accent, var(--tcl-accent)) 12%,
+      var(--tcl-surface-raised)
+    );
+  }
+  .tcl-talent-tree__swatch[data-state='maxed'] {
+    border-color: var(--tcl-talenttree-accent, var(--tcl-accent));
+    background: color-mix(
+      in oklab,
+      var(--tcl-talenttree-accent, var(--tcl-accent)) 18%,
+      var(--tcl-surface-raised)
+    );
+  }
+  .tcl-talent-tree__swatch[data-state='locked'] {
+    border-style: dashed;
+    background: var(--tcl-surface-sunken);
+  }
+
+  /* ── aria-live inspector + the accessible allocate/remove path ── */
+  .tcl-talent-tree__inspector {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+    min-height: 3rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-talent-tree__inspector-live {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-talent-tree__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-talent-tree__inspector-sub {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+  }
+  .tcl-talent-tree__inspector-status {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-talent-tree__inspector-line {
+    margin: 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-talent-tree__inspector-line--warn {
+    color: color-mix(in oklab, var(--tcl-status-danger) 82%, var(--tcl-text));
+  }
+  .tcl-talent-tree__inspector-note {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-talent-tree__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-talent-tree__actions {
+    display: flex;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-talent-tree__action {
+    appearance: none;
+    padding: var(--tcl-space-1) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border-strong);
+    border-radius: var(--tcl-radius-sm);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    font: inherit;
+    font-size: var(--tcl-text-sm);
+    cursor: pointer;
+    transition: background var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-talent-tree__action:hover {
+    background: var(--tcl-surface-sunken);
+  }
+  .tcl-talent-tree__action[aria-disabled='true'] {
+    color: var(--tcl-text-faint);
+    border-color: var(--tcl-border);
+    background: var(--tcl-surface);
+    cursor: not-allowed;
+  }
+  .tcl-talent-tree__action:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-talent-tree__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-talent-tree__node,
+    .tcl-talent-tree__tile,
+    .tcl-talent-tree__edge,
+    .tcl-talent-tree__budget-fill,
+    .tcl-talent-tree__tile::after {
+      transition: none;
+    }
+    .tcl-talent-tree__node:hover {
+      transform: translate(-50%, -50%);
+    }
+  }
+}

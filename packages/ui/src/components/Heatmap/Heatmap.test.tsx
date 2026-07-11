@@ -45,18 +45,23 @@ describe('Heatmap', () => {
     const { container } = render(<Heatmap data={data} />);
     // Jonah/W2 is null → not a button
     expect(screen.queryByRole('button', { name: /Jonah, W2/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Jonah, W2: no data' })).toBeInTheDocument();
     expect(container.querySelector('.tcl-heatmap__cell--empty')).toBeInTheDocument();
   });
 
   it('selects a cell, sets aria-pressed, and reveals its value in the inspector', async () => {
     const user = userEvent.setup();
-    render(<Heatmap data={data} />);
+    const { container } = render(<Heatmap data={data} />);
     const cell = screen.getByRole('button', { name: 'Dana, W2: 88%' });
     expect(cell).toHaveAttribute('aria-pressed', 'false');
     await user.click(cell);
     expect(cell).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByText(/W2 · 88%/)).toBeInTheDocument();
     expect(screen.getByText(/Cloud/)).toBeInTheDocument();
+    expect(container.querySelector('.tcl-heatmap__inspector')).toHaveAttribute(
+      'aria-atomic',
+      'true',
+    );
   });
 
   it('calls onSelect with the row#col id', async () => {
@@ -83,6 +88,23 @@ describe('Heatmap', () => {
       <Heatmap
         data={{ columns: ['A', 'B'], tone: 'info', rows: [{ label: 'R', cells: [10, 90] }] }}
       />,
+    );
+    expect(container.querySelector('.tcl-heatmap__scale-gradient')).toBeInTheDocument();
+  });
+
+  it('treats an empty stops array as a continuous scale', () => {
+    const { container } = render(
+      <Heatmap
+        data={{
+          columns: ['A'],
+          rows: [{ label: 'R', cells: [50] }],
+          stops: [],
+          tone: 'info',
+        }}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'R, A: 50' }).style.background).toContain(
+      'color-mix',
     );
     expect(container.querySelector('.tcl-heatmap__scale-gradient')).toBeInTheDocument();
   });
@@ -119,20 +141,48 @@ describe('Heatmap', () => {
     const onSelectRow = vi.fn();
     const user = userEvent.setup();
     render(<Heatmap data={rowData} selectionMode="row" onSelectRow={onSelectRow} />);
-    await user.click(screen.getByRole('button', { name: 'One · x' }));
+    await user.click(screen.getByRole('button', { name: 'One · x, A: 0.2, B: 0.6, C: 0.9' }));
     expect(onSelectRow).toHaveBeenCalledWith('r1');
-    await user.click(screen.getByRole('button', { name: 'Three' }));
+    await user.click(screen.getByRole('button', { name: 'Three, A: 0.7, B: 0.3, C: 0.8' }));
     expect(onSelectRow).toHaveBeenCalledWith('2'); // no id → row index as a string
   });
 
   it('row mode: marks the selected row aria-current and reveals it in the inspector', () => {
     render(<Heatmap data={rowData} selectionMode="row" selectedRowId="r2" />);
-    const row = screen.getByRole('button', { name: 'Two' });
+    const row = screen.getByRole('button', { name: 'Two, A: 0.5, B: 0.1, C: 0.4' });
     expect(row).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByRole('button', { name: 'One · x' })).not.toHaveAttribute('aria-current');
+    expect(
+      screen.getByRole('button', { name: 'One · x, A: 0.2, B: 0.6, C: 0.9' }),
+    ).not.toHaveAttribute('aria-current');
     // the inspector (not just the row header) reflects the selection
     expect(
       screen.getByText('Two', { selector: '.tcl-heatmap__inspector-title' }),
+    ).toBeInTheDocument();
+  });
+
+  it('row mode: keeps the first row when explicit ids are duplicated', () => {
+    const { container } = render(
+      <Heatmap
+        data={{
+          columns: ['A'],
+          rows: [
+            { id: 'duplicate', label: 'First authored', cells: [1] },
+            { id: 'duplicate', label: 'Later duplicate', cells: [2] },
+            { label: 'Unkeyed', cells: [3] },
+          ],
+        }}
+        selectionMode="row"
+        selectedRowId="duplicate"
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'First authored, A: 1' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.queryByRole('button', { name: /Later duplicate/ })).not.toBeInTheDocument();
+    expect(container.querySelectorAll('.tcl-heatmap__row')).toHaveLength(2);
+    expect(
+      screen.getByText('First authored', { selector: '.tcl-heatmap__inspector-title' }),
     ).toBeInTheDocument();
   });
 
@@ -147,7 +197,46 @@ describe('Heatmap', () => {
       />,
     );
     expect(screen.getByText('styled')).toBeInTheDocument(); // visual node
-    expect(screen.getByRole('button', { name: 'Serial One' })).toBeInTheDocument(); // string name
+    expect(screen.getByRole('button', { name: 'Serial One, A: 0.5' })).toBeInTheDocument();
+  });
+
+  it('row mode: names and inspects every column/value pair, including units and no-data', () => {
+    const completeRowData: HeatmapContract = {
+      unit: '%',
+      columns: ['W1', 'W2', 'W3'],
+      rows: [{ id: 'dana', label: 'Dana', sub: 'Cloud', cells: [82, null, 91] }],
+    };
+    const { container } = render(
+      <Heatmap data={completeRowData} selectionMode="row" selectedRowId="dana" />,
+    );
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Dana · Cloud, W1: 82%, W2: no data, W3: 91%',
+      }),
+    ).toBeInTheDocument();
+    const inspector = container.querySelector('.tcl-heatmap__inspector');
+    expect(inspector).toHaveTextContent('W182%');
+    expect(inspector).toHaveTextContent('W2no data');
+    expect(inspector).toHaveTextContent('W391%');
+  });
+
+  it('row mode: hidden live inspector announces every column/value pair', () => {
+    const { container } = render(
+      <Heatmap
+        data={{
+          unit: 'd',
+          columns: ['Build', 'Review'],
+          rows: [{ id: 'r', label: 'Cycle', cells: [2, 3] }],
+        }}
+        selectionMode="row"
+        selectedRowId="r"
+        showInspector={false}
+      />,
+    );
+    expect(container.querySelector('.tcl-heatmap__sr-live')).toHaveTextContent(
+      'Cycle, Build: 2d, Review: 3d selected',
+    );
   });
 
   it('showInspector=false hides the inspector but keeps a hidden aria-live region', () => {
@@ -156,6 +245,7 @@ describe('Heatmap', () => {
     const live = container.querySelector('.tcl-heatmap__sr-live');
     expect(live).toBeInTheDocument();
     expect(live).toHaveAttribute('aria-live', 'polite');
+    expect(live).toHaveAttribute('aria-atomic', 'true');
     expect(live).toHaveTextContent('Dana, W1: 82%'); // selection still announced
   });
 

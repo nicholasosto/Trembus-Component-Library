@@ -177,15 +177,120 @@ describe('Strata', () => {
     expect(onSelect).toHaveBeenCalledWith('state');
   });
 
-  it('respects a controlled selectedId', async () => {
+  it('exposes one roving Tab stop: the selected arc, otherwise the first arc', () => {
+    const { rerender } = render(<Strata data={guide} />);
+    const buttons = arcButtons();
+    expect(buttons.filter((button) => button.tabIndex === 0)).toEqual([buttons[0]]);
+    expect(buttons[0]).toHaveAccessibleName('Surface, layer 0');
+
+    rerender(<Strata data={guide} selectedId="state" />);
+    expect(arcButtons().filter((button) => button.tabIndex === 0)).toEqual([
+      screen.getByRole('button', { name: /^State,/ }),
+    ]);
+
+    // A stale controlled id cannot remove the component's only Tab stop.
+    rerender(<Strata data={guide} selectedId="not-in-the-map" />);
+    expect(arcButtons().filter((button) => button.tabIndex === 0)).toEqual([
+      screen.getByRole('button', { name: /^Surface,/ }),
+    ]);
+  });
+
+  it('roves, selects, and focuses with Arrow keys and Home/End without moving centroids', async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
-    render(<Strata data={guide} selectedId="state" onSelect={onSelect} />);
-    expect(screen.getByRole('button', { name: /^State,/ })).toHaveAttribute('aria-pressed', 'true');
+    render(<Strata data={guide} onSelect={onSelect} />);
+    const surface = screen.getByRole('button', { name: /^Surface,/ });
+    const mark = screen.getByRole('button', { name: /^Mark,/ });
+    const relation = screen.getByRole('button', { name: /^Relation,/ });
+    const last = screen.getByRole('button', { name: /^attention-budget,/ });
+    const centers = new Map(
+      arcButtons().map((button) => [
+        button.getAttribute('aria-label'),
+        { left: button.style.left, top: button.style.top },
+      ]),
+    );
+
+    surface.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(mark).toHaveFocus();
+    expect(mark).toHaveAttribute('aria-pressed', 'true');
+    expect(mark.tabIndex).toBe(0);
+    expect(surface.tabIndex).toBe(-1);
+
+    await user.keyboard('{ArrowDown}');
+    expect(relation).toHaveFocus();
+    expect(relation).toHaveAttribute('aria-pressed', 'true');
+    await user.keyboard('{End}');
+    expect(last).toHaveFocus();
+    expect(last).toHaveAttribute('aria-pressed', 'true');
+    await user.keyboard('{ArrowRight}');
+    expect(surface).toHaveFocus(); // wraps
+    await user.keyboard('{ArrowLeft}');
+    expect(last).toHaveFocus(); // wraps back
+    await user.keyboard('{Home}');
+    expect(surface).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(last).toHaveFocus(); // the second arrow-key pair also wraps
+
+    expect(onSelect).toHaveBeenCalledWith('mark');
+    expect(onSelect).toHaveBeenCalledWith('relation');
+    for (const button of arcButtons()) {
+      expect({ left: button.style.left, top: button.style.top }).toEqual(
+        centers.get(button.getAttribute('aria-label')),
+      );
+    }
+  });
+
+  it('keeps controlled pointer focus as the Tab stop until selectedId actually changes', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const { rerender } = render(
+      <Strata data={guide} selectedId="state" onSelect={onSelect} />,
+    );
+    const state = screen.getByRole('button', { name: /^State,/ });
+    expect(state).toHaveAttribute('aria-pressed', 'true');
     const mark = screen.getByRole('button', { name: /^Mark/ });
     await user.click(mark);
     expect(onSelect).toHaveBeenCalledWith('mark');
     expect(mark).toHaveAttribute('aria-pressed', 'false'); // controlled — ring did not move
+    expect(mark).toHaveFocus();
+    expect(mark.tabIndex).toBe(0);
+    expect(state.tabIndex).toBe(-1);
+
+    // An ordinary parent re-render with the same primitive value must not pull
+    // the tab stop back to the still-selected arc.
+    rerender(<Strata data={guide} selectedId="state" onSelect={onSelect} />);
+    expect(mark.tabIndex).toBe(0);
+    expect(state.tabIndex).toBe(-1);
+
+    // A real external value change deliberately re-seeds roving focus.
+    rerender(<Strata data={guide} selectedId="relation" onSelect={onSelect} />);
+    expect(screen.getByRole('button', { name: /^Relation,/ }).tabIndex).toBe(0);
+    expect(mark.tabIndex).toBe(-1);
+  });
+
+  it('keeps controlled Arrow-key focus tabbable when the parent declines selection', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(<Strata data={guide} selectedId="surface" onSelect={onSelect} />);
+    const surface = screen.getByRole('button', { name: /^Surface,/ });
+    const mark = screen.getByRole('button', { name: /^Mark,/ });
+    const relation = screen.getByRole('button', { name: /^Relation,/ });
+
+    surface.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(mark).toHaveFocus();
+    expect(mark.tabIndex).toBe(0);
+    expect(mark).toHaveAttribute('aria-pressed', 'false');
+    expect(surface).toHaveAttribute('aria-pressed', 'true');
+    expect(surface.tabIndex).toBe(-1);
+    expect(onSelect).toHaveBeenLastCalledWith('mark');
+
+    await user.keyboard('{ArrowRight}');
+    expect(relation).toHaveFocus();
+    expect(relation.tabIndex).toBe(0);
+    expect(mark.tabIndex).toBe(-1);
+    expect(onSelect).toHaveBeenLastCalledWith('relation');
   });
 
   it('lights the LOAD cone of a bedrock principle — the blast radius of a false axiom', async () => {
@@ -253,7 +358,7 @@ describe('Strata', () => {
     expect(screen.getByText('Conjecture')).toBeInTheDocument();
   });
 
-  it('positions every arc button within the canvas (0–100%)', () => {
+  it('positions every arc-button centroid within the canvas (0–100%)', () => {
     const { container } = render(<Strata data={guide} />);
     const nodes = container.querySelectorAll<HTMLElement>('.tcl-strata__node');
     expect(nodes.length).toBeGreaterThan(0);

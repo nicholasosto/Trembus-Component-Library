@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { cx } from '../../utils/cx';
 import { toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -218,6 +219,52 @@ export function Swimlane({
 
   const layout = useMemo(() => buildLayout(data), [data]);
   const { lanes, steps, edges, width, height } = layout;
+  const firstStepId = steps[0]?.id;
+  const selectedStepId = steps.some(({ id }) => id === selectedId) ? selectedId : undefined;
+  const [rovingId, setRovingId] = useState<string | undefined>(selectedStepId ?? firstStepId);
+  const resolvedRovingId = steps.some(({ id }) => id === rovingId)
+    ? rovingId
+    : (selectedStepId ?? firstStepId);
+  const stepRefs = useRef(new Map<string, HTMLButtonElement>());
+  const stepGroupRef = useRef<HTMLDivElement>(null);
+  const previousControlledId = useRef(selProp);
+
+  useEffect(() => {
+    if (resolvedRovingId !== rovingId) setRovingId(resolvedRovingId);
+  }, [resolvedRovingId, rovingId]);
+
+  useLayoutEffect(() => {
+    if (selProp === previousControlledId.current) return;
+    previousControlledId.current = selProp;
+
+    const nextId = steps.some(({ id }) => id === selProp) ? selProp : firstStepId;
+    const focusWasInside = stepGroupRef.current?.contains(document.activeElement) ?? false;
+    setRovingId(nextId);
+    if (focusWasInside && nextId) stepRefs.current.get(nextId)?.focus();
+  }, [firstStepId, selProp, steps]);
+
+  const moveFocus = (event: ReactKeyboardEvent<HTMLButtonElement>, currentId: string): void => {
+    const currentIndex = steps.findIndex(({ id }) => id === currentId);
+    if (currentIndex < 0 || steps.length === 0) return;
+
+    let nextIndex: number | undefined;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % steps.length;
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + steps.length) % steps.length;
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = steps.length - 1;
+    }
+
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    const nextId = steps[nextIndex].id;
+    setRovingId(nextId);
+    select(nextId);
+    stepRefs.current.get(nextId)?.focus();
+  };
 
   const selected = steps.find((p) => p.id === selectedId);
   const successors = selected
@@ -293,7 +340,12 @@ export function Swimlane({
               })}
             </svg>
 
-            <div className="tcl-swimlane__steps" role="group" aria-label={data.title ?? 'Swimlane'}>
+            <div
+              ref={stepGroupRef}
+              className="tcl-swimlane__steps"
+              role="group"
+              aria-label={data.title ?? 'Swimlane'}
+            >
               {steps.map((p) => {
                 const status = p.step.status ?? 'pending';
                 const meta = STATUS_META[status];
@@ -315,8 +367,17 @@ export function Swimlane({
                       height: `${CELL_H}px`,
                     })}
                     aria-pressed={isSelected}
+                    tabIndex={p.id === resolvedRovingId ? 0 : -1}
                     aria-label={`${p.laneLabel}: ${p.step.label} — ${meta.word}`}
-                    onClick={() => select(p.id)}
+                    ref={(node) => {
+                      if (node) stepRefs.current.set(p.id, node);
+                      else stepRefs.current.delete(p.id);
+                    }}
+                    onClick={() => {
+                      setRovingId(p.id);
+                      select(p.id);
+                    }}
+                    onKeyDown={(event) => moveFocus(event, p.id)}
                   >
                     <span className="tcl-swimlane__step-top">
                       <span className="tcl-swimlane__step-dot" aria-hidden="true" />

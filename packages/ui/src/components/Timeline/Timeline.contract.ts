@@ -6,21 +6,35 @@ export const timelineContract: ComponentContract = {
   jobs: {
     revealState: {
       satisfiedBy:
-        'dated events are placed on a horizontal time axis (ordinal columns or proportional to their date), alternating above/below, with tone-coded era nodes on the axis and a category legend — when each thing happened, in what order, and of what kind is perceivable at a glance; tone is paired with a word, never colour alone.',
+        'dated events are placed on a horizontal time axis (ordinal columns or proportional to their date), alternating above/below, with tone-coded era nodes and a category legend; duplicate explicit ids resolve first-authored-wins before placement, and tone is paired with a word.',
       story: 'Default',
     },
     affordAction: {
       satisfiedBy:
-        'every event is a focusable HTML `<button>` carrying its accessible name (date · title · category); prev/next controls step the selection chronologically; selecting an event reveals its date, sub, category, and note in the panel and lights its axis node.',
+        'events use one roving tab stop across HTML `<button>` controls carrying accessible names (date · title · category); Arrow keys plus Home/End move focus and selection chronologically; prev/next controls provide the same step action.',
       story: 'States',
     },
     acknowledgeInput: {
       satisfiedBy:
-        'click or Enter/Space selects an event (aria-pressed), rings the card in the accent, fills its axis node, scrolls it into view, and reveals its detail in a live (aria-live) inspector; focus ring on the event + nav buttons.',
+        'click, Enter/Space, or roving-key navigation selects an event (aria-pressed), rings the card, fills its axis node, scrolls it into view without smooth motion when reduced motion is requested, and reveals its detail in a live inspector.',
       story: 'Interaction',
     },
   },
-  a11y: { role: 'group', keyboard: ['Tab', 'Enter', 'Space'], focusRing: true },
+  a11y: {
+    role: 'group',
+    keyboard: [
+      'Tab',
+      'Enter',
+      'Space',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
+    ],
+    focusRing: true,
+  },
   tokensUsed: [
     '--tcl-accent',
     '--tcl-status-*',
