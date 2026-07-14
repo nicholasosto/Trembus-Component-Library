@@ -18,7 +18,7 @@ const preview: Preview = {
     controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
     backgrounds: { disable: true },
   },
-  initialGlobals: { theme: 'light' },
+  initialGlobals: { theme: 'dark' },
   globalTypes: {
     theme: {
       description: 'Theme (light default + Trembus dark + blood-dark reliquary)',
@@ -36,7 +36,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story, ctx) => {
-      const theme = (ctx.globals.theme as string) ?? 'light';
+      const theme = (ctx.globals.theme as string) ?? 'dark';
       if (typeof document !== 'undefined') {
         document.documentElement.setAttribute('data-theme', theme);
       }
