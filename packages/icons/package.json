@@ -1,6 +1,6 @@
 {
   "name": "@trembus/icons",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The Trembus glyph set — hand-authored, normalized 24×24 inline-SVG icons (node/file-type marks + UI affordances) shared by @trembus/ui and @trembus/viz. Pure React components, no stylesheet: monochrome glyphs paint currentColor (the consumer tints via a token); brand marks (TS, JS, …) carry their own color.",
   "type": "module",
   "keywords": [

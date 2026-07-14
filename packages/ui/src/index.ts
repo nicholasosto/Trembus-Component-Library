@@ -200,8 +200,10 @@ export type {
   SwimlaneContract,
   SwimlaneLane,
   SwimlaneStep,
+  SwimlaneStepMarker,
   SwimlaneStatus,
   SwimlaneLaneKind,
+  SwimlaneDensity,
 } from './components/Swimlane/Swimlane';
 export { RunHistory } from './components/RunHistory/RunHistory';
 export type {
@@ -212,7 +214,10 @@ export type {
   RunStepOutcome,
   RunStatus,
   RunOutputKind,
+  RunOutputOp,
 } from './components/RunHistory/RunHistory';
+// The canonical RunHistory→Swimlane replay (run-over-definition time-travel).
+export { applyRun } from './utils/applyRun';
 export { Callout } from './components/Callout/Callout';
 export type { CalloutProps, CalloutTone } from './components/Callout/Callout';
 export { EmptyState } from './components/EmptyState/EmptyState';

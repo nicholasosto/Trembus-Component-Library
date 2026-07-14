@@ -1,8 +1,9 @@
 // Example PAGE — a composition of Swimlane + RunHistory, NOT a library component.
 // Lives in src/examples/ so `check:contracts` ignores it (composed pages have no single
 // 3-jobs contract). Compose from the public barrel ('../index') so it exercises the real
-// consumer API. The "magic" — selecting a run time-travels the diagram — lives here, via
-// the page-local `applyRun` transform, so Swimlane itself stays untouched.
+// consumer API. The "magic" — selecting a run time-travels the diagram — is the public
+// `applyRun` transform (graduated from this page once consumers started hand-copying it),
+// so Swimlane itself stays untouched.
 //
 // Run history is treated as an OPTIONAL companion to the flow: a pill switch toggles it,
 // and when a workflow has no history the switch is disabled (greyed) and only the flow's
@@ -10,9 +11,8 @@
 // diagram is never starved for horizontal room.
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card, Inline, RunHistory, Stack, Swimlane, Text } from '../index';
+import { applyRun, Card, Inline, RunHistory, Stack, Swimlane, Text } from '../index';
 import type { RunHistoryContract, RunRecord, RunStepOutcome, SwimlaneContract } from '../index';
-import { applyRun } from './applyRun';
 
 // The workflow being run, authored once. Steps carry NO status — each run supplies it.
 const base: SwimlaneContract = {

@@ -11,6 +11,52 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.8.0] — 2026-07-14
+
+### Added
+
+- **`Swimlane`** — the swimlane-v2 process-board kit (additive API; default geometry and step
+  accessible names unchanged; lane-head visuals refreshed — the old `__lane-dot` /
+  `__lane-kind` internal class hooks are gone):
+  - Lane heads render a per-kind glyph from `@trembus/icons` (`human → user`, `ai → sparkle`,
+    `system → server`, `tool → wrench`; `neutral` keeps an empty slot so labels stay aligned)
+    in place of the 8px dot + raw uppercased kind word. The kind word moves into the glyph's
+    `title` tooltip — the lane column was `aria-hidden` decoration, and each step button
+    already announces its actor — and the lane label gets the freed width.
+  - New `density` prop (`'cozy' | 'comfortable'`, default `'cozy'` — the original geometry,
+    byte-for-byte). `comfortable` raises cell/lane heights so step labels wrap to two clamped
+    lines instead of ellipsizing; the preset feeds both the SVG connector math and the cells.
+  - New `SwimlaneStep.markers` — small per-step annotation badges
+    (`{ id?, glyph?, title }[]`, glyph names from the `@trembus/icons` registry). Decorative
+    on the card; every marker `title` is folded into the step button's accessible name.
+  - The step `detail` line gains a hover `title` tooltip (labels already had one).
+- **`RunHistory`** — `RunOutput.op?: 'create' | 'modify' | 'delete'`: output chips render a
+  git-style `+` / `~` / `−` prefix mark (decorative) paired with an sr-only word
+  ("created" / "modified" / "deleted") in the chip's accessible name.
+- **`applyRun`** — the run-over-definition replay from the `Examples/SwimlaneRuns` page is now
+  a public barrel export (two consuming command centers were hand-copying it); lenient about
+  a missing `steps` array, mirroring `Swimlane`'s own parse.
+
+### Fixed
+
+- Authored-JSON junk hardening: unknown or prototype-chain lane kinds, marker glyph names,
+  and output `op` values degrade to their documented fallbacks (neutral lane / dot mark /
+  op-less chip) instead of crashing or rendering empty stubs.
+
+## [@trembus/icons 0.2.0] — 2026-07-14
+
+### Added
+
+- New monochrome glyphs — `wrench`, `sparkle`, `robot` — registered in `GLYPHS` and exported
+  tree-shakeably as `WrenchIcon` / `SparkleIcon` / `RobotIcon`. `wrench` and `sparkle` head
+  `Swimlane`'s tool/ai lanes; `robot` ships as the alternative ai mark.
+
+### Fixed
+
+- `Glyph` now resolves names with an own-property check: prototype-chain names in authored
+  JSON (`'constructor'`, `'toString'`, …) previously resolved to functions and crashed the
+  consumer's render tree; they now render nothing, like any unknown name.
+
 ## [@trembus/ui 0.7.0] — 2026-07-11
 
 ### Added

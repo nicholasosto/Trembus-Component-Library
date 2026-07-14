@@ -120,3 +120,79 @@ export const Interaction: Story = {
     await expect(canvas.getByText(/Hands off to/)).toBeInTheDocument();
   },
 };
+
+/**
+ * The process-board kit: `density="comfortable"` gives step labels two clamped
+ * lines instead of an ellipsis; per-step `markers` annotate cards (decision refs,
+ * file ops) with each marker's title folded into the step's accessible name; lane
+ * heads carry a kind glyph (tooltip = the kind word) instead of a dot + raw word.
+ */
+export const Comfortable: Story = {
+  args: {
+    density: 'comfortable',
+    data: {
+      view: 'swimlane',
+      code: 'workflow.component-kit',
+      title: 'Component request, intake to release',
+      caption: 'Longer step labels wrap; markers carry per-step annotations.',
+      lanes: [
+        { id: 'human', label: 'You', kind: 'human' },
+        { id: 'ai', label: 'Claude', kind: 'ai' },
+        { id: 'tools', label: 'Tools', kind: 'tool' },
+        { id: 'ci', label: 'Gate', kind: 'system' },
+        { id: 'docs', label: 'Docs' },
+      ],
+      steps: [
+        {
+          id: 'intake',
+          lane: 'human',
+          label: 'File the component request with context',
+          detail: 'inbox item',
+          status: 'done',
+        },
+        {
+          id: 'plan',
+          lane: 'ai',
+          label: 'Review the request against the codebase',
+          detail: 'verifies every claim',
+          status: 'done',
+          markers: [{ id: 'dec', glyph: 'check', title: 'Realizes decision 0013' }],
+        },
+        {
+          id: 'scaffold',
+          lane: 'tools',
+          label: 'Scaffold the canonical 5-file shape',
+          detail: 'new-component skill',
+          status: 'done',
+          markers: [{ id: 'files', glyph: 'file', title: 'Creates the 5-file shape' }],
+        },
+        {
+          id: 'build',
+          lane: 'ai',
+          label: 'Implement the component with regression tests',
+          status: 'active',
+          markers: [
+            { id: 'ts', glyph: 'typescript', title: 'Touches TypeScript sources' },
+            { id: 'note', title: 'Tracked in the release plan' },
+          ],
+        },
+        {
+          id: 'gate',
+          lane: 'ci',
+          label: 'Run the full validation gate',
+          detail: 'pnpm validate',
+          status: 'pending',
+          to: ['fix', 'changelog'],
+        },
+        { id: 'fix', lane: 'ai', label: 'Fix regressions surfaced by the gate', status: 'pending' },
+        {
+          id: 'changelog',
+          lane: 'docs',
+          label: 'Record the change in the package changelog',
+          status: 'pending',
+          to: [],
+        },
+      ],
+    },
+  },
+};

@@ -63,12 +63,19 @@
   .tcl-swimlane__lane-head + .tcl-swimlane__lane-head {
     border-top: 1px solid var(--tcl-border-soft);
   }
-  .tcl-swimlane__lane-dot {
+  /* fixed-width glyph slot — rendered even for neutral (glyph-less) lanes so the
+     labels stay left-aligned across every lane head */
+  .tcl-swimlane__lane-glyph {
     flex: none;
-    width: 8px;
-    height: 8px;
-    border-radius: var(--tcl-radius-full);
-    background: var(--lane-tone, var(--tcl-status-neutral));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    font-size: 15px;
+    line-height: 1;
+    /* pulled toward text so the glyph stays legible as the sole always-visible
+       kind mark (raw accent gold dips ~2:1 on light surfaces — Badge precedent) */
+    color: color-mix(in oklab, var(--lane-tone, var(--tcl-status-neutral)) 70%, var(--tcl-text));
   }
   .tcl-swimlane__lane-label {
     min-width: 0;
@@ -77,15 +84,6 @@
     white-space: nowrap;
     font-size: var(--tcl-text-sm);
     font-weight: var(--tcl-weight-semibold);
-  }
-  .tcl-swimlane__lane-kind {
-    flex: none;
-    margin-left: auto;
-    font-family: var(--tcl-font-mono);
-    font-size: 9px;
-    letter-spacing: var(--tcl-tracking-wide);
-    text-transform: uppercase;
-    color: var(--tcl-text-faint);
   }
 
   .tcl-swimlane__track {
@@ -227,6 +225,21 @@
     font-size: var(--tcl-text-sm);
     font-weight: var(--tcl-weight-semibold);
   }
+  /* per-step annotation badges (decorative; meaning is in the button's name) */
+  .tcl-swimlane__step-markers {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex: none;
+    margin-left: auto;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-swimlane__step-marker {
+    display: inline-flex;
+    align-items: center;
+  }
   .tcl-swimlane__step-detail {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -234,6 +247,25 @@
     padding-left: calc(8px + var(--tcl-space-2));
     font-size: var(--tcl-text-xs);
     color: var(--tcl-text-dim);
+  }
+
+  /* ── comfortable density: the step label wraps to two clamped lines ──
+     (geometry itself — cell/lane heights — comes from the JS preset, which
+     also drives the SVG connector math; these rules only re-flow the text) */
+  .tcl-swimlane[data-density='comfortable'] .tcl-swimlane__step-top {
+    align-items: flex-start;
+  }
+  .tcl-swimlane[data-density='comfortable'] .tcl-swimlane__step-dot {
+    /* optically align the dot to the first text line once labels can wrap */
+    margin-top: 4px;
+  }
+  .tcl-swimlane[data-density='comfortable'] .tcl-swimlane__step-label {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    line-height: var(--tcl-leading-tight);
   }
 
   .tcl-swimlane__empty {

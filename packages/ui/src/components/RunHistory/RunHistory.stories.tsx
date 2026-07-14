@@ -49,7 +49,7 @@ const log: RunHistoryContract = {
       stepOutcomes: failedAtTest,
       outputs: [
         { label: 'ci.log', href: '#', kind: 'log' },
-        { label: 'PR #482', href: '#', kind: 'pr' },
+        { label: 'PR #482', href: '#', kind: 'pr', op: 'modify' },
       ],
     },
     {
@@ -62,8 +62,9 @@ const log: RunHistoryContract = {
       note: 'Gate passed on the first attempt after the #128 fix; merged to main.',
       stepOutcomes: allDone,
       outputs: [
-        { label: 'PR #482', href: '#', kind: 'pr' },
-        { label: 'transcript.md', href: '#', kind: 'doc' },
+        { label: 'PR #482', href: '#', kind: 'pr', op: 'create' },
+        { label: 'transcript.md', href: '#', kind: 'doc', op: 'create' },
+        { label: 'legacy-flag.ts', href: '#', kind: 'doc', op: 'delete' },
         { label: 'deploy · web-1f3a', href: '#', kind: 'deploy' },
       ],
     },

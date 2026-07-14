@@ -61,10 +61,12 @@ your own components.
 
 **Visualizations** (Tier-1, data-driven) — `Hub`, `BarChart`, `LineChart`,
 `DonutChart`, `Heatmap`, `Gauge`, `Sparkline`, `Funnel`, `Treemap`, `Timeline`,
-`Swimlane`, `Brief`, `DecisionMap`. (Node-link graphs live in [`@trembus/viz`](https://www.npmjs.com/package/@trembus/viz).)
+`Swimlane`, `RunHistory`, `Brief`, `DecisionMap`. (Node-link graphs live in
+[`@trembus/viz`](https://www.npmjs.com/package/@trembus/viz).)
 
 Hooks (`useAffordanceState`, `useFocusTrap`, `useReturnFocus`, `useReducedMotion`,
-`useDismissable`) and utils (`Portal`, `Slot`, `cx`) are exported too.
+`useDismissable`) and utils (`Portal`, `Slot`, `cx`, `applyRun` — replay a
+`RunHistory` run over a `Swimlane` definition) are exported too.
 
 ## Theming tokens
 

@@ -15,6 +15,9 @@ import {
   LayersIcon,
   NetworkIcon,
   QueueIcon,
+  WrenchIcon,
+  SparkleIcon,
+  RobotIcon,
   FolderIcon,
   FolderOpenIcon,
   FileIcon,
@@ -55,6 +58,10 @@ export const GLYPHS: Record<string, ComponentType<GlyphProps>> = {
   layers: LayersIcon,
   network: NetworkIcon,
   queue: QueueIcon,
+  // actor / process kinds
+  wrench: WrenchIcon,
+  sparkle: SparkleIcon,
+  robot: RobotIcon,
   // file types
   folder: FolderIcon,
   'folder-open': FolderOpenIcon,
@@ -90,6 +97,9 @@ export function Glyph({
   name: string;
   className?: string;
 }): ReactElement | null {
-  const C = GLYPHS[name];
+  // Own-property check: a bare index would resolve prototype-chain names
+  // ('constructor', 'toString', …) to functions and crash the render — glyph
+  // names arrive from consumer JSON, so junk must degrade to nothing.
+  const C = Object.hasOwn(GLYPHS, name) ? GLYPHS[name] : undefined;
   return C ? <C className={className} /> : null;
 }

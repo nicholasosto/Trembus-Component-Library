@@ -6,7 +6,7 @@ export const swimlaneContract: ComponentContract = {
   jobs: {
     revealState: {
       satisfiedBy:
-        'each actor is a lane (row) and each step a status-toned card placed left-to-right by column, with decorative SVG connectors tracing the handoffs as work crosses lanes — who does what, in what order, and where it hands off is perceivable at a glance; status is color-coded via tokens.',
+        'each actor is a lane (row) headed by a tone-tinted kind glyph (kind word in its tooltip) and each step a status-toned card placed left-to-right by column, with decorative SVG connectors tracing the handoffs as work crosses lanes — who does what, in what order, and where it hands off is perceivable at a glance; status is color-coded via tokens, and per-step marker annotations join the step button’s accessible name.',
       story: 'Default',
     },
     affordAction: {

@@ -110,6 +110,60 @@ describe('RunHistory', () => {
     expect(screen.queryByRole('button', { name: /Succeeded/ })).not.toBeInTheDocument();
   });
 
+  it('renders git-style op marks on output chips, op word in the accessible name', async () => {
+    const withOps: RunHistoryContract = {
+      runs: [
+        {
+          id: 'r1',
+          label: '#1',
+          status: 'succeeded',
+          startedAt: '2026-06-20T10:00:00.000Z',
+          outputs: [
+            { label: 'report.pdf', href: 'https://example.com/r', kind: 'doc', op: 'create' },
+            { label: 'flag.ts', kind: 'doc', op: 'delete' },
+            { label: 'plain.txt', kind: 'doc' },
+          ],
+        },
+      ],
+    };
+    const { container } = render(<RunHistory data={withOps} defaultSelectedRunId="r1" />);
+    // the op word (sr-only) joins the name; the sign + ↗ stay decorative
+    expect(screen.getByRole('link', { name: 'created report.pdf' })).toBeInTheDocument();
+    const signs = container.querySelectorAll('.tcl-run-history__chip-op');
+    expect(Array.from(signs).map((s) => s.textContent)).toEqual(['+', '−']);
+    expect(signs[0]?.getAttribute('aria-hidden')).toBe('true');
+    // a static (non-link) chip carries its op the same way
+    expect(screen.getByText('deleted')).toHaveClass('tcl-sr-only');
+    // chips without an op render exactly as before — no mark, no sr word
+    expect(screen.getByText('plain.txt').querySelector('.tcl-run-history__chip-op')).toBeNull();
+    expect(await a11yViolations(container)).toEqual([]);
+  });
+
+  it('degrades junk op values (incl. prototype-chain keys) to an op-less chip', () => {
+    const junk: RunHistoryContract = {
+      runs: [
+        {
+          id: 'r1',
+          status: 'succeeded',
+          startedAt: '2026-06-20T10:00:00.000Z',
+          outputs: [
+            {
+              label: 'a.txt',
+              kind: 'doc',
+              op: 'constructor' as never,
+            },
+            { label: 'b.txt', kind: 'doc', op: 'remove' as never },
+          ],
+        },
+      ],
+    };
+    const { container } = render(<RunHistory data={junk} defaultSelectedRunId="r1" />);
+    expect(container.querySelectorAll('.tcl-run-history__chip-op')).toHaveLength(0);
+    expect(container.querySelectorAll('.tcl-run-history__chip .tcl-sr-only')).toHaveLength(0);
+    expect(screen.getByText('a.txt')).toBeInTheDocument();
+    expect(screen.getByText('b.txt')).toBeInTheDocument();
+  });
+
   it('has no axe violations (populated and empty)', async () => {
     const { container, rerender } = render(<RunHistory data={flow} defaultSelectedRunId="r127" />);
     expect(await a11yViolations(container)).toEqual([]);

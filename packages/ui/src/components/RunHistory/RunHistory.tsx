@@ -22,6 +22,8 @@ import './RunHistory.css';
  */
 export type RunStatus = 'succeeded' | 'failed' | 'running' | 'cancelled' | 'partial' | 'queued';
 export type RunOutputKind = 'pr' | 'doc' | 'log' | 'dataset' | 'deploy' | 'link';
+/** What the run did to the artifact — renders a git-style `+` / `~` / `−` chip prefix. */
+export type RunOutputOp = 'create' | 'modify' | 'delete';
 
 export interface RunOutput {
   /** Stable id; falls back to the index, NEVER the label (the recurring viz-id gotcha). */
@@ -32,6 +34,8 @@ export interface RunOutput {
   href?: string;
   /** Artifact class → a tone-coded chip. */
   kind?: RunOutputKind;
+  /** File-op the run performed on this artifact → a `+` / `~` / `−` prefix mark. */
+  op?: RunOutputOp;
 }
 
 /** Per-step outcome for THIS run — the bridge that lets a host time-travel a Swimlane. */
@@ -114,6 +118,17 @@ const OUTPUT_TONE: Record<RunOutputKind, FillBarTone> = {
   dataset: 'info',
   log: 'neutral',
   link: 'neutral',
+};
+
+/**
+ * Git-style op marks. The sign is decorative (`aria-hidden`) — the sr-only word
+ * beside it puts the op into the chip's accessible name, so a screen reader hears
+ * "created report.pdf", never "tilde".
+ */
+const OP_META: Record<RunOutputOp, { sign: string; word: string }> = {
+  create: { sign: '+', word: 'created' },
+  modify: { sign: '~', word: 'modified' },
+  delete: { sign: '−', word: 'deleted' },
 };
 
 const OUTPUT_CAP = 8;
@@ -376,15 +391,31 @@ function RunInspector({ run }: { run: RunRecord }) {
 function OutputChip({ output }: { output: RunOutput }): ReactNode {
   const tone = OUTPUT_TONE[output.kind ?? 'link'];
   const cls = cx('tcl-run-history__chip', `is-${tone}`);
+  // Own-property check so junk op strings (incl. prototype-chain names like
+  // 'constructor') degrade to an op-less chip instead of an empty stub.
+  const op = output.op && Object.hasOwn(OP_META, output.op) ? OP_META[output.op] : undefined;
+  const body = (
+    <>
+      {op && (
+        <>
+          <span className="tcl-run-history__chip-op" aria-hidden="true">
+            {op.sign}
+          </span>
+          <span className="tcl-sr-only">{op.word}</span>
+        </>
+      )}
+      {output.label}
+    </>
+  );
   if (output.href) {
     return (
       <a className={cls} href={output.href}>
-        {output.label}
+        {body}
         <span className="tcl-run-history__chip-ext" aria-hidden="true">
           ↗
         </span>
       </a>
     );
   }
-  return <span className={cls}>{output.label}</span>;
+  return <span className={cls}>{body}</span>;
 }

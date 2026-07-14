@@ -181,4 +181,117 @@ describe('Swimlane', () => {
     const { container } = render(<Swimlane data={flow} defaultSelectedId="ask" />);
     expect(await a11yViolations(container)).toEqual([]);
   });
+
+  it('renders a kind glyph per lane head — kind word in the tooltip, not as text', () => {
+    const { container } = render(<Swimlane data={flow} />);
+    expect(container.querySelector('.tcl-swimlane__lane-glyph [data-glyph="user"]')).toBeTruthy();
+    expect(
+      container.querySelector('.tcl-swimlane__lane-glyph [data-glyph="sparkle"]'),
+    ).toBeTruthy();
+    // the raw kind word is no longer rendered as text…
+    expect(screen.queryByText('human')).not.toBeInTheDocument();
+    // …it lives in the glyph slot's tooltip
+    const slots = container.querySelectorAll('.tcl-swimlane__lane-glyph');
+    expect(Array.from(slots).map((s) => s.getAttribute('title'))).toEqual(['human', 'ai']);
+  });
+
+  it('keeps an empty, tooltip-less glyph slot for neutral lanes so labels align', () => {
+    const { container } = render(
+      <Swimlane data={{ lanes: [{ label: 'Notes' }], steps: [{ lane: 'Notes', label: 'A' }] }} />,
+    );
+    const slot = container.querySelector('.tcl-swimlane__lane-glyph');
+    expect(slot).toBeTruthy();
+    expect(slot?.getAttribute('title')).toBeNull();
+    expect(slot?.querySelector('svg')).toBeNull();
+  });
+
+  it('defaults to the original cozy geometry; density="comfortable" raises the cells', () => {
+    const { container, rerender } = render(<Swimlane data={flow} />);
+    const step = () => container.querySelector('.tcl-swimlane__step') as HTMLElement;
+    const laneHead = () => container.querySelector('.tcl-swimlane__lane-head') as HTMLElement;
+    // cozy = the pre-density metrics, byte-for-byte (the back-compat contract)
+    expect(step().style.height).toBe('60px');
+    expect(step().style.width).toBe('140px');
+    expect(laneHead().style.height).toBe('88px');
+    expect((container.querySelector('.tcl-swimlane') as HTMLElement).dataset.density).toBe('cozy');
+
+    rerender(<Swimlane data={flow} density="comfortable" />);
+    expect(step().style.height).toBe('76px');
+    expect(step().style.width).toBe('140px');
+    expect(laneHead().style.height).toBe('104px');
+    expect((container.querySelector('.tcl-swimlane') as HTMLElement).dataset.density).toBe(
+      'comfortable',
+    );
+  });
+
+  it('gives the detail line a hover title matching its text', () => {
+    const data: SwimlaneContract = {
+      lanes: [{ label: 'You' }],
+      steps: [{ lane: 'You', label: 'Step', detail: 'reads the codebase' }],
+    };
+    render(<Swimlane data={data} />);
+    expect(screen.getByText('reads the codebase')).toHaveAttribute('title', 'reads the codebase');
+  });
+
+  it('folds marker titles into the step accessible name; the marks stay decorative', () => {
+    const data: SwimlaneContract = {
+      lanes: [{ label: 'You' }],
+      steps: [
+        {
+          id: 'a',
+          lane: 'You',
+          label: 'Build',
+          markers: [
+            { id: 'm1', glyph: 'check', title: 'Realizes decision 0013' },
+            { id: 'm2', title: 'Tracked in plan' }, // no glyph → dot mark
+          ],
+        },
+      ],
+    };
+    const { container } = render(<Swimlane data={data} />);
+    expect(
+      screen.getByRole('button', {
+        name: 'You: Build — Pending — Realizes decision 0013, Tracked in plan',
+      }),
+    ).toBeInTheDocument();
+    const markers = container.querySelector('.tcl-swimlane__step-markers');
+    expect(markers?.getAttribute('aria-hidden')).toBe('true');
+    expect(markers?.querySelector('[data-glyph="check"]')).toBeTruthy();
+    const marks = markers?.querySelectorAll('.tcl-swimlane__step-marker') ?? [];
+    expect(marks[0]?.getAttribute('title')).toBe('Realizes decision 0013');
+    expect(marks[1]?.textContent).toBe('•');
+  });
+
+  it('degrades prototype-chain glyph/kind names to the documented fallbacks, no crash', () => {
+    const data: SwimlaneContract = {
+      lanes: [{ label: 'You', kind: 'constructor' as never }],
+      steps: [
+        {
+          id: 'a',
+          lane: 'You',
+          label: 'A',
+          markers: [{ id: 'm', glyph: 'constructor', title: 'junk glyph' }],
+        },
+      ],
+    };
+    const { container } = render(<Swimlane data={data} />);
+    // junk marker glyph → the promised dot mark, not a crashed tree
+    expect(container.querySelector('.tcl-swimlane__step-marker')?.textContent).toBe('•');
+    // junk lane kind → neutral: empty glyph slot, no tooltip
+    const slot = container.querySelector('.tcl-swimlane__lane-glyph');
+    expect(slot?.querySelector('svg')).toBeNull();
+    expect(slot?.getAttribute('title')).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'You: A — Pending — junk glyph' }),
+    ).toBeInTheDocument();
+  });
+
+  it('has no axe violations with markers and comfortable density', async () => {
+    const withMarkers: SwimlaneContract = {
+      ...flow,
+      steps: flow.steps.map((s) => ({ ...s, markers: [{ glyph: 'check', title: 'ok' }] })),
+    };
+    const { container } = render(<Swimlane data={withMarkers} density="comfortable" />);
+    expect(await a11yViolations(container)).toEqual([]);
+  });
 });

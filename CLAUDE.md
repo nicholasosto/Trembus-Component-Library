@@ -220,6 +220,12 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   prints must clamp to the same ceiling — else an out-of-order/non-monotonic datum shows e.g. "150%"
   next to a full bar (Funnel: conversion vs top, and "% retained"). Size bars against the largest
   datum (not strictly the first) so a zero/low reference can't collapse every bar to empty.
+- **By-name registry lookups need `Object.hasOwn`.** Any `REGISTRY[name]` where the name comes
+  from authored JSON (glyph names, lane kinds, op codes) resolves prototype-chain keys
+  (`'constructor'`, `'toString'`) to inherited functions — React then renders a function as a
+  component and the whole tree unmounts. Guard with
+  `Object.hasOwn(REG, key) ? REG[key] : fallback`; icons' `Glyph` (0.2.0) does it centrally,
+  Swimlane's `KIND_GLYPH`/marker lookup and RunHistory's `OP_META` mirror it.
 
 ## Visualizations
 

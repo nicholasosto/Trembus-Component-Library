@@ -101,6 +101,27 @@ export const QueueIcon = (p: GlyphProps): ReactElement => (
   </Svg>
 );
 
+// ── actor / process kinds ──
+export const WrenchIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="wrench" {...p}>
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z" />
+  </Svg>
+);
+export const SparkleIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="sparkle" {...p}>
+    <path d="M12 4.8c.8 4 3.2 6.4 7.2 7.2-4 .8-6.4 3.2-7.2 7.2-.8-4-3.2-6.4-7.2-7.2 4-.8 6.4-3.2 7.2-7.2Z" />
+    <path d="M19 5h.01" />
+  </Svg>
+);
+export const RobotIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="robot" {...p}>
+    <rect x="5" y="9" width="14" height="10" rx="2" />
+    <path d="M12 9V5M12 4h.01" />
+    <path d="M9.5 13.5h.01M14.5 13.5h.01" />
+    <path d="M9.5 16.5h5" />
+  </Svg>
+);
+
 // ── file types (monochrome) ──
 export const FolderIcon = (p: GlyphProps): ReactElement => (
   <Svg name="folder" {...p}>

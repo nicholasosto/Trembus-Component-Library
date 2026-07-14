@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
+import type { ComponentType, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { Glyph, GLYPHS, ServerIcon, SparkleIcon, UserIcon, WrenchIcon } from '@trembus/icons';
+import type { GlyphProps } from '@trembus/icons';
 import { cx } from '../../utils/cx';
 import { toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -31,6 +33,21 @@ export interface SwimlaneLane {
   kind?: SwimlaneLaneKind;
 }
 
+/**
+ * A small annotation badge on a step card — e.g. "realizes decision 0013" or a
+ * file-op mark — without forking the card markup. Markers are decorative on the
+ * card (`aria-hidden` + `title` tooltip); each `title` is folded into the step
+ * button's accessible name so assistive tech hears the annotation too.
+ */
+export interface SwimlaneStepMarker {
+  /** Stable id; falls back to the index. */
+  id?: string;
+  /** Glyph name from the `@trembus/icons` registry (e.g. `'check'`, `'file'`). Unknown or omitted names render a plain dot mark. */
+  glyph?: string;
+  /** The marker's meaning — shown as a tooltip and joined into the step's accessible name. */
+  title: string;
+}
+
 export interface SwimlaneStep {
   /** Stable id for selection + handoff targeting; falls back to the step index. */
   id?: string;
@@ -51,6 +68,8 @@ export interface SwimlaneStep {
    * Omit to connect to the next step in order; pass `[]` for a terminal step.
    */
   to?: string[];
+  /** Small annotation badges on the card (top-right). */
+  markers?: SwimlaneStepMarker[];
 }
 
 export interface SwimlaneContract {
@@ -63,12 +82,21 @@ export interface SwimlaneContract {
   steps: SwimlaneStep[];
 }
 
+/**
+ * Geometry preset. `cozy` (default) is the original fixed geometry — existing
+ * consumers render pixel-identically. `comfortable` raises the cells so step
+ * labels wrap to two lines instead of ellipsizing.
+ */
+export type SwimlaneDensity = 'cozy' | 'comfortable';
+
 export interface SwimlaneProps {
   data: SwimlaneContract;
   /** Controlled selected step id. */
   selectedId?: string;
   defaultSelectedId?: string;
   onSelect?: (id: string) => void;
+  /** Geometry preset (default `cozy` — the original metrics, unchanged). */
+  density?: SwimlaneDensity;
   className?: string;
 }
 
@@ -84,6 +112,19 @@ const KIND_TONE: Record<SwimlaneLaneKind, FillBarTone> = {
   neutral: 'neutral',
 };
 
+/**
+ * Lane-head glyph per actor kind (tinted by the lane tone). The kind word lives
+ * in the glyph's `title` tooltip — the lane column is decorative (`aria-hidden`);
+ * each step button already announces its actor via its accessible name.
+ */
+const KIND_GLYPH: Record<SwimlaneLaneKind, ComponentType<GlyphProps> | null> = {
+  human: UserIcon,
+  ai: SparkleIcon,
+  system: ServerIcon,
+  tool: WrenchIcon,
+  neutral: null,
+};
+
 const STATUS_META: Record<SwimlaneStatus, { tone: FillBarTone; word: string }> = {
   done: { tone: 'success', word: 'Done' },
   active: { tone: 'accent', word: 'Active' },
@@ -93,12 +134,25 @@ const STATUS_META: Record<SwimlaneStatus, { tone: FillBarTone; word: string }> =
 };
 
 // Deterministic geometry (px). The track SVG and the absolutely-positioned step
-// buttons share this exact coordinate space, so connectors always meet their cells.
-const COL_W = 168; // column pitch
-const CELL_W = 140; // step card width (COL_W − CELL_W = the connector gutter)
-const LANE_H = 88; // lane row pitch
-const CELL_H = 60; // step card height
-const PAD = 14; // track inset so focus rings never clip at the edges
+// buttons share this exact coordinate space, so connectors always meet their
+// cells — which is why the preset feeds BOTH `buildLayout` and the inline styles
+// (a pure-CSS knob could not reach the SVG connector math).
+interface SwimlaneGeometry {
+  colW: number; // column pitch
+  cellW: number; // step card width (colW − cellW = the connector gutter)
+  laneH: number; // lane row pitch
+  cellH: number; // step card height
+  pad: number; // track inset so focus rings never clip at the edges
+}
+
+// `cozy` is the original geometry, byte-for-byte — the default MUST NOT change
+// (existing consumers render pixel-identically). `comfortable` adds the head-room
+// a two-line wrapped label + detail line need (label 2×12px×1.2 + detail ≈ 50px
+// of content inside the padding).
+const GEOMETRY: Record<SwimlaneDensity, SwimlaneGeometry> = {
+  cozy: { colW: 168, cellW: 140, laneH: 88, cellH: 60, pad: 14 },
+  comfortable: { colW: 168, cellW: 140, laneH: 104, cellH: 76, pad: 14 },
+};
 
 interface PlacedStep {
   id: string;
@@ -129,7 +183,8 @@ interface Layout {
   height: number;
 }
 
-function buildLayout(data: SwimlaneContract): Layout {
+function buildLayout(data: SwimlaneContract, geom: SwimlaneGeometry): Layout {
+  const { colW, cellW, laneH, cellH, pad } = geom;
   const laneList = data.lanes ?? [];
   const stepList = data.steps ?? [];
 
@@ -157,8 +212,8 @@ function buildLayout(data: SwimlaneContract): Layout {
       laneLabel: lanes[row].lane.label,
       row,
       col,
-      x: PAD + col * COL_W,
-      y: row * LANE_H + (LANE_H - CELL_H) / 2,
+      x: pad + col * colW,
+      y: row * laneH + (laneH - cellH) / 2,
     });
   });
 
@@ -177,10 +232,10 @@ function buildLayout(data: SwimlaneContract): Layout {
       seen.add(tid);
       const tgt = byId.get(tid);
       if (!tgt) return;
-      const sx = src.x + CELL_W;
-      const sy = src.y + CELL_H / 2;
+      const sx = src.x + cellW;
+      const sy = src.y + cellH / 2;
       const tx = tgt.x;
-      const ty = tgt.y + CELL_H / 2;
+      const ty = tgt.y + cellH / 2;
       const dx = Math.max(24, Math.abs(tx - sx) * 0.5);
       edges.push({
         key: `${src.id}->${tgt.id}`,
@@ -198,8 +253,8 @@ function buildLayout(data: SwimlaneContract): Layout {
     lanes,
     steps,
     edges,
-    width: PAD + maxCol * COL_W + CELL_W + PAD,
-    height: Math.max(1, lanes.length) * LANE_H,
+    width: pad + maxCol * colW + cellW + pad,
+    height: Math.max(1, lanes.length) * laneH,
   };
 }
 
@@ -208,6 +263,7 @@ export function Swimlane({
   selectedId: selProp,
   defaultSelectedId,
   onSelect,
+  density = 'cozy',
   className,
 }: SwimlaneProps) {
   const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
@@ -217,7 +273,8 @@ export function Swimlane({
     onSelect?.(id);
   };
 
-  const layout = useMemo(() => buildLayout(data), [data]);
+  const geom = GEOMETRY[density] ?? GEOMETRY.cozy;
+  const layout = useMemo(() => buildLayout(data, geom), [data, geom]);
   const { lanes, steps, edges, width, height } = layout;
   const firstStepId = steps[0]?.id;
   const selectedStepId = steps.some(({ id }) => id === selectedId) ? selectedId : undefined;
@@ -273,7 +330,7 @@ export function Swimlane({
   const hasContent = steps.length > 0;
 
   return (
-    <div className={cx('tcl-swimlane', className)}>
+    <div className={cx('tcl-swimlane', className)} data-density={density}>
       {(data.code || data.title || data.caption || data.brand) && (
         <header className="tcl-swimlane__header">
           {data.brand && <p className="tcl-swimlane__brand">{data.brand}</p>}
@@ -288,18 +345,23 @@ export function Swimlane({
           {/* sticky actor column */}
           <div className="tcl-swimlane__lanes" aria-hidden="true">
             {lanes.map(({ id, lane }) => {
-              const tone = KIND_TONE[lane.kind ?? 'neutral'];
+              // Own-property lookups: authored JSON can carry junk kinds
+              // ('constructor', …) that a bare index resolves up the prototype
+              // chain — degrade them to neutral instead of crashing the render.
+              const kind = lane.kind ?? 'neutral';
+              const tone = Object.hasOwn(KIND_TONE, kind) ? KIND_TONE[kind] : 'neutral';
+              const KindGlyph = Object.hasOwn(KIND_GLYPH, kind) ? KIND_GLYPH[kind] : null;
               return (
                 <div
                   key={id}
                   className="tcl-swimlane__lane-head"
-                  style={vars({ '--lane-tone': toneVar(tone), height: `${LANE_H}px` })}
+                  style={vars({ '--lane-tone': toneVar(tone), height: `${geom.laneH}px` })}
                 >
-                  <span className="tcl-swimlane__lane-dot" />
+                  {/* fixed-width slot even when empty (neutral) so labels align across lanes */}
+                  <span className="tcl-swimlane__lane-glyph" title={KindGlyph ? kind : undefined}>
+                    {KindGlyph && <KindGlyph />}
+                  </span>
                   <span className="tcl-swimlane__lane-label">{lane.label}</span>
-                  {lane.kind && lane.kind !== 'neutral' && (
-                    <span className="tcl-swimlane__lane-kind">{lane.kind}</span>
-                  )}
                 </div>
               );
             })}
@@ -314,7 +376,7 @@ export function Swimlane({
               <div
                 key={id}
                 className={cx('tcl-swimlane__stripe', row % 2 === 1 && 'is-alt')}
-                style={vars({ top: `${row * LANE_H}px`, height: `${LANE_H}px` })}
+                style={vars({ top: `${row * geom.laneH}px`, height: `${geom.laneH}px` })}
                 aria-hidden="true"
               />
             ))}
@@ -350,6 +412,8 @@ export function Swimlane({
                 const status = p.step.status ?? 'pending';
                 const meta = STATUS_META[status];
                 const isSelected = p.id === selectedId;
+                const markers = p.step.markers ?? [];
+                const markerTitles = markers.map((m) => m.title).filter(Boolean);
                 return (
                   <button
                     key={p.id}
@@ -363,12 +427,14 @@ export function Swimlane({
                       '--step-tone': toneVar(meta.tone),
                       left: `${p.x}px`,
                       top: `${p.y}px`,
-                      width: `${CELL_W}px`,
-                      height: `${CELL_H}px`,
+                      width: `${geom.cellW}px`,
+                      height: `${geom.cellH}px`,
                     })}
                     aria-pressed={isSelected}
                     tabIndex={p.id === resolvedRovingId ? 0 : -1}
-                    aria-label={`${p.laneLabel}: ${p.step.label} — ${meta.word}`}
+                    aria-label={`${p.laneLabel}: ${p.step.label} — ${meta.word}${
+                      markerTitles.length > 0 ? ` — ${markerTitles.join(', ')}` : ''
+                    }`}
                     ref={(node) => {
                       if (node) stepRefs.current.set(p.id, node);
                       else stepRefs.current.delete(p.id);
@@ -384,9 +450,30 @@ export function Swimlane({
                       <span className="tcl-swimlane__step-label" title={p.step.label}>
                         {p.step.label}
                       </span>
+                      {markers.length > 0 && (
+                        // decorative on the card — each title is already folded
+                        // into the step button's accessible name above
+                        <span className="tcl-swimlane__step-markers" aria-hidden="true">
+                          {markers.map((m, mi) => (
+                            <span
+                              key={m.id ?? `m${mi}`}
+                              className="tcl-swimlane__step-marker"
+                              title={m.title}
+                            >
+                              {m.glyph && Object.hasOwn(GLYPHS, m.glyph) ? (
+                                <Glyph name={m.glyph} />
+                              ) : (
+                                '•'
+                              )}
+                            </span>
+                          ))}
+                        </span>
+                      )}
                     </span>
                     {p.step.detail && (
-                      <span className="tcl-swimlane__step-detail">{p.step.detail}</span>
+                      <span className="tcl-swimlane__step-detail" title={p.step.detail}>
+                        {p.step.detail}
+                      </span>
                     )}
                   </button>
                 );

@@ -15,6 +15,15 @@ describe('icons', () => {
     expect(container.querySelector('svg')).toBeNull();
   });
 
+  it('renders nothing for prototype-chain names — junk JSON must not crash', () => {
+    // a bare GLYPHS[name] index would resolve these to functions up the
+    // prototype chain and React would throw rendering them as components
+    for (const name of ['constructor', 'toString', '__proto__', 'hasOwnProperty', 'valueOf']) {
+      const { container } = render(<Glyph name={name} />);
+      expect(container.querySelector('svg'), name).toBeNull();
+    }
+  });
+
   it('exposes tree-shakeable named components', () => {
     const { container } = render(<DatabaseIcon />);
     expect(container.querySelector('[data-glyph="database"]')).toBeTruthy();
