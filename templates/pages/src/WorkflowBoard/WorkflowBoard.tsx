@@ -1,7 +1,8 @@
-/* @trembus-template workflow-board v1.0.0 · WorkflowBoard.tsx (main) · chrome is template-owned — edit only inside @tcl-slot regions; re-apply via the trembus-template skill */
+/* @trembus-template workflow-board v1.1.0 · WorkflowBoard.tsx (main) · chrome is template-owned — edit only inside @tcl-slot regions; re-apply via the trembus-template skill */
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import {
+  applyRun,
   Card,
   DataStatusBar,
   Inline,
@@ -35,28 +36,6 @@ export interface WorkflowBoardProps {
   onRefresh?: () => void;
 }
 
-// Duplicated from @trembus/ui's SwimlaneRuns example (packages/ui/src/examples/
-// applyRun.ts) — deliberately page-local, unexported library code, so a
-// copy-and-own page carries its own copy. Time-travel: a run's per-step
-// outcomes overwrite each step's status; unreached steps fall back to pending;
-// per-step outputs fold into the step note so Swimlane's inspector surfaces them.
-function applyRun(base: SwimlaneContract, run: RunRecord): SwimlaneContract {
-  if (!run.stepOutcomes?.length) return base;
-  const byStep = new Map(run.stepOutcomes.map((o) => [o.step, o]));
-  return {
-    ...base,
-    steps: base.steps.map((step) => {
-      const outcome = step.id != null ? byStep.get(step.id) : undefined;
-      if (!outcome) return { ...step, status: 'pending' };
-      const outs = outcome.outputs?.length
-        ? `Output: ${outcome.outputs.map((o) => o.label).join(', ')}`
-        : undefined;
-      const note = [step.note, outs].filter(Boolean).join(' · ') || undefined;
-      return { ...step, status: outcome.status, note };
-    }),
-  };
-}
-
 /**
  * A workflow working surface: DataStatusBar freshness header, title row with a
  * board toolbar, an optional RunHistory log (toggled by a Switch, disabled when
@@ -83,7 +62,8 @@ export function WorkflowBoard({
   const runsVisible = showRuns && hasRuns;
   const selectedRun = runs.find((r) => r.id === selectedRunId) ?? runs[0];
 
-  // Keep the board's caption honest about what is (or isn't) being replayed.
+  // applyRun (public in @trembus/ui ≥ 0.8.0) replays the run over the definition;
+  // keep the board's caption honest about what is (or isn't) being replayed.
   const board: SwimlaneContract =
     runsVisible && selectedRun
       ? {

@@ -1,8 +1,8 @@
 {
   "name": "workflow-board",
   "title": "WorkflowBoard",
-  "version": "1.0.0",
-  "description": "Workflow working surface: DataStatusBar freshness header + title row with a board toolbar + Switch-toggled RunHistory log + Card-wrapped Swimlane board. Selecting a run time-travels the diagram to that run's state (applyRun is inlined — the page is self-contained). Data arrives via props typed entirely from @trembus/ui; no new library API.",
+  "version": "1.1.0",
+  "description": "Workflow working surface: DataStatusBar freshness header + title row with a board toolbar + Switch-toggled RunHistory log + Card-wrapped Swimlane board. Selecting a run time-travels the diagram to that run's state via applyRun, imported from @trembus/ui (public since 0.8.0). Data arrives via props typed entirely from @trembus/ui.",
   "files": [
     {
       "path": "WorkflowBoard.tsx",
@@ -27,7 +27,7 @@
     }
   ],
   "dependencies": {
-    "@trembus/ui": ">=0.5.0"
+    "@trembus/ui": "^0.8.0"
   },
   "setup": [
     "import '@trembus/ui/styles.css' once at the app entry",
@@ -35,6 +35,15 @@
     "author the workflow SwimlaneContract with NO per-step status — runs supply it"
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-07-14",
+      "changes": [
+        "Replaced the inlined applyRun copy with the public `applyRun` export from @trembus/ui (added in 0.8.0) — logic-identical, so replay behavior is unchanged. Chrome-only; both slots untouched.",
+        "dependencies: @trembus/ui >=0.5.0 → ^0.8.0 (the applyRun export floor)."
+      ],
+      "migration": "Upgrade the app's @trembus/ui to ^0.8.0 first, then re-apply via the trembus-template skill; slot bodies are preserved."
+    },
     {
       "version": "1.0.0",
       "date": "2026-07-04",
