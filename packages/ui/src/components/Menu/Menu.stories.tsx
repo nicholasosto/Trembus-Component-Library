@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import { Button } from '../Button/Button';
+import { Dialog } from '../Dialog/Dialog';
 import { Menu } from './Menu';
 
 const meta = {
@@ -81,6 +83,79 @@ export const States: Story = {
       </Menu>
     </div>
   ),
+};
+
+function MenuInDialogDemo() {
+  const [open, setOpen] = useState(false);
+  const [last, setLast] = useState<string | null>(null);
+  return (
+    <>
+      <Button onPress={() => setOpen(true)}>Manage asset</Button>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Asset actions"
+        description="The overflow menu portals to <body> — it must stack above this overlay."
+        footer={
+          <Button variant="ghost" tone="neutral" onPress={() => setOpen(false)}>
+            Close
+          </Button>
+        }
+      >
+        <Menu>
+          <Menu.Trigger>
+            <Button variant="outline" tone="neutral">
+              More actions
+            </Button>
+          </Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={() => setLast('Rename')}>Rename</Menu.Item>
+            <Menu.Item onSelect={() => setLast('Duplicate')}>Duplicate</Menu.Item>
+            <Menu.Item onSelect={() => setLast('Archive')}>Archive</Menu.Item>
+          </Menu.Content>
+        </Menu>
+        <p role="status" style={{ minHeight: '1.25rem', color: 'var(--tcl-text-dim)' }}>
+          {last ? `Last action: ${last}` : ''}
+        </p>
+      </Dialog>
+    </>
+  );
+}
+
+/**
+ * Job: Afford Action — a menu opened from a trigger INSIDE a modal `Dialog`.
+ * The portaled content stacks on the popover layer (above the modal overlay),
+ * selecting an item runs the action without dismissing the dialog, and Escape
+ * peels one layer at a time (menu first, dialog on the second press).
+ */
+export const InsideDialog: Story = {
+  render: () => <MenuInDialogDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Manage asset' }));
+    const dialog = await screen.findByRole('dialog');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'More actions' }));
+    const menu = await screen.findByRole('menu');
+
+    // The stacking regression this story guards: the menu must clear the overlay.
+    const overlay = document.querySelector('.tcl-dialog__overlay');
+    const z = (el: Element): number => Number.parseInt(getComputedStyle(el).zIndex, 10);
+    await expect(overlay).not.toBeNull();
+    await expect(z(menu)).toBeGreaterThan(z(overlay as Element));
+
+    // Selecting an item fires it and closes the menu — the dialog survives the press.
+    await userEvent.click(within(menu).getByRole('menuitem', { name: 'Duplicate' }));
+    await expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    await expect(screen.getByRole('dialog')).toBeInTheDocument();
+    await expect(within(dialog).getByRole('status')).toHaveTextContent('Last action: Duplicate');
+
+    // Escape peels one layer at a time.
+    await userEvent.click(within(dialog).getByRole('button', { name: 'More actions' }));
+    await screen.findByRole('menu');
+    await userEvent.keyboard('{Escape}');
+    await expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    await expect(screen.getByRole('dialog')).toBeInTheDocument();
+  },
 };
 
 /** Job: Acknowledge Input — open, arrow to an item, select; the menu closes. */

@@ -226,6 +226,13 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   component and the whole tree unmounts. Guard with
   `Object.hasOwn(REG, key) ? REG[key] : fallback`; icons' `Glyph` (0.2.0) does it centrally,
   Swimlane's `KIND_GLYPH`/marker lookup and RunHistory's `OP_META` mirror it.
+- **Portaled popup content stacks on the popover layer, not dropdown.** Anything that portals
+  to `<body>` and can be opened from inside a `Dialog` (Menu today; a future Select/Popover)
+  takes `--tcl-z-popover` (1350 — above modal 1300, below toast/tooltip), or it renders BEHIND
+  the dialog overlay: present in the a11y tree, invisible on screen. The same composition also
+  needs Dialog's press-outside-to-close to ignore presses inside the portaled popup (it exempts
+  `[role="menu"]`) and the popup's Escape to `stopPropagation` so layers peel one per press
+  (ui 0.8.1 / tokens 0.2.0; `Components/Menu → InsideDialog` is the regression story).
 
 ## Visualizations
 

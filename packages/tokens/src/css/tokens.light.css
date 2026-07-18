@@ -63,6 +63,8 @@
     --tcl-z-sticky: 1100;
     --tcl-z-overlay: 1200;
     --tcl-z-modal: 1300;
+    /* portaled popovers/menus — above modal so they surface from inside a Dialog */
+    --tcl-z-popover: 1350;
     --tcl-z-toast: 1400;
     --tcl-z-tooltip: 1500;
   }

@@ -38,7 +38,7 @@ export const menuContract: ComponentContract = {
   tokensUsed: [
     '--tcl-surface-raised',
     '--tcl-elevation-2',
-    '--tcl-z-dropdown',
+    '--tcl-z-popover',
     '--tcl-surface-hover',
     '--tcl-border',
     '--tcl-text-dim',

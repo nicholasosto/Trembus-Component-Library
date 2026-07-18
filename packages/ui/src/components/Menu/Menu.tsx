@@ -194,6 +194,9 @@ function MenuContent({
         list[list.length - 1]?.focus();
       } else if (e.key === 'Escape') {
         e.preventDefault();
+        // Escape dismisses ONE layer: don't let it bubble to a Dialog (or other
+        // Escape-closing surface) the menu was opened from.
+        e.stopPropagation();
         setOpen(false);
         triggerRef.current?.focus();
       }
@@ -474,7 +477,10 @@ function MenuSubContent({ className, children, ...rest }: MenuSubContentProps) {
  * `Menu.SubContent`) opened with →/Enter — where ←/Escape backs out one level and
  * selecting any item collapses the whole tree. A submenu opens to the right, and
  * flips to the left of its trigger row when opening right would overflow the
- * viewport (measured on open + scroll/resize). Compound API:
+ * viewport (measured on open + scroll/resize). Safe to open from inside a modal
+ * `Dialog`: content stacks on the popover layer (above the dialog overlay), and
+ * Escape / an inside press dismiss only the menu, never the dialog under it.
+ * Compound API:
  * `<Menu><Menu.Trigger><Button/></Menu.Trigger><Menu.Content><Menu.Item/></Menu.Content></Menu>`.
  */
 export const Menu = Object.assign(MenuRoot, {

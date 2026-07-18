@@ -1,6 +1,9 @@
 @layer tcl.components {
   .tcl-menu {
-    z-index: var(--tcl-z-dropdown);
+    /* popover layer, not dropdown: the content is portaled to <body>, so it must clear
+       a Dialog overlay (modal, 1300) when the trigger lives inside one. The fallback
+       covers a @trembus/tokens < 0.2.0 that predates --tcl-z-popover. */
+    z-index: var(--tcl-z-popover, calc(var(--tcl-z-modal) + 50));
     min-width: 180px;
     padding: var(--tcl-space-2);
     background: var(--tcl-surface-raised);

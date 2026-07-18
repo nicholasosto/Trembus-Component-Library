@@ -11,6 +11,33 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.8.1] — 2026-07-18
+
+### Fixed
+
+- **`Menu` inside `Dialog`** — the composition now works end to end (found composing a
+  command bar whose Toolbar overflow menu lives in a modal):
+  - The portaled content sat on the dropdown layer (z 1000), *under* the dialog overlay's
+    modal layer (1300) — present in the a11y tree but invisible on screen. `.tcl-menu` now
+    stacks on the new popover layer (`--tcl-z-popover`, 1350 — above modal, below toast),
+    with a `calc(--tcl-z-modal + 50)` fallback for a pre-0.2.0 `@trembus/tokens`.
+  - `Dialog`'s press-outside-to-close no longer treats a press inside a portaled
+    `role="menu"` popup as outside — selecting a menu item fires the action instead of
+    dismissing the dialog first.
+  - Escape in an open root menu stops propagating, so it peels one layer at a time: menu
+    first, dialog on the second press (submenus already did this).
+  - New `Components/Menu → InsideDialog` story locks all three in with a play test
+    (stacking assert + item select + Escape layering).
+
+## [@trembus/tokens 0.2.0] — 2026-07-18
+
+### Added
+
+- **`--tcl-z-popover: 1350`** — a z-layer for portaled popovers/menus that must surface
+  above the modal layer (1300) but stay under toast (1400) and tooltip (1500);
+  `'popover'` joins the `ZToken` union (usable via `tokens.z('popover')` and `Box`'s
+  `z` prop).
+
 ## [@trembus/ui 0.8.0] — 2026-07-14
 
 ### Added

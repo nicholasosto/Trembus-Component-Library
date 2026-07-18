@@ -1,6 +1,6 @@
 {
   "name": "@trembus/tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Trembus design tokens — the var(--tcl-*) CSS custom properties, the type-safe token ontology, the color-coded tone vocabulary, the 3-jobs contract type, and the axe a11y test helper shared by @trembus/ui and @trembus/viz.",
   "type": "module",
   "license": "MIT",

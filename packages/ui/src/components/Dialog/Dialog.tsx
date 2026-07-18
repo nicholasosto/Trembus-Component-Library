@@ -53,12 +53,18 @@ export function Dialog({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, closeOnEsc, onClose]);
 
-  // Press outside the content to close (keyboard users use Escape).
+  // Press outside the content to close (keyboard users use Escape). A press
+  // inside a portaled popup opened from the dialog (e.g. a Menu — its content
+  // renders in a <body> portal on the popover layer, ABOVE the overlay) is not
+  // "outside": only something stacked over the overlay can receive the press.
   useEffect(() => {
     if (!open || !closeOnOverlayClick) return;
     const onPointerDown = (e: PointerEvent): void => {
       const node = contentRef.current;
-      if (node && !node.contains(e.target as Node)) onClose();
+      const target = e.target as Node;
+      if (!node || node.contains(target)) return;
+      if (target instanceof Element && target.closest('[role="menu"]')) return;
+      onClose();
     };
     document.addEventListener('pointerdown', onPointerDown, true);
     return () => document.removeEventListener('pointerdown', onPointerDown, true);
