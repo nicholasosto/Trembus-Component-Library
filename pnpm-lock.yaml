@@ -416,6 +416,9 @@ importers:
       '@trembus/ui':
         specifier: workspace:*
         version: link:../ui
+      '@trembus/viz':
+        specifier: workspace:*
+        version: link:../viz
       prism-react-renderer:
         specifier: ^2.4.1
         version: 2.4.1(react@19.2.7)

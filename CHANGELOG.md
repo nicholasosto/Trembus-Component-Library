@@ -11,14 +11,30 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
-## [@trembus/game-viz 0.3.1] — 2026-07-18
+## [@trembus/game-viz 0.4.0] — 2026-07-18
+
+### Changed
+
+- **BREAKING — `styles.css` now ships only game-viz's own component CSS.** It no longer
+  re-bundles `@trembus/ui/styles.css` and `@trembus/viz/styles.css` (the follow-up
+  tracked in 0.3.1): Vite inlines dependency CSS even with the JS externalized, so every
+  game-viz build froze a snapshot of ui/viz styles that could silently override a newer
+  copy the consumer imported directly — exactly how ui 0.8.1's Menu popover-layer fix
+  got stomped. The bundle drops from ~208 kB to ~26 kB (own components + the idempotent
+  `@layer` cascade-order declaration) and can never go stale against its dependencies.
+  - **Migration:** import each package's style entry yourself (in any order):
+    `import '@trembus/ui/styles.css'` (tokens foundation + the primitives game-viz
+    composes), `import '@trembus/viz/styles.css'` (Constellation's `TalentTree` spine),
+    `import '@trembus/game-viz/styles.css'`. If you already imported all three — the
+    long-documented consumer pattern — nothing changes except the override hazard and
+    ~180 kB of duplicate CSS disappearing. No JS API change.
 
 ### Fixed
 
 - Rebuilt against `@trembus/ui` 0.8.1: the package's single `styles.css` (library-mode
   `cssCodeSplit: false`) bundles a copy of the ui component CSS it imports, and the 0.3.0
   snapshot predated the Menu popover-layer fix — a consumer importing game-viz styles
-  *after* ui's had `.tcl-menu` regressed back to the dropdown layer (z 1000, behind a
+  _after_ ui's had `.tcl-menu` regressed back to the dropdown layer (z 1000, behind a
   Dialog overlay). No API change. (De-duplicating the bundled dependency CSS is tracked
   as a follow-up.)
 
@@ -28,7 +44,7 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 - **`Menu` inside `Dialog`** — the composition now works end to end (found composing a
   command bar whose Toolbar overflow menu lives in a modal):
-  - The portaled content sat on the dropdown layer (z 1000), *under* the dialog overlay's
+  - The portaled content sat on the dropdown layer (z 1000), _under_ the dialog overlay's
     modal layer (1300) — present in the a11y tree but invisible on screen. `.tcl-menu` now
     stacks on the new popover layer (`--tcl-z-popover`, 1350 — above modal, below toast),
     with a `calc(--tcl-z-modal + 50)` fallback for a pre-0.2.0 `@trembus/tokens`.

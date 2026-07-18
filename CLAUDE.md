@@ -49,7 +49,7 @@ globs `packages/*`; shared compiler options in root `tsconfig.base.json`;
 
 **Motion / video — `@trembus/video`** (`packages/video/`, private, **not a published library**) is a
 **Remotion** app that renders the real components to video: a composition `import`s the actual
-`@trembus/game-viz` component **and** `@trembus/game-viz/styles.css`, so the whole
+`@trembus/game-viz` component **and** the ui / viz / game-viz `styles.css` entries, so the whole
 `@layer`/`var(--tcl-*)`/`color-mix` token system renders in headless Chromium with zero re-authoring
 (verified — a `CinematicHero` promo renders at full fidelity). It sits **outside the `pnpm validate`
 gate** (no `*.contract.ts`, no axe): its scripts are named off the gated set
@@ -125,8 +125,10 @@ shipped: `demos/soul-steel/` (composes all three packages; see its `README.md`).
 
 - **Consume the PUBLISHED API only** — import the bare specifiers (`@trembus/ui`, `@trembus/viz`,
   `@trembus/game-viz`) + each package's `./styles.css`, never deep/relative `packages/*/src` paths.
-  Each styles.css bundles the full `@trembus/tokens` layer system, so the libs must be **built**
-  first (the demo resolves their `dist/`) — that's the point: it dog-foods the real consumer surface.
+  ui/viz styles.css bundle the full `@trembus/tokens` layer system; game-viz's (0.4.0+) carries
+  only its own component CSS — so ALL three style entries get imported, and the libs must be
+  **built** first (the demo resolves their `dist/`) — that's the point: it dog-foods the real
+  consumer surface.
 - **Off the `validate` gate**, like `packages/video`: living under `demos/` keeps it invisible to
   `scripts/check-contracts.ts` (scoped to `packages/{ui,viz,game-viz}`); it's in the root
   `eslint`/`prettier` ignores; and its scripts are named OFF the gated set (`dev` / `build:site` /
@@ -233,6 +235,15 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   needs Dialog's press-outside-to-close to ignore presses inside the portaled popup (it exempts
   `[role="menu"]`) and the popup's Escape to `stopPropagation` so layers peel one per press
   (ui 0.8.1 / tokens 0.2.0; `Components/Menu → InsideDialog` is the regression story).
+- **Never `@import` a sibling package's `styles.css` from a package style entry.** Vite's CSS
+  pipeline inlines dependency CSS even when the JS is externalized (`rollupOptions.external`
+  does not apply to CSS), so the dist bundle freezes a stale snapshot of the dep's styles that
+  later overrides a newer copy the consumer imported directly (game-viz built against ui 0.7.0
+  stomped ui 0.8.1's Menu popover fix, 2026-07-18 → game-viz 0.4.0). Each package's styles.css
+  carries only its OWN component CSS plus `@trembus/tokens/layers.css` (the idempotent
+  cascade-order one-liner); the tokens FOUNDATION inlined by ui/viz styles.css is the one
+  deliberate exception (tokens changes ship as lockstep releases). Consumers import each
+  package's styles.css themselves.
 
 ## Visualizations
 

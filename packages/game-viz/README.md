@@ -16,13 +16,22 @@ pnpm add @trembus/game-viz react react-dom
 ```
 
 `react` / `react-dom` are peer dependencies (React 19); `@trembus/ui`,
-`@trembus/icons`, and `@trembus/tokens` come along automatically.
+`@trembus/viz`, `@trembus/icons`, and `@trembus/tokens` come along automatically.
 
 ## Use
 
+Since 0.4.0 `@trembus/game-viz/styles.css` carries **only game-viz's own
+component CSS** — it no longer re-bundles its dependencies' stylesheets (a
+bundled copy freezes at build time and can override a newer `@trembus/ui`
+you import directly). game-viz renders `@trembus/ui` primitives (and, via
+`Constellation`, the `@trembus/viz` `TalentTree`), so import each package's
+style entry once in your app:
+
 ```tsx
 import { Chronicle } from '@trembus/game-viz';
-import '@trembus/game-viz/styles.css';
+import '@trembus/ui/styles.css'; // tokens foundation + ui primitives
+import '@trembus/viz/styles.css'; // viz spine (Constellation's TalentTree)
+import '@trembus/game-viz/styles.css'; // game-viz components
 
 <div className="tcl-root" data-theme="reliquary">
   <Chronicle data={ironAge} tone="danger" archive="The Reliquary Archive" />

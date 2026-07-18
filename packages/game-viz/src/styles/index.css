@@ -1,13 +1,22 @@
 /* ════════════════════════════════════════════════════════════
-   @trembus/game-viz — style entry. Import this ONCE in a consumer app:
-       import '@trembus/game-viz/styles.css';
+   @trembus/game-viz — style entry. This bundle carries ONLY the
+   game-viz component CSS (each component opens `@layer tcl.components`
+   and bundles alongside via its own side-effect import), plus the
+   one-line cascade-order declaration below.
+
    game-viz BUILDS ON @trembus/ui (it composes ui primitives —
-   Box/Stack/Text/Pressable/Badge/Button) AND, since the Constellation
-   skin wraps the @trembus/viz TalentTree, on @trembus/viz too. Each of
-   those style entries declares the same @layer cascade order over the
-   shared @trembus/tokens foundation, so importing both is idempotent.
-   Each game-viz component opens `@layer tcl.components` and bundles
-   alongside via its own side-effect import.
+   Box/Stack/Text/Pressable/Badge/Button) and, via Constellation, on
+   @trembus/viz — but it does NOT bundle their CSS. Bundling a
+   dependency's stylesheet freezes a stale snapshot of it at build
+   time, which can override a newer copy the consumer imported
+   directly. A consumer imports each package's own entry:
+
+       import '@trembus/ui/styles.css';        // tokens foundation + ui components
+       import '@trembus/viz/styles.css';       // viz components
+       import '@trembus/game-viz/styles.css';  // game-viz components
+
+   layers.css only pins the tcl.* layer ORDER (idempotent with the
+   same declaration in ui/viz), so game-viz CSS lands correctly even
+   if this file is imported first.
    ════════════════════════════════════════════════════════════ */
-@import '@trembus/ui/styles.css';
-@import '@trembus/viz/styles.css';
+@import '@trembus/tokens/layers.css';

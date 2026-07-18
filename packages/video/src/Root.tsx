@@ -7,9 +7,13 @@ import { WorkflowDemo } from './workflow/WorkflowDemo';
 import { T as workflowT } from './workflow/timeline';
 // The whole point: render the REAL @trembus components, styled by the REAL token
 // bundle. webpack ingests these CSS subpath exports as-is (@layer cascade intact).
-// game-viz for the cinematic promo; ui for the Swimlane / RunHistory in the demo.
-import '@trembus/game-viz/styles.css';
+// Each package bundles ONLY its own component CSS (game-viz 0.4.0 stopped
+// re-bundling its dependencies' styles), so import all three entries: ui carries
+// the tokens foundation + primitives, viz the node-link spine, game-viz the
+// cinematic chrome.
 import '@trembus/ui/styles.css';
+import '@trembus/viz/styles.css';
+import '@trembus/game-viz/styles.css';
 
 // The repo references --tcl-font-display ('Cinzel', Optima, …) but ships no font
 // face, so on a headless render box the gold liturgical title would fall back to a
