@@ -11,6 +11,17 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/game-viz 0.3.1] — 2026-07-18
+
+### Fixed
+
+- Rebuilt against `@trembus/ui` 0.8.1: the package's single `styles.css` (library-mode
+  `cssCodeSplit: false`) bundles a copy of the ui component CSS it imports, and the 0.3.0
+  snapshot predated the Menu popover-layer fix — a consumer importing game-viz styles
+  *after* ui's had `.tcl-menu` regressed back to the dropdown layer (z 1000, behind a
+  Dialog overlay). No API change. (De-duplicating the bundled dependency CSS is tracked
+  as a follow-up.)
+
 ## [@trembus/ui 0.8.1] — 2026-07-18
 
 ### Fixed
