@@ -1,6 +1,6 @@
 # TCL consumer recipes
 
-> Stamp 2026-07-20 · tokens 0.2.1 · icons 0.2.0 · ui 0.8.2 · viz 0.5.0 · game-viz 0.4.0
+> Stamp 2026-07-20 · tokens 0.2.2 · icons 0.2.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
 
 Copy-adaptable patterns for consuming apps. Whole-page scaffolds (AppShell nav shell,
 WorkflowBoard) are versioned copy-and-own templates owned by the sibling
@@ -70,9 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 Themes are CSS-only: flipping the attribute re-themes everything, portals included.
 
 ```tsx
-type AppTheme = 'light' | 'dark' | 'reliquary'; // ThemeName omits 'reliquary' — known gap
+import type { ThemeName } from '@trembus/tokens'; // 'light' | 'dark' | 'reliquary' (tokens ≥ 0.2.2)
 
-function applyTheme(theme: AppTheme) {
+function applyTheme(theme: ThemeName) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('app-theme', theme);
 }
@@ -290,7 +290,6 @@ Windowed components: pass `virtualize={false}` (VirtualAssetGrid) in jsdom so al
 | Escape closes Dialog AND Menu at once            | your own portaled popup inside Dialog — `stopPropagation` its Escape (built-ins already do)                                                          |
 | Double selection rings / wrong inspector target  | duplicate or missing datum ids — give stable unique `id`s                                                                                            |
 | Labels read "[object Object]"                    | ReactNode passed into a string label field — labels stay strings; use `display`/`sub` for rich content                                               |
-| TS rejects `data-theme="reliquary"`              | known gap: `ThemeName` omits it — cast/widen locally                                                                                                 |
 | Chart renders empty inside a hidden tab/panel    | mounted while `display:none` → measured 0 — render when visible                                                                                      |
 | Effigy blank                                     | non-glTF/GLB source (use MediaFrame's poster/doc fallback), bundler without dynamic `import()`, or pre-hydration SSR frame (poster shows — expected) |
 | jsdom test hangs ~10 s on axe                    | raw `axe` on media — use `a11yViolations` from `@trembus/tokens/testing` (recipe 12)                                                                 |

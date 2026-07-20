@@ -1,6 +1,6 @@
 {
   "name": "@trembus/viz",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Trembus Tier-2 node-link visualizations (Tree, Lineage, SystemMap, ClassDiagram, Strata, TalentTree) — the same 3-jobs contract spine as @trembus/ui's Tier-1 viz, with a layout engine (d3-hierarchy for trees, dagre for DAGs), drill-down C4 architecture maps, UML class diagrams, concentric first-principles strata, and a game talent-tree with a full points-budget allocation engine.",
   "type": "module",
   "keywords": [

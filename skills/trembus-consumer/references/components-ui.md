@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-20 · tokens 0.2.1 · icons 0.2.0 · ui 0.8.2 · viz 0.5.0 · game-viz 0.4.0
+> Stamp 2026-07-20 · tokens 0.2.2 · icons 0.2.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)

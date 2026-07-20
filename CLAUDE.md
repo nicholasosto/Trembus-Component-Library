@@ -195,6 +195,15 @@ components: no 3-jobs contract. One private workspace member `templates/pages`
   (`@trembus/viz` components compose NO primitives — raw HTML/SVG + `@trembus/tokens` only.)
 - Labeled controls (Input/Textarea/Select) share `packages/ui/src/internal/field` (FieldShell +
   useFieldIds) — one source of truth for label/description/error wiring.
+- **Storybook docs descriptions** (established 2026-07-20, all 64 surfaces carry them): a
+  JSDoc block directly above `const meta` renders as the docs-page intro — four sections:
+  `### When to use it` (incl. "not for X — use Y" near-neighbor guidance) · `### Data &
+key props` · `### Accessibility` (only source-verified claims) · `### Theming & setup`
+  (per-package byte-identical Setup line). A `/** Job: <UI job> — … */` line sits above
+  every story export; prop TSDoc feeds the ArgTypes table (and ships in the published
+  `.d.ts`). Keep backticked code spans on ONE comment line — a span wrapped across lines
+  renders as a code block with a Copy chip mid-bullet. New components must ship with all
+  three description layers.
 
 ## Gotchas (learned the hard way — don't rediscover these)
 

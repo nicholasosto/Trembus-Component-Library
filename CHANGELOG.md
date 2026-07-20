@@ -10,28 +10,57 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
-- **Storybook + `.d.ts` documentation pass across `@trembus/ui`, `@trembus/viz`, and
-  `@trembus/game-viz`** (all 64 documented surfaces: 46 ui components + 4 primitives +
-  6 viz + 8 game-viz). Every docs page now opens with an organized component description
-  (When to use it · Data & key props · Accessibility · Theming & setup — a11y claims
-  verified against source), every story carries a job-mapped description, and missing
-  prop TSDoc was filled — the TSDoc ships in each package's published `.d.ts`, so editor
-  hover docs improve too. Comment-only: no runtime, type, or CSS changes (two stale
-  id-fallback TSDoc comments in DonutChart/LineChart were corrected to match the code,
-  and the consumer skill's EmptyState capsule now names the real `icon` prop).
+
+## [@trembus/tokens 0.2.2] — 2026-07
 
 ### Fixed
 
-- **`@trembus/tokens`: `ThemeName` now includes `'reliquary'`.** The theme fully ships
-  (`tokens.reliquary.css`, the `./reliquary.css` export, the Storybook theme toolbar) but the
-  union stayed `'light' | 'dark'`, forcing consumers to widen or cast the attribute value
-  locally. Type-only widening — no CSS or runtime change.
-- **`@trembus/viz`: `Strata` support connectors arc around the hub.** A wide-angle or
-  layer-skipping `restsOn` connector used to cut a straight chord through the central hub;
-  connectors now flow with the geology — a radial stub off the dependent, an arc riding the
-  seam between the two bands (always the short way), and a radial stub docking onto the
-  foundation — degrading to a clean spoke when the endpoints align. Regression-tested: no
-  connector vertex may enter the hub radius.
+- **`ThemeName` now includes `'reliquary'`.** The theme fully ships
+  (`tokens.reliquary.css`, the `./reliquary.css` export, the Storybook theme toolbar) but
+  the union stayed `'light' | 'dark'`, forcing consumers to widen or cast the attribute
+  value locally. Type-only widening — no CSS or runtime change.
+
+## [@trembus/ui 0.8.3] — 2026-07
+
+### Changed
+
+- **Storybook docs + `.d.ts` TSDoc pass over the entire surface** — all 46 components
+  plus the 4 primitives (Box · Pressable · Stack/Inline · Text). Every docs page now
+  opens with an organized component description (When to use it · Data & key props ·
+  Accessibility · Theming & setup — accessibility claims verified against source),
+  every story carries a job-mapped description, and missing prop TSDoc was filled —
+  the TSDoc ships in the published `.d.ts`, so editor hover docs improve too.
+  Comment-only: no runtime, type, or CSS change. Two stale id-fallback TSDoc comments
+  were corrected to match the code (`DonutChart` segment ids and `LineChart` series ids
+  fall back to the INDEX, never the label/name).
+
+## [@trembus/viz 0.5.1] — 2026-07
+
+### Fixed
+
+- **`Strata` support connectors arc around the hub.** A wide-angle or layer-skipping
+  `restsOn` connector used to cut a straight chord through the central hub; connectors
+  now flow with the geology — a radial stub off the dependent, an arc riding the seam
+  between the two bands (always the short way), and a radial stub docking onto the
+  foundation — degrading to a clean spoke when the endpoints align. Regression-tested:
+  no connector vertex may enter the hub radius.
+
+### Changed
+
+- **Storybook docs + `.d.ts` TSDoc pass over all 6 Tier-2 components** (Tree · Lineage ·
+  SystemMap · ClassDiagram · Strata · TalentTree): organized component descriptions,
+  job-mapped story descriptions, and completed prop TSDoc (selection trios, contract
+  masthead fields) shipping in the published `.d.ts`. Comment-only.
+
+## [@trembus/game-viz 0.4.1] — 2026-07
+
+### Changed
+
+- **Storybook docs + `.d.ts` TSDoc pass over all 8 Game components** (Reliquary ·
+  SoulCard · EpisodeDeck · CinematicHero · Effigy · MediaFrame · Chronicle ·
+  Constellation): organized component descriptions (including the skin→base guidance
+  and the three-stylesheet setup line), job-mapped story descriptions, and completed
+  prop TSDoc shipping in the published `.d.ts`. Comment-only.
 
 ## [@trembus/tokens 0.2.1] — 2026-07
 

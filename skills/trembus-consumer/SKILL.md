@@ -12,7 +12,7 @@ TCL is five published ESM npm packages (React `^19` peer, Node ≥ 20): `@trembu
 components; every component carries a machine-checked "3 UI jobs" contract and ships
 axe-clean. Live gallery: <https://nicholasosto.github.io/Trembus-Component-Library/>
 
-> Stamp 2026-07-20 · tokens 0.2.1 · icons 0.2.0 · ui 0.8.2 · viz 0.5.0 · game-viz 0.4.0
+> Stamp 2026-07-20 · tokens 0.2.2 · icons 0.2.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
 
 - **Self-contained.** Everything you need is this skill's files, the consumer repo,
   `node_modules/@trembus/*`, and public URLs. Never go looking for the library author's
@@ -218,11 +218,6 @@ Read just that range; never the whole file. Conventions stated once, not per cap
 6. Major-version divergence from the stamp → treat all capsules as advisory: read the
    shipped per-package READMEs + CHANGELOG, and suggest refreshing this skill
    (`git pull` in the library checkout; the symlink updates it instantly).
-
-Known gaps (workarounds for shipped quirks — prune when fixed):
-
-- 2026-07-20 · `ThemeName` in `@trembus/tokens` omits `'reliquary'` though the theme
-  ships — the attribute works; widen/cast locally. Remove when tokens > 0.2.1 fixes it.
 
 ## 7 · Verify your work
 
