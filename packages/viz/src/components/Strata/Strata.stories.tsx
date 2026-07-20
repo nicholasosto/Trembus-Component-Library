@@ -108,6 +108,41 @@ const combatDoctrine: StrataContract = {
   ],
 };
 
+/**
+ * Concentric first-principles strata — "what rests on what". Radius encodes
+ * FUNDAMENTALITY: bedrock principles (empty `restsOn`) fill the core, and each derived
+ * principle sits in the ring matching its longest support chain. It is strata with
+ * DAG links, deliberately NOT a sunburst — no part-of-whole is implied, and rings
+ * compress as depth grows so deep maps never escape the plot box.
+ *
+ * ### When to use it
+ * - First-principles maps, capability stacks, knowledge foundations — anywhere the
+ *   question is "what does this rest on?" and "what would collapse if this failed?"
+ * - Not for part-of-whole shares → ui `DonutChart` / `Treemap`; not for flow between
+ *   peers → `Lineage`.
+ *
+ * ### Data & key props
+ * - `data.principles` — `{ id, label, restsOn?, conjecture?, tone?, sub?, note? }`
+ *   (`id` REQUIRED + unique); `data.title` draws in the center hub.
+ * - A dangling `restsOn` reference auto-materializes a dashed GAP arc in the ring
+ *   beneath — an undiscovered support surfaced as an opportunity, never an error.
+ *   Don't "fix" a gap by deleting the reference; add the missing principle or keep
+ *   the gap visible.
+ * - `conjecture: true` renders a dashed arc — proposed, not yet established.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the selection trio.
+ *
+ * ### Accessibility
+ * - The SVG geology is `aria-hidden` decoration; every principle (gaps included) is a
+ *   real focusable HTML `<button>` with full Arrow/Home/End roving.
+ * - Selecting lights the LOAD CONE — everything resting on the selection — and the
+ *   `aria-live` inspector names direct supports in both directions.
+ *
+ * ### Theming & setup
+ * - Untoned arcs carry the accent, fading with distance from bedrock; explicit `tone`
+ *   overrides per principle.
+ * - Setup: import `@trembus/viz/styles.css` once at the app root (it carries the full
+ *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
+ */
 const meta = {
   title: 'Visualizations/Strata',
   component: Strata,

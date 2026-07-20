@@ -244,9 +244,7 @@ describe('Strata', () => {
   it('keeps controlled pointer focus as the Tab stop until selectedId actually changes', async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
-    const { rerender } = render(
-      <Strata data={guide} selectedId="state" onSelect={onSelect} />,
-    );
+    const { rerender } = render(<Strata data={guide} selectedId="state" onSelect={onSelect} />);
     const state = screen.getByRole('button', { name: /^State,/ });
     expect(state).toHaveAttribute('aria-pressed', 'true');
     const mark = screen.getByRole('button', { name: /^Mark/ });
@@ -316,6 +314,31 @@ describe('Strata', () => {
     expect(screen.getByText(/Foundations: 8/)).toBeInTheDocument();
     // Nothing rests on Button yet — the floating-principle smell is announced.
     expect(screen.getByText(/Supports: nothing yet\./)).toBeInTheDocument();
+  });
+
+  it('routes support connectors around the hub — never a straight chord across the core', () => {
+    // `button` rests on three principles spread across the ring, so its connector to
+    // `reveal-state` spans ~160°, and `feedback-loop` reaches past a whole layer to
+    // `state`. A straight chord dived to ~r44 through the central hub (r86); the arced
+    // connectors ride the seam between the bands and must stay clear of it. Each arc is
+    // centred on the hub at its endpoint radius, so bounding the vertices bounds the path.
+    const { container } = render(<Strata data={guide} />);
+    const C = 360; // viewBox S / 2
+    const HUB_R = 86;
+    const links = container.querySelectorAll<SVGPathElement>('.tcl-strata__link');
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      const d = link.getAttribute('d') ?? '';
+      for (const seg of d.matchAll(/([MLA])([-\d.,\s]+)/g)) {
+        const n = seg[2]
+          .trim()
+          .split(/[\s,]+/)
+          .map(Number);
+        // A rx ry rot large sweep x y → destination is the last pair; M/L → the pair.
+        const [x, y] = seg[1] === 'A' ? [n[5], n[6]] : [n[0], n[1]];
+        expect(Math.hypot(x - C, y - C)).toBeGreaterThanOrEqual(HUB_R - 0.5);
+      }
+    }
   });
 
   it('names direct supports both ways in the live inspector', async () => {

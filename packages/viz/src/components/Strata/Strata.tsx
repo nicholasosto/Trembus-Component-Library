@@ -39,9 +39,13 @@ export interface StrataContract {
 }
 
 export interface StrataProps {
+  /** The strata contract — principles + their `restsOn` support links. */
   data: StrataContract;
+  /** Controlled selected principle id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the principle id when one is selected. */
   onSelect?: (id: string) => void;
   className?: string;
 }
@@ -135,6 +139,30 @@ function sectorPath(r0: number, r1: number, a0: number, a1: number): string {
   return (
     `M${f(p1.x)},${f(p1.y)} A${f(r1)},${f(r1)} 0 ${large} 1 ${f(p2.x)},${f(p2.y)} ` +
     `L${f(p3.x)},${f(p3.y)} A${f(r0)},${f(r0)} 0 ${large} 0 ${f(p4.x)},${f(p4.y)} Z`
+  );
+}
+
+/**
+ * A support connector that flows WITH the concentric geology instead of slashing
+ * a straight chord across it: a short radial stub off the dependent's edge, an arc
+ * riding the seam between the two bands (always the short way — `norm180`), then a
+ * radial stub docking onto the foundation. Because the sweep stays out at the
+ * mid-radius, a wide-angle link curves cleanly around the core rather than diving
+ * through the hub (which a straight line — or a naive radial Bézier — does). For
+ * near-aligned arcs the arc collapses and it degrades to a clean radial spoke.
+ */
+function connectorPath(rFrom: number, aFrom: number, rTo: number, aTo: number): string {
+  const rMid = (rFrom + rTo) / 2;
+  const p0 = polar(rFrom, aFrom);
+  const s0 = polar(rMid, aFrom);
+  const s1 = polar(rMid, aTo);
+  const p1 = polar(rTo, aTo);
+  const sweep = norm180(aTo - aFrom);
+  const f = (v: number): string => v.toFixed(2);
+  return (
+    `M${f(p0.x)},${f(p0.y)} L${f(s0.x)},${f(s0.y)} ` +
+    `A${f(rMid)},${f(rMid)} 0 0 ${sweep > 0 ? 1 : 0} ${f(s1.x)},${f(s1.y)} ` +
+    `L${f(p1.x)},${f(p1.y)}`
   );
 }
 
@@ -366,23 +394,24 @@ function buildLayout(principles: StrataPrinciple[]): Layout {
     };
   });
 
-  // 9. support connectors: dependent's inner edge → foundation's outer edge
-  //    (revealed on selection; the inspector is the accessible channel). A cycle
-  //    inverts the layering, so pick each attach edge by relative depth — the
-  //    connector spans the space BETWEEN the two bands, never crosses through one.
+  // 9. support connectors: dependent's inner edge → foundation's outer edge, arced
+  //    along the seam between their bands (revealed on selection; the inspector is
+  //    the accessible channel). A cycle inverts the layering, so pick each attach
+  //    edge by relative depth — the connector spans the space BETWEEN the two bands,
+  //    never crosses through one and never slashes across the core.
   const links: LaidLink[] = [];
   for (const [dep, founds] of rev) {
     const de = entOf.get(dep)!;
     for (const fid of founds) {
       const fe = entOf.get(fid)!;
       const inverted = fe.depth > de.depth;
-      const from = polar(bandR(de.depth)[inverted ? 1 : 0], de.center);
-      const to = polar(bandR(fe.depth)[inverted ? 0 : 1], fe.center);
+      const rFrom = bandR(de.depth)[inverted ? 1 : 0];
+      const rTo = bandR(fe.depth)[inverted ? 0 : 1];
       links.push({
         from: dep,
         to: fid,
         toGap: fe.kind === 'gap',
-        d: `M${from.x.toFixed(2)},${from.y.toFixed(2)} L${to.x.toFixed(2)},${to.y.toFixed(2)}`,
+        d: connectorPath(rFrom, de.center, rTo, fe.center),
       });
     }
   }
@@ -425,9 +454,7 @@ export function Strata({
   className,
 }: StrataProps) {
   const [selectedId, select] = useControllableSelection(selProp, defaultSelectedId, onSelect);
-  const [rovingId, setRovingId] = useState<string | undefined>(
-    () => selProp ?? defaultSelectedId,
-  );
+  const [rovingId, setRovingId] = useState<string | undefined>(() => selProp ?? defaultSelectedId);
   const previousSelectedIdProp = useRef(selProp);
 
   // Selection and keyboard focus may intentionally diverge for a controlled
@@ -456,9 +483,7 @@ export function Strata({
 
   const hasSelection = cones.all.size > 0;
   const selected = arcs.find((a) => a.id === selectedId);
-  const tabbableId = arcs.some((a) => a.id === rovingId)
-    ? rovingId
-    : (selected?.id ?? arcs[0]?.id);
+  const tabbableId = arcs.some((a) => a.id === rovingId) ? rovingId : (selected?.id ?? arcs[0]?.id);
 
   // A radial map has no single semantic axis, so either arrow-key pair walks
   // the deterministic arc order. Selection follows focus (automatic
@@ -489,9 +514,8 @@ export function Strata({
     event.preventDefault();
     event.stopPropagation();
 
-    const nodes = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
-      '.tcl-strata__node',
-    );
+    const nodes =
+      event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('.tcl-strata__node');
     nodes?.item(nextIndex).focus();
     setRovingId(nextArc.id);
     select(nextArc.id);
