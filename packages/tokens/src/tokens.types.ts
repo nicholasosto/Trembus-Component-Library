@@ -30,4 +30,5 @@ export type SurfaceTone = 'none' | 'raised' | 'sunken' | 'overlay';
 /** Material "skin" applied to a `Box` surface via [data-material]; tunable via the --tcl-mat-* knobs. */
 export type MaterialTone = 'glass' | 'cyber' | 'felt' | 'relic' | 'parchment' | 'slate' | 'regal';
 
-export type ThemeName = 'light' | 'dark';
+/** Shipped `[data-theme]` values — light is the `:root` default; dark and reliquary override it. */
+export type ThemeName = 'light' | 'dark' | 'reliquary';
