@@ -1,5 +1,6 @@
 /* ════════════════════════════════════════════════════════════
-   DARK theme — adopts the Trembus Visual Grammar palette verbatim.
+   DARK theme — adopts the Trembus Visual Grammar palette (text-dim /
+   text-faint lifted for WCAG AA on raised/tinted surfaces — see below).
    Chrome values are --vg-* (vg-tokens.css); status values are the
    --sc-* Steel City partition. Only color + elevation change; the
    invariant scales (spacing/radius/type/motion/z) come from :root.
@@ -19,8 +20,8 @@
     --tcl-border-strong: #3a4350;
 
     --tcl-text: #e6edf3; /* --vg-text */
-    --tcl-text-dim: #8b949e; /* --vg-text-dim */
-    --tcl-text-faint: #5a6371; /* --vg-text-faint */
+    --tcl-text-dim: #a6afba; /* --vg-text-dim, lifted → AA 4.5:1 on tinted/raised surfaces */
+    --tcl-text-faint: #8b94a4; /* --vg-text-faint, lifted → AA 4.5:1 as real text (was #5a6371) */
 
     --tcl-accent: #d4af37; /* --vg-gold */
     --tcl-accent-hover: #e2c456;

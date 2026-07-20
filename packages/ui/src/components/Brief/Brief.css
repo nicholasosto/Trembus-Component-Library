@@ -31,14 +31,18 @@
   }
   .tcl-brief__kind {
     padding: 2px 10px;
+    border: 1px solid color-mix(in oklab, var(--brief-accent) 45%, transparent);
     border-radius: var(--tcl-radius-full);
-    background: color-mix(in oklab, var(--brief-accent) 16%, var(--tcl-surface));
+    background: color-mix(in oklab, var(--brief-accent) 18%, var(--tcl-surface));
     font-family: var(--tcl-font-mono);
     font-size: var(--tcl-text-xs);
     font-weight: var(--tcl-weight-bold);
     letter-spacing: var(--tcl-tracking-caps);
     text-transform: uppercase;
-    color: var(--brief-accent);
+    /* tone-as-text legibility (cf. Badge accent→text): keep the kind's tone on
+       the tint + border, paint the LABEL in --text so it clears AA in every
+       theme (raw tone-on-tint was 1.8–4.3:1) */
+    color: var(--tcl-text);
   }
   .tcl-brief__id {
     font-family: var(--tcl-font-mono);
@@ -204,6 +208,11 @@
   .tcl-brief__desc {
     color: var(--tcl-text-faint);
   }
+  /* inside a severity check row the desc sits on a saturated tint — bump it to
+     the readable "dim" tier so faint-on-tint never drops below AA */
+  .tcl-brief__check .tcl-brief__desc {
+    color: var(--tcl-text-dim);
+  }
 
   /* ── commands ── */
   .tcl-brief__command {
@@ -329,7 +338,10 @@
     font-weight: var(--tcl-weight-medium);
   }
   a.tcl-brief__chip {
-    color: var(--tcl-status-info-fg);
+    /* link on a sunken chip — the info tone reads (--status-info-fg is dark ink
+       for a solid info FILL and renders near-invisible here); nudged toward
+       --text so it clears AA on the off-white sunken chip in light (raw = 4.47) */
+    color: color-mix(in oklab, var(--tcl-status-info) 90%, var(--tcl-text));
     text-decoration: none;
   }
   a.tcl-brief__chip:hover {

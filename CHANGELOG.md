@@ -11,6 +11,37 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/tokens 0.2.1] — 2026-07
+
+### Fixed
+
+- **WCAG AA contrast for the faint / dim text tokens.** `--tcl-text-faint` is used as real
+  text (Brief ids & micro-labels, Stat units) yet failed AA on every surface — even 3.2:1 on
+  the dark page. Lifted per theme (it moves opposite ways because light is dark-on-light):
+  dark `#5a6371 → #8b94a4`, reliquary `#7a6668 → #958083`, light **darkened** `#9a9a94 → #6f6f69`.
+  Dark `--tcl-text-dim` also lifted `#8b949e → #a6afba` so secondary body text (e.g. Callout
+  bodies) clears AA on tinted-over-raised surfaces. Values were solved hue-preserving in OKLab
+  and the `text > dim > faint` hierarchy is preserved. Verified with axe in all three themes.
+
+## [@trembus/ui 0.8.2] — 2026-07
+
+### Fixed
+
+- **AA contrast on faint and tone-as-text micro-labels** (consumes `@trembus/tokens` 0.2.1;
+  the faint/dim label lift flows through automatically). Component-level fixes:
+  - **`Badge`** — the `neutral` tone painted its label in the raw neutral tone (fails AA on
+    the soft tint); it now uses `--tcl-text-dim`, the AA-safe muted ink (mirrors the existing
+    `accent → --text` legibility variant).
+  - **`Brief`** — checklist descriptions on a severity tint move to the readable
+    `--tcl-text-dim` tier; the kind pill (`SPEC`/`PLAN`/…) keeps its tone on the tint plus a
+    new border but paints the label in `--tcl-text` (raw tone-on-tint was 1.8–4.3:1); the
+    reference-link chip was near-invisible (`--tcl-status-info-fg` dark ink on a sunken chip,
+    1.09:1) and now uses a legible info tone.
+  - **`Stat`** — the "bad" delta (danger red on the raised card) was 4.25:1 in dark; nudged
+    toward `--tcl-text` so it clears AA while staying clearly red.
+  - Added `tokenContrast.test.ts` — a pure-math AA guard across all three themes, since the
+    browser a11y gate (`test:stories`) only exercises the dark theme.
+
 ## [@trembus/game-viz 0.4.0] — 2026-07-18
 
 ### Changed

@@ -22,7 +22,7 @@
 
     --tcl-text: #f0e6e6; /* warm off-white */
     --tcl-text-dim: #b8a3a3; /* ≥7:1 on --tcl-surface */
-    --tcl-text-faint: #7a6668;
+    --tcl-text-faint: #958083; /* lifted → AA 4.5:1 as real text (was #7a6668) */
 
     /* brand accent — the order's blood-red (replaces gold). Deep enough that
        it carries near-white text (--tcl-accent-fg) on a solid fill ≥6:1, so

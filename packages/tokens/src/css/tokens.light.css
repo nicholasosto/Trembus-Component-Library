@@ -26,15 +26,16 @@
     --tcl-radius-full: 9999px;
 
     /* typography (fonts = Trembus --vg-sans / --vg-mono) */
-    --tcl-font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui,
-      sans-serif;
+    --tcl-font-sans:
+      -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
     --tcl-font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
     /* display — engraved/liturgical serif for expressive @trembus/game-viz title
        work. Theme-invariant. Consumers can remap to a loaded face (e.g. Cinzel,
        Trajan Pro). Component CSS still passes a serif fallback to var() so it
        degrades gracefully if a consumer never defines it. */
-    --tcl-font-display: 'Cinzel', 'Optima', 'Palatino Linotype', 'Palatino', 'Book Antiqua',
-      Georgia, 'Times New Roman', serif;
+    --tcl-font-display:
+      'Cinzel', 'Optima', 'Palatino Linotype', 'Palatino', 'Book Antiqua', Georgia,
+      'Times New Roman', serif;
     --tcl-text-xs: 11px;
     --tcl-text-sm: 12px;
     --tcl-text-base: 14px;
@@ -85,7 +86,7 @@
 
     --tcl-text: #1a1a18;
     --tcl-text-dim: #6b6b66;
-    --tcl-text-faint: #9a9a94;
+    --tcl-text-faint: #6f6f69; /* darkened → AA 4.5:1 as real text (was #9a9a94) */
 
     /* brand accent (gold) — shared hue across themes */
     --tcl-accent: #d4af37;

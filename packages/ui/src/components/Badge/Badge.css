@@ -37,7 +37,9 @@
   .tcl-badge--neutral {
     --bdg: var(--tcl-status-neutral);
     --bdg-fg: var(--tcl-status-neutral-fg);
-    --bdg-text: var(--tcl-status-neutral);
+    /* tone-as-text legibility variant (cf. --accent → --text): the raw neutral
+       tone fails AA on the soft tint; --text-dim is the AA-safe muted ink */
+    --bdg-text: var(--tcl-text-dim);
     --bdg-soft: var(--tcl-status-neutral-bg);
   }
   .tcl-badge--success {

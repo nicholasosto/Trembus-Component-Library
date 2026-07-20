@@ -103,7 +103,9 @@
     color: var(--tcl-status-success);
   }
   .tcl-stat__delta--bad {
-    color: var(--tcl-status-danger);
+    /* danger red as small text on the raised card fails AA in dark (~4.25); a
+       slight blend toward --text lifts it past 4.5 while staying clearly red */
+    color: color-mix(in oklab, var(--tcl-status-danger) 85%, var(--tcl-text));
   }
   .tcl-stat__delta--flat {
     color: var(--tcl-text-faint);
