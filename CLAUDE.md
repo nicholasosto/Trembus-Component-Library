@@ -78,6 +78,14 @@ adversarial review → fixes WITH regression tests → re-gate) — the done-bar
 work; **`/release <pkg>`** executes `RELEASING.md` end to end (enforced CHANGELOG entry,
 roster docs sync, publish order, git tag + GitHub Release). RELEASING.md stays canonical.
 
+**Consumer-facing skills** (user-level, symlinked into `~/.claude/skills/`):
+**`trembus-consumer`** (canonical at `skills/trembus-consumer/`, installed by
+`bash skills/link-skill.sh`) teaches agents in CONSUMING repos the published @trembus
+surface — setup, component chooser by data shape/UI job, per-component capsules,
+recipes, version-drift protocol. Deliberately self-contained (no private paths). Every
+release restamps its `> Stamp` line + syncs the affected roster file (RELEASING.md
+docs-sync item 5). Sibling: `trembus-template` (page templates — see below).
+
 ## Visual preview — Claude drives Storybook live
 
 Boot Storybook through the **Claude_Preview MCP**, not Bash: `preview_start({name:'storybook'})`

@@ -41,13 +41,17 @@ Add a section at the top (below `## [Unreleased]`), Keep-a-Changelog format:
 
 ## 4 · Docs roster sync (when the public surface changed)
 
-All four surfaces — they have gone stale before:
+All five surfaces — they have gone stale before:
 
 1. `packages/<pkg>/README.md` — the component roster paragraph + browse line.
 2. Root `README.md` — the package table row.
 3. `CLAUDE.md` **and** `AGENTS.md` — near-twin files; update BOTH (workspace package list
    - the relevant section: Tier-2 roster, game-viz roster, gotchas learned).
 4. New canonical Visual Grammar schema? Mirror it (Tier-2 contract convention).
+5. `skills/trembus-consumer/` — the user-level consumer skill: restamp the `> Stamp` line
+   in SKILL.md + all four `references/*.md` (byte-identical), sync whichever reference
+   files describe the changed surface (new components/props → capsules + `since:` tags),
+   and prune known-gaps entries this release fixes.
 
 ## 5 · Gate
 

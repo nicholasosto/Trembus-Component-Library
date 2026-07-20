@@ -51,7 +51,7 @@ ship a broken `workspace:^` in the published `package.json`.
 ## Docs sync — part of the release, not an afterthought
 
 When a release changes a package's public surface (new component, new compound part,
-renamed prop), sync ALL FOUR doc surfaces in the release commit — each has gone stale
+renamed prop), sync ALL FIVE doc surfaces in the release commit — each has gone stale
 before (the Tier-2 roster once lagged two releases behind):
 
 1. `packages/<pkg>/package.json` — `description` + `keywords` (the npm search surface).
@@ -59,6 +59,10 @@ before (the Tier-2 roster once lagged two releases behind):
 3. Root `README.md` — the package table row.
 4. `CLAUDE.md` **and** `AGENTS.md` — near-twin files, update **both**: the workspace
    package list, the relevant roster (Tier-2 / Game / command-bar…), and any new gotchas.
+5. `skills/trembus-consumer/` — the user-level consumer skill: restamp the `> Stamp` line
+   in SKILL.md + all four `references/*.md` (byte-identical), sync the reference files
+   that describe the changed surface (new components/props → capsules + `since:` tags),
+   and prune known-gaps entries the release fixes.
 
 Tier-2 viz components also mirror their contract as a Visual Grammar schema in the
 canonical kit (see CLAUDE.md → Visualizations).
