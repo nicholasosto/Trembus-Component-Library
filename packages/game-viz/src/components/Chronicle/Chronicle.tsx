@@ -22,7 +22,9 @@ export interface ChronicleProps {
   data: TimelineContract;
   /** Controlled selected event id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the event id when one is selected. */
   onSelect?: (id: string) => void;
   /** Frame accent (scrubber · selection · numeral · inspector rail). Default `danger`. */
   tone?: ChronicleTone;

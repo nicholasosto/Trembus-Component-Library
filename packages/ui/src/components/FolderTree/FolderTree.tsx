@@ -41,6 +41,7 @@ export interface FolderTreeProps {
   // ── single selection (controlled / uncontrolled) ──
   selectedId?: string;
   defaultSelectedId?: string;
+  /** Selection callback — receives the id and the node itself. */
   onSelect?: (id: string, node: FolderNode) => void;
   // ── multi-select checkboxes (opt-in) ──
   checkable?: boolean;
@@ -51,6 +52,7 @@ export interface FolderTreeProps {
   filter?: boolean | string;
   onFilterChange?: (query: string) => void;
   // ── lazy children ──
+  /** Called on first expand of an unloaded folder; a spinner shows while a promise is pending, a failure marks the row. */
   onLoadChildren?: (node: FolderNode) => FolderNode[] | Promise<FolderNode[]>;
   className?: string;
 }

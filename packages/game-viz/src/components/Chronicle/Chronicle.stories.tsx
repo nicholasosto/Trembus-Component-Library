@@ -92,6 +92,37 @@ const ironAge: ChronicleContract = {
   ],
 };
 
+/**
+ * The liturgical-gothic skin over the ui `Timeline` — same contract
+ * (`ChronicleContract` IS `TimelineContract`), same keyboard and selection spine,
+ * passed straight through. The skin adds the reliquary-dark plate, a display-serif
+ * title plate, an optional archive tab, and re-tints the whole timeline accent
+ * (scrubber · selection ring · numerals · inspector rail) through the
+ * `--tcl-timeline-accent` hook — defaulting to the order's blood-red `danger`.
+ *
+ * ### When to use it
+ * - A dated-event chronicle on a lore or game page that speaks this idiom.
+ * - Anywhere else: use ui `Timeline` directly. Pick the base component first, swap to
+ *   the skin if the idiom fits — the skin adds no behavior of its own.
+ *
+ * ### Data & key props
+ * - `data: ChronicleContract` — authored exactly like a Timeline: `events` with stable
+ *   `id`s, optional `categories` legend, `code` / `brand` / `title` / `caption` masthead.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the selection trio, forwarded.
+ * - `tone` — the accent re-tint, default `danger` · `archive` — the top tab label.
+ *
+ * ### Accessibility
+ * - Identical to `Timeline`: every event is a real focusable button (named
+ *   "date: label — category"), prev/next steppers walk the axis, and selection is
+ *   announced in the `aria-live` inspector.
+ * - The plate chrome is `aria-hidden` decoration.
+ *
+ * ### Theming & setup
+ * - Display serif is Cinzel when you load it (`@fontsource/cinzel`), else serif; most at
+ *   home in `data-theme="reliquary"`, correct in light and dark.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/Chronicle',
   component: Chronicle,

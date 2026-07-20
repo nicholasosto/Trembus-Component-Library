@@ -55,14 +55,19 @@ export interface TimelineEvent {
 }
 
 export interface TimelineContract {
+  /** Visual Grammar discriminator. */
   view?: 'timeline';
+  /** Brand line above the title. */
   brand?: string;
   /** Chapter/volume mark (e.g. "III"), shown large + decorative in the header. */
   code?: string;
+  /** Chronicle title — also the accessible name of the event group. */
   title?: string;
+  /** One-line caption under the title. */
   caption?: string;
   /** Right-aligned header meta (e.g. "1,204 YEARS · 7 EPOCHS"). */
   meta?: string;
+  /** The dated events; chronological order (by `at`) drives placement and stepping. */
   events: TimelineEvent[];
   /** Legend + tone mapping. */
   categories?: TimelineCategory[];
@@ -73,10 +78,13 @@ export interface TimelineContract {
 }
 
 export interface TimelineProps {
+  /** The authored timeline contract (events + categories + scale) to lay out. */
   data: TimelineContract;
   /** Controlled selected event id. */
   selectedId?: string;
+  /** Initial selection for uncontrolled use. */
   defaultSelectedId?: string;
+  /** Called with the event id on click, arrow-key step, or prev/next. */
   onSelect?: (id: string) => void;
   className?: string;
 }

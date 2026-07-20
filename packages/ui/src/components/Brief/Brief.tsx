@@ -84,6 +84,7 @@ export interface BriefContract {
 }
 
 export interface BriefProps {
+  /** The brief contract to render. Produce one by hand, via `parseBrief`, or via `fromMarkdown`. */
   data: BriefContract;
   /** Heading rank for the document title (default `2`); section headings use the next rank. */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;

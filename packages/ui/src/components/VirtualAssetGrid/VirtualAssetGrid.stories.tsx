@@ -65,6 +65,43 @@ const renderTile = (asset: AssetItem, { selected }: { selected: boolean }): Reac
 // Cast the generic component to the concrete item type so meta `args` type cleanly.
 const VAG = VirtualAssetGrid as (props: VirtualAssetGridProps<AssetItem>) => ReactElement;
 
+/**
+ * A dependency-free windowed tile grid for thousands of assets — a single-select
+ * `role="listbox"` with sticky counted section subheads in normal flow, fixed tile
+ * geometry, and only the visible rows mounted. Lead job: **reveal state** — a large
+ * dataset stays scannable and selectable at 10k+ items.
+ *
+ * ### When to use it
+ * - Browsing or picking ONE asset among hundreds to thousands of uniform tiles.
+ * - Not for hierarchies (`FolderTree`) or mixed-column records (`Table`).
+ *
+ * ### Data & key props
+ * - `items` (keep the reference stable) + `getKey` — REQUIRED stable key per item;
+ *   it never falls back to label or index.
+ * - `renderTile(item, { selected })` — the tile body, memoized on (item, selected);
+ *   `getLabel` gives the option's accessible name (defaults to `getKey`).
+ * - Sections: `groupBy` / `groupLabel` / `groupOrder`; layout: `minTileWidth` (200)
+ *   · `tileHeight` or `aspect` (1) · `gap` (12) · `overscanRows` (3).
+ * - `selectedId` / `defaultSelectedId` / `onSelect(id, item)` — the selection trio.
+ * - `virtualize={false}` — escape hatch that mounts every tile (jsdom tests, axe
+ *   over the full tree, print, tiny sets).
+ *
+ * ### Accessibility
+ * - `role="listbox"` named by `label` (default "Assets"); tiles are `role="option"`
+ *   with `aria-selected` + per-section `aria-posinset`/`aria-setsize`; sections are
+ *   labelled `role="group"`s.
+ * - One roving Tab stop; arrows move by the LIVE column count across section
+ *   boundaries, plus Home/End/PageUp/PageDown; Enter/Space selects; a windowed-out
+ *   target scrolls into view, mounts, and takes focus.
+ * - A visually-hidden `role="status"` region announces the selection; the selection
+ *   tint stays distinct from the focus ring; tile transitions stop under
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Surfaces, subheads, and the selection tint come from tokens; works in light ·
+ *   dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/VirtualAssetGrid',
   component: VAG,

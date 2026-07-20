@@ -38,18 +38,26 @@ export interface Episode {
 
 export interface EpisodeDeckContract {
   view?: 'episode-deck';
+  /** Masthead eyebrow above the title, e.g. "The Reliquary". */
   brand?: string;
+  /** Mono code line in the masthead, e.g. "SEASON I". */
   code?: string;
+  /** Deck heading; also the accessible name of the episode group. */
   title?: string;
+  /** Support line beneath the heading. */
   caption?: string;
+  /** The episodes, in airing order (missing numerals derive from position). */
   episodes: Episode[];
 }
 
 export interface EpisodeDeckProps {
+  /** The deck contract — masthead + episodes. */
   data: EpisodeDeckContract;
   /** Controlled selected episode id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the episode id when a row is selected. */
   onSelect?: (id: string) => void;
   /** Accent tone for selection + the streaming pulse (default `accent`). */
   tone?: EpisodeDeckTone;

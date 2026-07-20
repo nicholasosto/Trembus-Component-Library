@@ -4,8 +4,13 @@ import { cx } from '../../utils/cx';
 import { useComposedRefs } from '../../utils/refs';
 import './Checkbox.css';
 
-export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
+export interface CheckboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'size'
+> {
+  /** Label text beside the box — the whole label is the click target. */
   label?: ReactNode;
+  /** Helper text below the control, wired to the input via `aria-describedby`. */
   description?: string;
   /** Tri-state — shows a dash and sets the DOM `indeterminate` property. */
   indeterminate?: boolean;

@@ -107,6 +107,7 @@ function ToolbarRoot({ orientation = 'horizontal', className, children, ...rest 
 export interface ToolbarButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Emphasis — `accent` renders the primary/highlighted action. */
   tone?: 'neutral' | 'accent';
+  /** Ref to the underlying `<button>` (useful when the button is a `Menu.Trigger`). */
   ref?: Ref<HTMLButtonElement>;
 }
 

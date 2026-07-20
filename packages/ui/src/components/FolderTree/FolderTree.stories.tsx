@@ -52,6 +52,45 @@ const SAMPLE: FolderNode[] = [
   { id: 'workspace', label: 'pnpm-workspace.yaml' },
 ];
 
+/**
+ * The library's WAI-ARIA `role="tree"` file explorer: indented folder/file rows
+ * with expand/collapse, roving-tabindex keyboard navigation, an optional filter
+ * box, tri-state multi-select checkboxes, and lazy-loaded children. Lead job:
+ * **reveal state** — depth, open/closed, selection, and check state are all
+ * perceivable at once.
+ *
+ * ### When to use it
+ * - Hierarchical navigation and picking: project files, asset folders, scoped
+ *   multi-select over a tree.
+ * - Not for site navigation — use `NavBar`; not for thousands of flat tiles —
+ *   use `VirtualAssetGrid`; not for node-link hierarchy *diagrams* — that's viz `Tree`.
+ *
+ * ### Data & key props
+ * - `data: FolderNode[]` — nested nodes
+ *   `{ id?, label, kind?, icon?, children?, hasChildren?, disabled? }`; omitted ids
+ *   derive from position (provide them if the tree reorders). File-type glyphs infer
+ *   from the extension.
+ * - `label` — the tree's accessible name (default `"Files"`).
+ * - Three controlled/uncontrolled trios: `expandedIds`/`defaultExpandedIds`/`onExpandedChange`,
+ *   `selectedId`/`defaultSelectedId`/`onSelect(id, node)`, and `checkable` +
+ *   `checkedIds`/`defaultCheckedIds`/`onCheckedChange` (folder state derives from leaves).
+ * - `filter` — `true` for the built-in box, a string to drive it controlled
+ *   (+ `onFilterChange`); `onLoadChildren(node)` — sync or async lazy loader.
+ *
+ * ### Accessibility
+ * - `role="tree"` of `role="treeitem"` rows carrying `aria-level` / `aria-setsize` /
+ *   `aria-posinset` / `aria-expanded` / `aria-selected` / tri-state `aria-checked`.
+ * - One roving tab stop: Up/Down walk visible rows, Right/Left expand/collapse or
+ *   hop to child/parent, Home/End jump, Enter selects (+ toggles folders), Space
+ *   toggles the checkbox when `checkable`.
+ * - Filtering highlights matches, auto-expands their ancestors, and announces the
+ *   match count via a `role="status"` live region; chevron rotation stops under
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Tokens-only styling; correct in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/FolderTree',
   component: FolderTree,

@@ -15,6 +15,42 @@ const base: EffigyContract = {
   tone: 'accent',
 };
 
+/**
+ * The relic stage — an interactive 3D turntable wrapping Google `<model-viewer>` (the
+ * repo's first 3D primitive). It presents a glTF/GLB like a museum piece: poster plate,
+ * deferred "Load 3D" reveal, orbit + zoom, optional idle auto-rotate with a real pause
+ * control, optional AR. The frame chrome (corner reticle, index tab, display-serif
+ * caption) is pure decoration around the model.
+ *
+ * ### When to use it
+ * - Showcasing a single 3D asset: relics, characters, props, product turntables.
+ * - For a MIXED asset grid (images + audio + models + docs) use `MediaFrame` — it
+ *   delegates loadable models to this component.
+ * - glTF/GLB only. For `.fbx`/`.obj`/`.blend`/`.rbxm`, show a pre-rendered poster via
+ *   `MediaFrame` instead.
+ *
+ * ### Data & key props
+ * - `data.src` + `data.alt` are REQUIRED — `alt` is the model's accessible name.
+ * - `data.poster` — shown until reveal. With a poster, `reveal` defaults to
+ *   `interaction`: the heavy model download waits behind a real "Load 3D" button.
+ *   Without one it defaults to `auto` (fetch near the viewport).
+ * - `data.cameraControls` (default true) · `autoRotate` · `ar` · `environmentImage` —
+ *   the model-viewer levers, re-exposed declaratively.
+ * - `ratio` — the stage's CSS aspect-ratio, default `'1 / 1'`.
+ *
+ * ### Accessibility
+ * - `alt` is enforced by the contract (WCAG 1.1.1 — the non-text alternative).
+ * - Load, reveal, and failure are announced through an `aria-live` region; the stage
+ *   rings on keyboard focus.
+ * - Auto-rotate honors `prefers-reduced-motion` AND pauses on a real `aria-pressed`
+ *   control — motion is never unstoppable.
+ *
+ * ### Behavior & setup
+ * - `<model-viewer>` is lazy-imported on mount: browser-only (SSR-safe) and needs a
+ *   bundler with dynamic `import()`; its ~300 KB arrives only when an Effigy mounts.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/Effigy',
   component: Effigy,

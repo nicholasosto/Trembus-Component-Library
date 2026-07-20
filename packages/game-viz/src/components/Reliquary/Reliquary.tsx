@@ -38,6 +38,7 @@ export interface ReliquaryProps {
   /** When set, the framed content becomes a labelled `group` for assistive tech. */
   'aria-label'?: string;
   className?: string;
+  /** The framed content — the frame adds chrome around it, never behavior. */
   children?: ReactNode;
 }
 

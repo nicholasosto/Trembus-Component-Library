@@ -4,29 +4,43 @@ import type { FillBarSize, FillBarTone } from '../../internal/fillbar';
 import './Meter.css';
 
 export interface MeterSegment {
+  /** Portion of the track this segment occupies (in `max` units). */
   value: number;
+  /** Segment color; defaults to the meter's `tone`. */
   tone?: FillBarTone;
+  /** Text printed inside the segment (also read into `aria-valuetext`). */
   label?: string;
 }
 
 export interface MeterThreshold {
+  /** Position of the marker; the fill takes `tone` once `value` crosses it. */
   value: number;
+  /** Tone applied to the fill past this marker (marker tick defaults to neutral). */
   tone?: FillBarTone;
 }
 
 export interface MeterProps {
+  /** The measurement (default `0`); clamped to `[min, max]` for ARIA and the fill. */
   value?: number;
+  /** Lower bound of the scale (default `0`). */
   min?: number;
+  /** Upper bound of the scale (default `100`). */
   max?: number;
+  /** Base fill tone (default `success`). */
   tone?: FillBarTone;
+  /** Track style: solid fill · stacked proportions · threshold gauge (default `solid`). */
   variant?: 'solid' | 'stacked' | 'threshold';
   /** Proportional segments for `variant="stacked"`. */
   segments?: MeterSegment[];
   /** Markers for `variant="threshold"`; the fill recolors as `value` crosses them. */
   thresholds?: MeterThreshold[];
+  /** Track height (default `md`). */
   size?: FillBarSize;
+  /** Opt-in HUD glow skin (default `false`). */
   glow?: boolean;
+  /** Right-side % read-out (default `true`; `stacked` defaults to `false`). */
   showValue?: boolean;
+  /** Decorative leading icon chip (`aria-hidden`). */
   icon?: ReactNode;
   /** Accessible name for the meter. */
   label?: string;

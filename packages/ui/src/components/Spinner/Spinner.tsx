@@ -4,6 +4,7 @@ import { cx } from '../../utils/cx';
 import './Spinner.css';
 
 export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
+  /** Ring size (default `md`). */
   size?: 'sm' | 'md' | 'lg' | 'xl';
   /** `current` inherits the surrounding text color. */
   tone?: 'current' | 'accent' | StatusTone;

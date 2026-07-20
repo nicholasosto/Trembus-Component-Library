@@ -16,6 +16,7 @@ import './Pressable.css';
  * element with no extra DOM.
  */
 export interface PressableOwnProps extends UseAffordanceStateOptions {
+  /** Merge the affordance behavior into your own child element (Slot) instead of rendering a `<button>`. */
   asChild?: boolean;
   className?: string;
   style?: CSSProperties;

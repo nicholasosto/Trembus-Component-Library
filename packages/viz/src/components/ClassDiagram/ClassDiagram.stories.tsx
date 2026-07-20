@@ -91,6 +91,39 @@ const shop: ClassDiagramContract = {
   ],
 };
 
+/**
+ * A UML class diagram: compartmented class boxes (stereotype, attributes, methods with
+ * `+ - # ~` visibility marks) connected by typed relationship arrowheads — inheritance,
+ * realization, composition, aggregation, association, dependency. The arrowhead
+ * vocabulary IS the point: pick `kind` accurately.
+ *
+ * ### When to use it
+ * - Class-level design where UML semantics matter — inheritance trees, interface
+ *   realizations, ownership (composition vs aggregation).
+ * - Not for services/containers/deployment altitude → `SystemMap`; not for generic
+ *   "A depends on B" flows → `Lineage`.
+ *
+ * ### Data & key props
+ * - `data.nodes` — `{ id, name, stereotype?, attributes?, methods?, tone?, note? }`
+ *   (`id` REQUIRED + unique); members are `{ name, visibility? }`.
+ * - `data.edges` — `{ from, to, kind?, label?, fromLabel?, toLabel?, tone? }` —
+ *   `kind` defaults to `association`; the from/to labels carry multiplicities.
+ * - `data.direction` — dagre rankdir, default `BT` so superclasses sit ABOVE
+ *   subclasses (the UML convention).
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the selection trio.
+ *
+ * ### Accessibility
+ * - The SVG (boxes' chrome, edges, arrowheads) is `aria-hidden` decoration; every
+ *   class is a real focusable HTML `<button>`, and the selected class's members and
+ *   relationships are revealed in an `aria-live` inspector.
+ * - Visibility marks are text (`+ - # ~`), not color — readable as-is.
+ *
+ * ### Theming & setup
+ * - `tone` paints the class accent bar; edges stay on faint text tones so boxes
+ *   dominate.
+ * - Setup: import `@trembus/viz/styles.css` once at the app root (it carries the full
+ *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
+ */
 const meta = {
   title: 'Visualizations/ClassDiagram',
   component: ClassDiagram,

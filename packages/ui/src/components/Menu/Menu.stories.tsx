@@ -5,6 +5,45 @@ import { Button } from '../Button/Button';
 import { Dialog } from '../Dialog/Dialog';
 import { Menu } from './Menu';
 
+/**
+ * A portal dropdown command menu (the ARIA menu-button pattern) with nested
+ * submenus — the accessible replacement for hover-only quick actions. Lead job:
+ * **afford action** — one trigger opens a named set of commands.
+ *
+ * ### When to use it
+ * - Overflow / command sets behind one trigger; alternates behind a
+ *   `Menu.Sub`. A `Toolbar.Button` can be the trigger for a command bar.
+ * - Not for site navigation — use `NavBar` (real links); not for a one-of-N form
+ *   value — use `Select` / `RadioGroup`.
+ *
+ * ### Data & key props
+ * - Compound parts: `Menu.Trigger` (wraps ONE interactive child) · `Menu.Content`
+ *   (`align` start|end, `side` bottom|top — `top` suits a bottom-docked bar) ·
+ *   `Menu.Item` (`onSelect`, `disabled`) · `Menu.Label` · `Menu.Separator` ·
+ *   `Menu.Sub` / `Menu.SubTrigger` / `Menu.SubContent`.
+ * - Root `open` / `defaultOpen` / `onOpenChange` (uncontrolled by default, closed).
+ * - Content portals to `<body>`, positions off the trigger rect, and tracks
+ *   scroll/resize; a submenu opens to the right and flips left when it would
+ *   overflow the viewport.
+ *
+ * ### Accessibility
+ * - The trigger gets `aria-haspopup="menu"` / `aria-expanded` / `aria-controls`;
+ *   ArrowDown also opens. Content is `role="menu"`, named by a `Menu.Label` when
+ *   present (else the trigger); items are `role="menuitem"`.
+ * - Arrow/Home/End rove focus; Enter/Space selects and collapses the whole tree;
+ *   → opens a submenu, ←/Escape backs out one level; Tab or an outside press
+ *   dismisses; closing returns focus to the trigger.
+ * - Safe inside a modal `Dialog`: content stacks on the popover layer
+ *   (`--tcl-z-popover`, above the modal overlay), the Dialog ignores presses
+ *   inside `[role="menu"]`, and the menu's Escape stops propagating so layers
+ *   peel one per press — `InsideDialog` is the regression story.
+ *
+ * ### Theming & setup
+ * - Raised-surface + elevation tokens; the popover z-token needs
+ *   `@trembus/tokens` ≥ 0.2.0 (the CSS carries a fallback above the modal layer).
+ *   Correct in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Menu',
   component: Menu,

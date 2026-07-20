@@ -73,12 +73,19 @@ export interface SwimlaneStep {
 }
 
 export interface SwimlaneContract {
+  /** Visual Grammar discriminator. */
   view?: 'swimlane';
+  /** Brand line above the header block. */
   brand?: string;
+  /** Machine code line (e.g. "workflow.ship-feature"), mono-set in the header. */
   code?: string;
+  /** Diagram title — also the accessible name of the step group. */
   title?: string;
+  /** One-line caption under the title. */
   caption?: string;
+  /** Actor lanes, top-to-bottom (one row each). */
   lanes: SwimlaneLane[];
+  /** Steps placed into lanes; document order drives sequential columns + default handoffs. */
   steps: SwimlaneStep[];
 }
 
@@ -90,10 +97,13 @@ export interface SwimlaneContract {
 export type SwimlaneDensity = 'cozy' | 'comfortable';
 
 export interface SwimlaneProps {
+  /** The authored swimlane contract (lanes + steps) to lay out. */
   data: SwimlaneContract;
   /** Controlled selected step id. */
   selectedId?: string;
+  /** Initial selection for uncontrolled use. */
   defaultSelectedId?: string;
+  /** Called with the step id on click, Enter/Space, or arrow-key move. */
   onSelect?: (id: string) => void;
   /** Geometry preset (default `cozy` — the original metrics, unchanged). */
   density?: SwimlaneDensity;

@@ -7,12 +7,16 @@ import './Button.css';
 export type ButtonTone = 'accent' | StatusTone;
 
 export interface ButtonProps {
+  /** Affordance weight (default `solid`). */
   variant?: 'solid' | 'outline' | 'ghost';
-  /** Intent — maps to the color-coded ontology. */
+  /** Intent — maps to the color-coded ontology (default `accent`). */
   tone?: ButtonTone;
+  /** Control size (default `md`). */
   size?: 'sm' | 'md' | 'lg';
+  /** Busy state: inline spinner + `aria-busy`, and the button is disabled while true. */
   loading?: boolean;
   disabled?: boolean;
+  /** Stretch to the container's full width. */
   fullWidth?: boolean;
   /** Lend Button's style + behavior to your own element (single child). */
   asChild?: boolean;

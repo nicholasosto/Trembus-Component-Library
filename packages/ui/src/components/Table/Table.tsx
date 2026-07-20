@@ -28,6 +28,7 @@ export type SortDirection = 'asc' | 'desc';
 export interface SortDescriptor {
   /** The `sortKey` of the currently sorted column. */
   column: string;
+  /** Sort direction for that column (`asc` | `desc`). */
   direction: SortDirection;
 }
 export type TableDensity = 'comfortable' | 'compact';
@@ -80,6 +81,7 @@ export interface TableProps extends Omit<TableHTMLAttributes<HTMLTableElement>, 
   /** Controlled sort state — the active column + direction. The table reflects
    * `aria-sort`; YOU reorder the data in response to `onSortChange`. */
   sortDescriptor?: SortDescriptor | null;
+  /** Sort intent from a header click — reorder your data and update `sortDescriptor`. */
   onSortChange?: (descriptor: SortDescriptor) => void;
   /** `multiple` adds a checkbox column with a tri-state select-all in the head. */
   selectionMode?: SelectionMode;
@@ -87,6 +89,7 @@ export interface TableProps extends Omit<TableHTMLAttributes<HTMLTableElement>, 
   selectedKeys?: Iterable<string>;
   /** Uncontrolled initial selection. */
   defaultSelectedKeys?: Iterable<string>;
+  /** Called with the full next selection set after any row / select-all toggle. */
   onSelectionChange?: (keys: Set<string>) => void;
 }
 
@@ -317,6 +320,7 @@ export interface TableHeaderCellProps extends Omit<
   ThHTMLAttributes<HTMLTableCellElement>,
   'align'
 > {
+  /** Horizontal alignment (default `start`). */
   align?: CellAlign;
   /** Marks the column sortable; clicking emits `onSortChange({ column: sortKey, … })`. */
   sortKey?: string;
@@ -387,6 +391,7 @@ function TableHeaderCell({
 
 // ── data cell ────────────────────────────────────────────────────────
 export interface TableCellProps extends Omit<TdHTMLAttributes<HTMLTableCellElement>, 'align'> {
+  /** Horizontal alignment (default `start`; `numeric` cells default to `end`). */
   align?: CellAlign;
   /** Mono, tabular-nums, end-aligned — for figures. */
   numeric?: boolean;

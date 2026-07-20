@@ -3,6 +3,39 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { Callout } from './Callout';
 
+/**
+ * A block-level, tone-tinted banner — left accent rail + tone icon + title +
+ * body — for contextual page/section notices. Lead job is **reveal state**: it
+ * pairs the color-coded ontology (like `Badge`) with a padded surface (like
+ * `Card`), and gains a close button when `onDismiss` is set.
+ *
+ * ### When to use it
+ * - Page- or section-level notices that should persist until read or dismissed:
+ *   degraded data sources, rollout notes, action-needed warnings.
+ * - Not for transient confirmations — that's Toast (`useToast`); not for an inline
+ *   status chip — that's `Badge`; not for blocking decisions — that's `Dialog`.
+ *
+ * ### Data & key props
+ * - `children` — the body; it can carry inline `<code>` and links.
+ * - `tone` (default `info`) — `info | success | warning | danger | neutral | accent`.
+ * - `title` — bold lead line above the body.
+ * - `icon` — leading glyph; defaults to a per-tone icon, pass `null` to hide.
+ * - `onDismiss` — setting it renders the close button; `dismissLabel` (default
+ *   `"Dismiss"`) names it.
+ *
+ * ### Accessibility
+ * - A static banner — no live region; content is read in place. If the message
+ *   arrives dynamically, announce it separately.
+ * - The tone icon is `aria-hidden`; the meaning lives in the title/body words,
+ *   never in color alone.
+ * - The dismiss control is a real `<button>` named by `dismissLabel`, with a
+ *   `:focus-visible` ring; its ✕ glyph is `aria-hidden`.
+ *
+ * ### Theming & setup
+ * - Tint, rail, and icon color resolve through `var(--tcl-status-*)` /
+ *   `var(--tcl-accent)`; works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Callout',
   component: Callout,

@@ -51,6 +51,40 @@ const pipeline: FunnelContract = {
   ],
 };
 
+/**
+ * An ordered stage-drop-off chart: each stage of one flow is a horizontal bar on a
+ * shared track, and selecting a stage reports its conversion versus the top AND
+ * the drop from the previous stage. It consumes the Trembus Visual Grammar
+ * **funnel contract**. Lead job: **reveal state** — the descending shape makes
+ * drop-off perceivable at a glance.
+ *
+ * ### When to use it
+ * - One directional flow with ordered stages: pipeline, signup, checkout,
+ *   compliance gates.
+ * - Not for independent categories on a shared axis — use `BarChart`; not for
+ *   part-of-whole composition — use `DonutChart`.
+ *
+ * ### Data & key props
+ * - `data.stages` — `{ id?, label, value, tone?, color?, note? }[]` in flow order;
+ *   give stable `id`s (a missing id falls back to the stage index, never the label).
+ * - `data.unit` suffixes every value; header fields (`title` / `caption` / `code`) are optional.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio.
+ * - Conversion is measured against the first stage; bars are sized against the
+ *   *largest* stage and the printed % clamps to 100, so non-monotonic data can
+ *   never overflow the track or contradict its own label.
+ *
+ * ### Accessibility
+ * - Stages sit under `role="group"` named by the title; each stage is a real
+ *   `<button>` with `aria-pressed` and a "label: value, N% of top" accessible name.
+ * - The selected stage's value, conversion, drop from the previous stage, and note
+ *   are announced through the `aria-live` inspector; bar/row transitions stop
+ *   under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Stage tones map to `--tcl-accent` / `--tcl-status-*` (default `accent`);
+ *   explicit `color` hex overrides. Correct in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Funnel',
   component: Funnel,

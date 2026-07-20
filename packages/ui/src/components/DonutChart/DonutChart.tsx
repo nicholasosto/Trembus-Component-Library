@@ -14,7 +14,7 @@ import './DonutChart.css';
 export type DonutTone = FillBarTone;
 
 export interface DonutSegment {
-  /** Stable id for selection; falls back to `label`. */
+  /** Stable id for selection; falls back to the segment index. */
   id?: string;
   label: string;
   /** Magnitude (non-negative). */
@@ -42,9 +42,13 @@ export interface DonutContract {
 }
 
 export interface DonutChartProps {
+  /** The authored donut contract (segments + optional header/center readout). */
   data: DonutContract;
+  /** Controlled selected segment id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the segment id on every selection. */
   onSelect?: (id: string) => void;
   /** Ring diameter in px (default 160). */
   size?: number;

@@ -5,16 +5,23 @@ import { cx } from '../../utils/cx';
 import './Progress.css';
 
 export interface ProgressProps {
+  /** Current progress toward `max`; the fill clamps to 0–100%. */
   value: number;
+  /** Completion bound (default `100`). */
   max?: number;
+  /** Fill tone (default `accent`). */
   tone?: FillBarTone;
+  /** Continuous fill or discrete cells (default `solid`). */
   variant?: 'solid' | 'segments';
   /** Number of cells when `variant="segments"`. */
   segments?: number;
+  /** Track height (default `md`). */
   size?: FillBarSize;
   /** Opt-in neon HUD treatment. */
   glow?: boolean;
+  /** Right-side % read-out (default `true`). */
   showValue?: boolean;
+  /** Decorative leading icon chip (`aria-hidden`). */
   icon?: ReactNode;
   /** Accessible name for the progressbar. */
   label?: string;

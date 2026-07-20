@@ -55,6 +55,35 @@ const deps: GraphContract = {
   ],
 };
 
+/**
+ * A directed graph laid out in layers by dagre — pipelines, data lineage, dependency
+ * maps, genealogies. Selecting a node highlights its FULL chain: everything upstream
+ * that feeds it and everything downstream that depends on it.
+ *
+ * ### When to use it
+ * - Flow and dependency between nodes — including multiple parents and cycles (it is
+ *   a graph, not a strict-DAG check).
+ * - Not for one-parent hierarchy → `Tree`; not for containment drill-down →
+ *   `SystemMap`; not for UML class semantics → `ClassDiagram`.
+ *
+ * ### Data & key props
+ * - `data.nodes` (`id` REQUIRED + unique) and `data.edges`
+ *   (`{ from, to, label?, tone?, dashed? }` — dashed reads as weak/inferred).
+ * - `data.direction` — dagre rankdir `TB` | `LR` | `BT` | `RL` (default `TB`).
+ * - Node `kind` defaults a tone (e.g. source / transform / sink); explicit
+ *   `tone` / `color` overrides it.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the selection trio.
+ *
+ * ### Accessibility
+ * - The SVG (edges + arrowheads) is `aria-hidden` decoration; every node is a real
+ *   focusable HTML `<button>`, and selection is revealed in an `aria-live` inspector.
+ * - LABEL EDGES THAT CARRY MEANING — edge labels are what a screen reader gets for
+ *   connections.
+ *
+ * ### Theming & setup
+ * - Setup: import `@trembus/viz/styles.css` once at the app root (it carries the full
+ *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
+ */
 const meta = {
   title: 'Visualizations/Lineage',
   component: Lineage,

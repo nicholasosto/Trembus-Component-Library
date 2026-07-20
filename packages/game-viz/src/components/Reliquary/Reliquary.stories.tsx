@@ -24,6 +24,38 @@ function Portrait({ label = 'SUBJECT' }: { label?: string }) {
   );
 }
 
+/**
+ * A presentational HUD frame in the liturgical-gothic idiom — corner reticles, a label
+ * tab, a tag tab, and tone-coded status readout strips wrapped around YOUR content. It
+ * reveals state about the thing it frames; it never owns the content or its
+ * interactions (the Badge/Skeleton "presentational" precedent).
+ *
+ * ### When to use it
+ * - Framing a stat block, portrait, minimap, or panel so it reads as game
+ *   instrumentation in a HUD.
+ * - Not for general grouping on product pages — that's ui `Card` / `Box` (+ `material`);
+ *   reach for game-viz only when the page deliberately speaks this idiom.
+ *
+ * ### Data & key props
+ * - `children` — the framed content. The frame adds chrome only.
+ * - `label` / `tag` — the top-left and top-right tabs (subject id · epithet).
+ * - `status` — bottom readout strips, `{ label, tone? }[]`. Keep the meaning in the
+ *   words ("CONTAINMENT STABLE"); the tone is reinforcement, never the message.
+ * - `tone` — frame accent (corner reticle + label tab), default `accent`.
+ *
+ * ### Accessibility
+ * - Pass `aria-label` and the frame exposes itself as a labelled `role="group"`; omit
+ *   it and the frame is transparent to assistive tech.
+ * - All chrome is `aria-hidden`; interactive content inside keeps its own focus order —
+ *   the frame never intercepts.
+ * - A status readout toned `accent` paints its text in `--tcl-text` for AA contrast;
+ *   the full tone stays on the strip's border and tint.
+ *
+ * ### Theming & setup
+ * - Most at home in `data-theme="reliquary"`; correct in light and dark too.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/Reliquary',
   component: Reliquary,

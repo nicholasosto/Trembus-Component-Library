@@ -6,16 +6,24 @@ import { cx } from '../../utils/cx';
 import './Tooltip.css';
 
 export interface TooltipProps {
+  /** The supplemental text revealed on hover/focus. */
   content: ReactNode;
   /** A single interactive element to attach the tooltip to. */
   children: ReactElement;
-  /** Delay before showing on hover (ms). Focus shows immediately. */
+  /** Delay before showing on hover (ms, default 400). Focus shows immediately. */
   openDelay?: number;
+  /** Placement relative to the trigger (default `top`). */
   side?: 'top' | 'bottom';
   className?: string;
 }
 
-export function Tooltip({ content, children, openDelay = 400, side = 'top', className }: TooltipProps) {
+export function Tooltip({
+  content,
+  children,
+  openDelay = 400,
+  side = 'top',
+  className,
+}: TooltipProps) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLElement>(null);

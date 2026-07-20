@@ -4,13 +4,19 @@ import { cx } from '../../utils/cx';
 import './Input.css';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  /** The accessible name — a real `<label>` wired to the control (clicking it focuses). */
   label?: string;
+  /** Helper text, joined into the input's aria-describedby. */
   description?: string;
   /** Validation message — sets aria-invalid and is announced via role="alert". */
   error?: string;
+  /** Control height preset (default `md`). */
   size?: 'sm' | 'md' | 'lg';
+  /** Leading adornment (icon, prefix) inside the field frame. */
   startSlot?: ReactNode;
+  /** Trailing adornment (icon, unit) inside the field frame. */
   endSlot?: ReactNode;
+  /** Class for the outer field shell (label + control + messages). */
   containerClassName?: string;
   ref?: Ref<HTMLInputElement>;
 }

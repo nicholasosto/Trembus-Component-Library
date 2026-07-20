@@ -72,19 +72,28 @@ export interface RunRecord {
 }
 
 export interface RunHistoryContract {
+  /** Contract discriminator. */
   view?: 'run-history';
+  /** Small brand line above the header. */
   brand?: string;
+  /** Mono code line, e.g. "workflow.ship-feature.runs". */
   code?: string;
+  /** Header title; also the table's accessible name (falls back to "Run history"). */
   title?: string;
+  /** One-line caption under the title. */
   caption?: string;
+  /** The executions, newest or oldest first — the view sorts by `startedAt` itself. */
   runs: RunRecord[];
 }
 
 export interface RunHistoryProps {
+  /** The run-history contract to render. */
   data: RunHistoryContract;
   /** Controlled selected run id. */
   selectedRunId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedRunId?: string;
+  /** Called with the run id on selection. */
   onSelectRun?: (id: string) => void;
   /** Row padding scale, passed through to `Table` (default `comfortable`). */
   density?: 'comfortable' | 'compact';

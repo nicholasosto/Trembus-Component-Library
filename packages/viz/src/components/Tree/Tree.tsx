@@ -41,9 +41,13 @@ export interface TreeNode {
 
 export interface TreeContract {
   view?: 'tree' | 'org-chart' | 'dendrogram';
+  /** Masthead eyebrow above the title. */
   brand?: string;
+  /** Mono code chip in the masthead. */
   code?: string;
+  /** Diagram heading. */
   title?: string;
+  /** Support line beneath the heading. */
   caption?: string;
   /** Flat node list; hierarchy is derived from `parentId`. */
   nodes: TreeNode[];
@@ -54,12 +58,17 @@ export interface TreeContract {
 }
 
 export interface TreeProps {
+  /** The tree contract — flat nodes, hierarchy derived from `parentId`. */
   data: TreeContract;
+  /** Controlled selected node id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the node id when one is selected. */
   onSelect?: (id: string) => void;
   /** Controlled set of collapsed node ids. */
   collapsedIds?: string[];
+  /** Called when a subtree's collapse is toggled. */
   onToggle?: (id: string, collapsed: boolean) => void;
   className?: string;
 }

@@ -51,6 +51,44 @@ const dirt: LineChartContract = {
   ],
 };
 
+/**
+ * A multi-series trend chart with an optional target line and shaded tolerance
+ * band. It consumes the Trembus Visual Grammar **line-chart contract**. Lead job:
+ * **reveal state** — trajectories against a threshold — with the full viz
+ * interaction spine: every data point is a real HTML `<button>` overlaid on the
+ * decorative SVG, and the selection is revealed in a live inspector.
+ *
+ * ### When to use it
+ * - Continuous trajectories over an ordered x-axis; comparing series against a
+ *   target or band.
+ * - Not for a word-sized inline trend — use `Sparkline`; not for categories on a
+ *   shared axis — use `BarChart`.
+ *
+ * ### Data & key props
+ * - `data.series` — `{ id?, name, tone?, color?, dashed?, fill?, points }[]` where
+ *   `points` are `{ x, y: number|null, note? }[]`; give stable series `id`s (a
+ *   missing id falls back to the series index, never the name). Point ids are
+ *   `"{seriesId}#{index}"`.
+ * - `y: null` renders a **gap** — never zero-fill missing data.
+ * - `data.yMin` / `yMax` force the domain (an inverted pair is swapped, cropped
+ *   series are clipped to the plot); `band { lo, hi, label? }`; `target { value, label? }`.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio;
+ *   `height` sets the plot viewBox height (default 220).
+ *
+ * ### Accessibility
+ * - The canvas is `role="group"` whose accessible name carries the title plus the
+ *   target and band values; the SVG itself is `aria-hidden`.
+ * - Points are HTML buttons positioned by % over a `preserveAspectRatio` SVG (axis
+ *   text never distorts) with `aria-pressed` and "series, x: value" names; points
+ *   cropped out by a forced domain render no button (no phantom clickables).
+ * - Selection is announced through the `aria-live` inspector; point transitions
+ *   stop under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Untoned series cycle the tone ontology (`--tcl-accent` / `--tcl-status-*`);
+ *   explicit `color` hex overrides. Correct in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/LineChart',
   component: LineChart,

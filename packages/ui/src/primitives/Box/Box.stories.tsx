@@ -3,6 +3,37 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { MaterialTone } from '../../tokens/tokens.types';
 import { Box } from './Box';
 
+/**
+ * The SURFACE primitive — a bounded region speaking the token vocabulary: elevation
+ * intent (`surface`), border, radius token, z-layer, padding steps, and the `material`
+ * skin system. Composed chrome throughout the library ultimately sits on a Box; reach
+ * for it when you build custom chrome and want to stay inside the token system.
+ *
+ * ### When to use it
+ * - Custom panels, wells, and chrome that composed components don't cover.
+ * - Not for everyday content blocks — `Card` (and friends) come pre-composed; Box is
+ *   the escape hatch that never hardcodes a hex.
+ *
+ * ### Data & key props
+ * - `surface` — elevation intent: `raised` · `sunken` · `overlay`.
+ * - `material` — a token-driven skin (`glass` · `cyber` · `felt` · `relic` ·
+ *   `parchment` · `slate` · `regal`) applied via `[data-material]` and tuned with the
+ *   `--tcl-mat-*` knobs (tint, accent, …).
+ * - `radius` / `border` / `z` — token-scale corner, border, and layer.
+ * - Padding on the space scale: `p` (all sides), `px` / `py` (axis), `pt` / `pr` /
+ *   `pb` / `pl` (edge) — steps, never pixels.
+ * - Polymorphic `as` — render any element while keeping the vocabulary.
+ *
+ * ### Accessibility
+ * - Renders a plain element with no role of its own; semantics come from `as` and the
+ *   content you put inside.
+ *
+ * ### Theming & setup
+ * - Everything resolves through `var(--tcl-*)`, so surfaces and materials re-skin per
+ *   theme automatically (materials carry per-theme tuning, e.g. glass on dark themes).
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full
+ *   tokens foundation).
+ */
 const meta = {
   title: 'Primitives/Box',
   component: Box,
@@ -11,6 +42,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof Box>;
 
+/** A Surface — padding, radius, border, and elevation from tokens alone. */
 export const Default: Story = {
   render: () => (
     <Box surface="raised" border radius="lg" p={6} style={{ maxWidth: 320 }}>
@@ -19,6 +51,7 @@ export const Default: Story = {
   ),
 };
 
+/** The three elevation intents side by side — raised · sunken · overlay. */
 export const Surfaces: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>

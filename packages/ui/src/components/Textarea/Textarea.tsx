@@ -4,11 +4,15 @@ import { cx } from '../../utils/cx';
 import './Textarea.css';
 
 export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
+  /** Visible field label; clicking it focuses the textarea. */
   label?: string;
+  /** Helper text below the label, wired via `aria-describedby`. */
   description?: string;
   /** Validation message — sets aria-invalid and is announced via role="alert". */
   error?: string;
+  /** Class for the outer field shell (the textarea itself takes `className`). */
   containerClassName?: string;
+  /** Ref to the underlying `<textarea>`. */
   ref?: Ref<HTMLTextAreaElement>;
 }
 

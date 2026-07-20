@@ -265,7 +265,7 @@ Storybook: components-datastatusbar--default
 ### EmptyState · feedback · reveal-state
 
 Deliberate absence: what's not here, why, what to do next.
-Key props: `glyph` · `title` · `description` · `action` (slot for a Button) · `badge`.
+Key props: `icon` (ReactNode; `null` hides the default ∅ mark) · `title` · `description` · `action` (slot for a Button) · `badge` · `pendingSource` (mono chip naming an unexposed data source).
 Use when: zero-data states — never leave a blank region.
 Storybook: components-emptystate--default
 

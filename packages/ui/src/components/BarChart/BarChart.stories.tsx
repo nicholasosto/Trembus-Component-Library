@@ -54,6 +54,42 @@ const coverage: BarChartContract = {
   ],
 };
 
+/**
+ * A categorical magnitude chart — vertical columns or horizontal bars against one
+ * shared axis, driven by a Visual Grammar `bar-chart` contract. Lead job is
+ * **reveal state**: values, tones, and reference markers; but every bar is a real
+ * `<button>`, so selection and the live inspector are first-class.
+ *
+ * ### When to use it
+ * - Comparing discrete categories on one measure: counts, coverage, utilization.
+ * - Not for part-of-whole (→ `DonutChart` / `Treemap`), trajectories over x
+ *   (→ `LineChart`), or ordered stage drop-off (→ `Funnel`).
+ *
+ * ### Data & key props
+ * - `data` (required) — single-series `bars: BarDatum[]`, OR clustered
+ *   `series: BarSeries[]` + `categories: string[]` (one bar per series under each
+ *   category, with a legend); plus `title` / `caption` / `unit` / `orientation`
+ *   (default `vertical`) / `max` / `markers` (reference lines).
+ * - Give bars stable `id`s — single-series falls back to `label`; grouped bar ids
+ *   are `"{seriesKey}#{categoryIndex}"`; `null` series values leave an empty slot.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio.
+ * - `height` (default `240`) — plot height, vertical orientation only.
+ *
+ * ### Accessibility
+ * - The canvas is a `role="group"` named by the contract title; each bar is a
+ *   focusable `<button>` with `aria-pressed` and its value in the accessible name
+ *   ("Components: 86%").
+ * - Selection is announced through the `aria-live` inspector; markers, axis ticks,
+ *   and legend swatches are decorative (`aria-hidden`) — the buttons carry the names.
+ * - Focus ring via `:focus-visible`; bar-growth transitions stop under
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Bars color through the tone ontology (`tone`, or an explicit `color` hex);
+ *   grouped series without a tone cycle through it. Works in light · dark ·
+ *   reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/BarChart',
   component: BarChart,
@@ -125,8 +161,9 @@ export const Interaction: Story = {
 };
 
 /**
- * Clustered multi-series — one bar per series under each category, with a legend.
- * Selecting any bar names its series + category in the inspector.
+ * Job: Afford Action — clustered multi-series: one bar per series under each
+ * category, with a legend. Selecting any bar names its series + category in the
+ * inspector.
  */
 export const Grouped: Story = {
   args: {

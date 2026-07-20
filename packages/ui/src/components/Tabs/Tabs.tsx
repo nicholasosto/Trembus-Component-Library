@@ -25,7 +25,9 @@ export interface TabsProps {
   value?: string;
   /** Uncontrolled initial value. */
   defaultValue?: string;
+  /** Called with the tab `value` on click or arrow-key activation. */
   onValueChange?: (value: string) => void;
+  /** Layout + arrow-key axis (default `horizontal`). */
   orientation?: Orientation;
   className?: string;
   style?: CSSProperties;
@@ -62,6 +64,7 @@ function TabsRoot({
 export interface TabsListProps {
   children?: ReactNode;
   className?: string;
+  /** Names the tab set for assistive tech (or use `aria-labelledby`). */
   'aria-label'?: string;
   'aria-labelledby'?: string;
 }
@@ -81,7 +84,9 @@ function TabsList({ children, className, ...rest }: TabsListProps) {
 }
 
 export interface TabProps {
+  /** Pairs this tab with the `Tabs.Panel` of the same value. */
   value: string;
+  /** Unreachable by click and skipped by the arrow-key rove (default `false`). */
   disabled?: boolean;
   children?: ReactNode;
   className?: string;
@@ -96,7 +101,9 @@ function Tab({ value, disabled = false, children, className }: TabProps) {
   const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>): void => {
     const list = e.currentTarget.closest('[role="tablist"]');
     if (!list) return;
-    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
+    const tabs = Array.from(
+      list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'),
+    );
     const idx = tabs.indexOf(e.currentTarget);
     if (idx < 0) return;
 
@@ -138,6 +145,7 @@ function Tab({ value, disabled = false, children, className }: TabProps) {
 }
 
 export interface TabsPanelProps {
+  /** Pairs this panel with the `Tabs.Tab` of the same value. */
   value: string;
   children?: ReactNode;
   className?: string;

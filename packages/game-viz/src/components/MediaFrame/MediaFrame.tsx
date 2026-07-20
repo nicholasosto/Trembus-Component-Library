@@ -30,6 +30,7 @@ export interface MediaFrameData {
 }
 
 export interface MediaFrameProps {
+  /** The asset descriptor — `medium`, `ext`, and `alt` are required. */
   data: MediaFrameData;
   /** CSS aspect-ratio of the frame. Default `'1 / 1'`. */
   ratio?: string;
@@ -37,6 +38,7 @@ export interface MediaFrameProps {
   interactive?: boolean;
   /** Force the loading (Skeleton) state. */
   loading?: boolean;
+  /** Fired by an `interactive` frame on click / Enter / Space. */
   onActivate?: () => void;
   className?: string;
 }

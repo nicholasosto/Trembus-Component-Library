@@ -2,6 +2,37 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { Tabs } from './Tabs';
 
+/**
+ * In-page section switching on the ARIA tabs pattern — a `role="tablist"` of real
+ * button tabs over exclusive panels, with automatic activation (moving focus moves
+ * the selection). Compound: `Tabs.List` / `Tabs.Tab` / `Tabs.Panel`. Lead job:
+ * **afford action**.
+ *
+ * ### When to use it
+ * - Alternate views of the SAME thing: overview / activity / settings of one entity.
+ * - Not when the "tabs" are routed pages — use `NavBar` links so URLs change.
+ *
+ * ### Data & key props
+ * - `value` / `defaultValue` / `onValueChange` — controlled/uncontrolled active tab;
+ *   each `Tabs.Tab` and `Tabs.Panel` shares a `value`.
+ * - `orientation` — `horizontal` (default) | `vertical`; flips the layout, the arrow
+ *   axis, and `aria-orientation`.
+ * - `Tabs.Tab disabled` — unreachable by click and skipped by the keyboard rove.
+ * - Inactive panel content is unmounted, not just visually hidden.
+ *
+ * ### Accessibility
+ * - Tabs are real `<button role="tab">`s with `aria-selected` + `aria-controls`;
+ *   panels are `role="tabpanel"` labelled by their tab, and the active panel takes
+ *   `tabIndex=0` so keyboard users reach its content.
+ * - Roving tabindex — one Tab stop; Arrow keys (per orientation) + Home/End move
+ *   focus AND activate. Handlers live on the tabs, not the tablist container.
+ * - Give `Tabs.List` an `aria-label` (or `aria-labelledby`) to name the set.
+ *
+ * ### Theming & setup
+ * - Active-tab accent and borders come from tokens; works in light · dark ·
+ *   reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Tabs',
   component: Tabs,

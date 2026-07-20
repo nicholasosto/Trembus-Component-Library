@@ -8,8 +8,11 @@ import './ToastProvider.css';
 export type ToastTone = 'neutral' | StatusTone;
 
 export interface ToastOptions {
+  /** Headline of the toast. */
   title: string;
+  /** Secondary line under the title. */
   description?: string;
+  /** Status tone (default `neutral`); `danger`/`warning` announce assertively. */
   tone?: ToastTone;
   /** Auto-dismiss after ms. 0 keeps it until dismissed. */
   duration?: number;
@@ -21,7 +24,9 @@ interface ToastRecord extends Required<Pick<ToastOptions, 'title' | 'tone' | 'du
 }
 
 interface ToastContextValue {
+  /** Enqueue a toast; returns its id for programmatic dismissal. */
   toast: (opts: ToastOptions) => string;
+  /** Remove a toast by the id `toast()` returned. */
   dismiss: (id: string) => void;
 }
 
@@ -36,13 +41,19 @@ export function useToast(): ToastContextValue {
 let toastCounter = 0;
 
 export interface ToastProviderProps {
+  /** The app subtree that gains access to `useToast()`. */
   children: ReactNode;
   /** Default auto-dismiss duration (ms). */
   duration?: number;
+  /** Viewport edge for the stack (default `bottom`). */
   placement?: 'top' | 'bottom';
 }
 
-export function ToastProvider({ children, duration = 5000, placement = 'bottom' }: ToastProviderProps) {
+export function ToastProvider({
+  children,
+  duration = 5000,
+  placement = 'bottom',
+}: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastRecord[]>([]);
 
   const dismiss = useCallback((id: string) => {
@@ -53,10 +64,7 @@ export function ToastProvider({ children, duration = 5000, placement = 'bottom' 
     (opts: ToastOptions) => {
       toastCounter += 1;
       const id = `tcl-toast-${toastCounter}`;
-      setToasts((list) => [
-        ...list,
-        { id, tone: 'neutral', duration, ...opts },
-      ]);
+      setToasts((list) => [...list, { id, tone: 'neutral', duration, ...opts }]);
       return id;
     },
     [duration],
@@ -109,9 +117,19 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
         <p className="tcl-toast__title">{title}</p>
         {description && <p className="tcl-toast__desc">{description}</p>}
       </div>
-      <button type="button" className="tcl-toast__close" aria-label="Dismiss" onClick={() => onDismiss(id)}>
+      <button
+        type="button"
+        className="tcl-toast__close"
+        aria-label="Dismiss"
+        onClick={() => onDismiss(id)}
+      >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <path
+            d="M3.5 3.5l7 7M10.5 3.5l-7 7"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
         </svg>
       </button>
     </div>

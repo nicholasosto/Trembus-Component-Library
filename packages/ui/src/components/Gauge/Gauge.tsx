@@ -21,8 +21,11 @@ export interface GaugeZone {
 }
 
 export interface GaugeProps {
+  /** The measurement; out-of-range values clamp to [min, max] everywhere (needle, readout, aria). */
   value: number;
+  /** Scale minimum (default 0). */
   min?: number;
+  /** Scale maximum. */
   max: number;
   /** Unit appended to the value readout (e.g. `d`, `%`). */
   unit?: string;

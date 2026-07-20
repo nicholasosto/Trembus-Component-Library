@@ -68,10 +68,13 @@ export interface SoulCardContract {
 }
 
 export interface SoulCardProps {
+  /** The dossier contract — `name` is the only required field. */
   data: SoulCardContract;
   /** Controlled flip state (only meaningful when `data.back` is set). */
   flipped?: boolean;
+  /** Uncontrolled initial flip state. */
   defaultFlipped?: boolean;
+  /** Called when the flip control toggles the card. */
   onFlip?: (flipped: boolean) => void;
   className?: string;
 }

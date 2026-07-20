@@ -71,16 +71,21 @@ export interface HeatmapContract {
 }
 
 export interface HeatmapProps {
+  /** The authored heatmap contract (columns, rows, scale, optional header). */
   data: HeatmapContract;
   /** Unit of selection (default `'cell'`). `'row'` selects a whole row for master-detail. */
   selectionMode?: 'cell' | 'row';
   /** Selected cell id (`"${rowIndex}#${colIndex}"`) — cell mode. */
   selectedId?: string;
+  /** Uncontrolled initial cell selection — cell mode. */
   defaultSelectedId?: string;
+  /** Called with the cell id on every selection — cell mode. */
   onSelect?: (id: string) => void;
   /** Selected row id (`HeatmapRow.id`, or the row index as a string) — row mode. */
   selectedRowId?: string;
+  /** Uncontrolled initial row selection — row mode. */
   defaultSelectedRowId?: string;
+  /** Called with the row id on every selection — row mode. */
   onSelectRow?: (id: string) => void;
   /**
    * Show the built-in value inspector (default `true`). When `false`, a hidden

@@ -134,6 +134,7 @@ export interface DecisionMapProps {
    * visible on first paint. Seeding happens on mount only, like any default.
    */
   defaultSelectedId?: string;
+  /** Called with the option id when a card is selected. */
   onSelect?: (id: string) => void;
   className?: string;
 }

@@ -24,7 +24,7 @@ export interface LinePoint {
 }
 
 export interface LineSeries {
-  /** Stable id for selection; falls back to `name`. */
+  /** Stable id for selection; falls back to the series index. */
   id?: string;
   name: string;
   /** Explicit line color (hex) — overrides `tone`. */
@@ -71,10 +71,13 @@ export interface LineChartContract {
 }
 
 export interface LineChartProps {
+  /** The authored line-chart contract (series + optional band/target/header). */
   data: LineChartContract;
   /** Controlled selected point id (`"{seriesId}#{index}"`). */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the point id (`"{seriesId}#{index}"`) on every selection. */
   onSelect?: (id: string) => void;
   /** Plot viewBox height; sets the chart aspect ratio (default 220). */
   height?: number;

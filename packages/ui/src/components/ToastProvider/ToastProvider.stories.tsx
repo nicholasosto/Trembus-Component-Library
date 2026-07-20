@@ -28,6 +28,37 @@ function ShowAllOnMount() {
   return <p style={{ color: 'var(--tcl-text-dim)' }}>Toasts appear in the corner →</p>;
 }
 
+/**
+ * The transient-confirmation system — a provider + hook pair rather than a rendered
+ * component. Mount `ToastProvider` once at the app root; anywhere below it, call
+ * `useToast()` and fire `toast({ title, description?, tone?, duration? })`. Toasts
+ * stack in a portaled corner viewport and auto-dismiss. Lead job: **acknowledge
+ * input** — the action you just took gets answered.
+ *
+ * ### When to use it
+ * - Confirming completed actions: saved, sent, copied, failed.
+ * - Not for messages that must persist or block — use `Callout` (inline) or
+ *   `Dialog` (modal).
+ *
+ * ### Data & key props
+ * - Provider: `duration` (default auto-dismiss, 5000 ms) · `placement` (`bottom`
+ *   default | `top`).
+ * - `toast(opts)` returns an id; `dismiss(id)` removes it programmatically.
+ * - Per-toast options: `title` (required) · `description` · `tone` (`neutral`
+ *   default | status tones) · `duration` (`0` = sticky until dismissed).
+ * - Auto-dismiss pauses while the pointer hovers a toast.
+ *
+ * ### Accessibility
+ * - The viewport is a portaled `role="region"` labelled "Notifications".
+ * - Each toast announces itself: `role="status"` / `aria-live="polite"` normally,
+ *   escalating to `role="alert"` / `assertive` for `danger` and `warning` tones.
+ * - Every toast carries a labelled Dismiss button.
+ *
+ * ### Theming & setup
+ * - Tones map to the status tokens; the viewport stacks on `--tcl-z-toast`. Works in
+ *   light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Toast',
   component: ToastProvider,

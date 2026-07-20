@@ -30,6 +30,45 @@ const util: HeatmapContract = {
   ],
 };
 
+/**
+ * A rows × columns intensity matrix: every cell shaded by its value on a bucketed
+ * or continuous scale. It consumes the Trembus Visual Grammar **heatmap
+ * contract**. Lead job: **reveal state** — the pattern across two categorical
+ * axes reads at a glance; selection drills into one cell (or one whole row).
+ *
+ * ### When to use it
+ * - Density/intensity across two categorical axes: resource × week, kind × day.
+ * - Not for reading one series precisely — use `LineChart` / `BarChart`; for a
+ *   master-detail list of records, use `selectionMode="row"` here or a `Table`.
+ *
+ * ### Data & key props
+ * - `data.columns: string[]` + `data.rows` —
+ *   `{ id?, label, display?, sub?, cells: (number|null)[] }`;
+ *   `label` stays a **string** (it is the accessible
+ *   name), use `display` for rich header content; `null` = a no-data cell.
+ * - Scale: `stops` (bucketed) or a continuous tone ramp over `min`/`max`
+ *   (defaults to the data extent); `columnTones` gives each column its own ramp
+ *   on the shared domain; `showValues` prints values in cells.
+ * - `selectionMode="cell"` (default) uses `selectedId`/`defaultSelectedId`/`onSelect`
+ *   with `"{rowIndex}#{colIndex}"` ids; `"row"` uses `selectedRowId`/
+ *   `defaultSelectedRowId`/`onSelectRow` (`HeatmapRow.id`, else the row index;
+ *   duplicate explicit ids resolve first-authored-wins).
+ * - `showInspector` / `showScale` (both default `true`).
+ *
+ * ### Accessibility
+ * - In cell mode every populated cell is a real `<button>` with `aria-pressed`
+ *   and a "row, column: value" name; no-data cells are named `role="img"`
+ *   placeholders. In row mode the whole row is one button carrying `aria-current`
+ *   and a name that enumerates every column/value pair; its cells go decorative.
+ * - Selection is announced via the `aria-live` (`aria-atomic`) inspector — and
+ *   when `showInspector={false}`, a hidden live region still announces it.
+ * - Cell/row transitions stop under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - The continuous scale is tokens-only: the tone color-mixed over
+ *   `--tcl-surface-sunken`, legible in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Heatmap',
   component: Heatmap,

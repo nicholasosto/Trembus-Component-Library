@@ -1,6 +1,39 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Meter } from './Meter';
 
+/**
+ * A static measurement read against capacity — disk, quota, load — rendered as a
+ * bordered track with a tone-coded fill (`role="meter"`). Three variants: `solid`
+ * fills to the value, `stacked` lays proportional segments across the track, and
+ * `threshold` recolors the fill as the value crosses configured markers. Lead job:
+ * reveal state — a read-out, not a control.
+ *
+ * ### When to use it
+ * - Showing how much of a fixed capacity is used or measured right now.
+ * - Not for task completion that advances over time — use `Progress` (`role="progressbar"`).
+ * - Not for a needle dial with zone semantics — use `Gauge`.
+ *
+ * ### Data & key props
+ * - `value` (default `0`) against `min`/`max` (defaults `0`/`100`).
+ * - `variant` — `solid` (default) · `stacked` (give `segments: {value, tone?, label?}[]`) ·
+ *   `threshold` (give `thresholds: {value, tone?}[]`; the fill takes the tone of the
+ *   highest marker the value has crossed).
+ * - `tone` (default `success`) · `size` (`sm|md|lg`, default `md`) · `glow` (HUD skin) ·
+ *   `icon` (leading chip) · `showValue` (default on for solid/threshold, off for stacked).
+ * - `label` — the accessible name; always pass one.
+ *
+ * ### Accessibility
+ * - The track is `role="meter"` with `aria-valuenow` (clamped to `[min, max]`),
+ *   `aria-valuemin`/`aria-valuemax`, and `label` as `aria-label`.
+ * - `stacked` exposes the per-segment breakdown via `aria-valuetext`; threshold
+ *   markers and the icon chip are `aria-hidden` decoration.
+ * - Not interactive — no focus stop, nothing to press.
+ *
+ * ### Theming & setup
+ * - Tones map to `var(--tcl-status-*)` / `var(--tcl-accent)`; `glow` is a static
+ *   decorative sheen. Works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Meter',
   component: Meter,

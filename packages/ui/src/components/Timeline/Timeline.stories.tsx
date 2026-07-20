@@ -94,6 +94,39 @@ const ironAge: TimelineContract = {
   ],
 };
 
+/**
+ * A horizontal chronicle — discrete dated events on a time axis, alternating above
+ * and below the rail, tone-coded by category, with era nodes marking each date.
+ * Lead job: **reveal state**. This is the base that game-viz `Chronicle` skins.
+ *
+ * ### When to use it
+ * - Release histories, roadmaps, biographies, eras — WHEN things happened.
+ * - Not for actor handoffs (`Swimlane`) or execution logs (`RunHistory`).
+ *
+ * ### Data & key props
+ * - `data.events` — `{ id?, at, dateLabel?, label, category?, tone?, sub?, … }[]`
+ *   (plus `detail` / `note` / `side`); give stable `id`s (the fallback is the index,
+ *   never the label; duplicate explicit ids resolve first-authored-wins).
+ * - `data.scale` — `ordinal` (even columns, default) | `time` (proportional to `at`,
+ *   de-overlapped so clustered events stay readable); `range` sets the time domain.
+ * - `data.categories` — `{key, label, tone?}[]` → the legend + per-event tones.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio.
+ *
+ * ### Accessibility
+ * - Each event is a real `<button>` (`aria-pressed`) named "date: title — category";
+ *   one roving Tab stop, Arrow keys + Home/End step the selection chronologically,
+ *   and the labelled Previous/Next buttons do the same.
+ * - Selection announces via the `aria-live` inspector; the axis SVG, stems, nodes,
+ *   and scrubber are decorative (`aria-hidden`).
+ * - Keeping the selection in view scrolls smoothly, or jumps without animation under
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - `--tcl-timeline-accent` skins the chrome (read via fallback — the hook game-viz
+ *   `Chronicle` remaps); accent painted as TEXT falls back to `--tcl-text` for AA.
+ *   Works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Timeline',
   component: Timeline,

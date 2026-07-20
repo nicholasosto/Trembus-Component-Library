@@ -113,6 +113,42 @@ const RITES: ConstellationContract = {
   ],
 };
 
+/**
+ * The night star-chart skin over the viz `TalentTree` — talents as stars, branches as
+ * constellations, wrapped in the reliquary plate with HUD corner brackets and an
+ * optional designation tab. Same contract (`ConstellationContract` IS
+ * `TalentTreeContract`) and the FULL allocation engine passes through: points budget,
+ * tier gates, rank prerequisites, and safe deallocation that never strands a dependent
+ * talent. The skin re-tints everything (met edges · budget meter · node accents · tier
+ * labels) through the `--tcl-talenttree-accent` hook. Lead job: **afford action**.
+ *
+ * ### When to use it
+ * - A skill / talent / rite tree on a page that speaks the gothic idiom.
+ * - Anywhere else: use viz `TalentTree` directly — the skin adds chrome, zero behavior.
+ *
+ * ### Data & key props
+ * - `data: ConstellationContract` — nodes with REQUIRED stable `id`s, `requires`
+ *   prerequisites (plain id or `{ id, rank }`), optional `maxRank` / `cost`, tiers with
+ *   optional point `gate`s, and the build's `points` budget.
+ * - `allocated` / `defaultAllocated` / `onAllocatedChange` — the id → rank allocation
+ *   map trio; `readOnly` freezes a finished build.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the inspector selection trio.
+ * - `tone` — default `accent` (gold) · `designation` — the top tab label.
+ *
+ * ### Accessibility
+ * - The TalentTree spine intact: talents are real buttons — allocate with click /
+ *   Enter / Space, deallocate with Shift+click / `-` / Delete; every change is spoken
+ *   by the `aria-live` inspector.
+ * - Tone rides borders, tints, and the accent lever ONLY — running text stays on the
+ *   `--tcl-text` tiers (gold-as-text fails AA; the Badge precedent).
+ * - The star specks twinkle only under `prefers-reduced-motion: no-preference`.
+ *
+ * ### Theming & setup
+ * - Display serif is Cinzel when you load it (`@fontsource/cinzel`), else serif; most at
+ *   home in `data-theme="reliquary"`, correct in light and dark.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/Constellation',
   component: Constellation,
@@ -124,7 +160,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Reveal State — the rite as a night star-chart: the reliquary plate, HUD brackets, and
+ * Job: Reveal State — the rite as a night star-chart: the reliquary plate, HUD brackets, and
  * blood-red accent lever frame the same tiered DAG the viz TalentTree draws, seeded
  * mid-devotion so Scourge's rank prerequisite is met and the Ordained gate is open.
  */
@@ -136,7 +172,7 @@ export const Default: Story = {
 };
 
 /**
- * Afford Action — the same skin re-tinted per tone. A read-only finished rite (accent
+ * Job: Afford Action — the same skin re-tinted per tone. A read-only finished rite (accent
  * gold) showing all four node states, beside an over-budget controlled rite (blood-red)
  * whose meter clamps to danger while the readout stays honest.
  */
@@ -172,7 +208,7 @@ export const States: Story = {
 };
 
 /**
- * Acknowledge Input — an unlit chart. Ignite rites with click / Enter / Space where the
+ * Job: Acknowledge Input — an unlit chart. Ignite rites with click / Enter / Space where the
  * prerequisites, ordination gate, and the 18-point devotion allow; Shift+click, `-`, or
  * Delete recants a rank when it won't strand a later rite. The inspector speaks each change.
  */

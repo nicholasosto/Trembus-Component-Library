@@ -33,20 +33,30 @@ export interface TreemapNode {
 }
 
 export interface TreemapContract {
+  /** Visual Grammar discriminator. */
   view?: 'treemap';
+  /** Brand line above the header block. */
   brand?: string;
+  /** Machine code line (e.g. "pmo.portfolio.hours"), mono-set in the header. */
   code?: string;
+  /** Chart title — also the accessible name of the cell group. */
   title?: string;
+  /** One-line caption under the title. */
   caption?: string;
   /** Unit suffix appended to every value label (e.g. `h`, `k`). */
   unit?: string;
+  /** The nodes to tile; only positive `value`s get a cell. */
   nodes: TreemapNode[];
 }
 
 export interface TreemapProps {
+  /** The authored treemap contract (nodes + header) to tile. */
   data: TreemapContract;
+  /** Controlled selected node id. */
   selectedId?: string;
+  /** Initial selection for uncontrolled use. */
   defaultSelectedId?: string;
+  /** Called with the node id when a cell is selected. */
   onSelect?: (id: string) => void;
   className?: string;
 }

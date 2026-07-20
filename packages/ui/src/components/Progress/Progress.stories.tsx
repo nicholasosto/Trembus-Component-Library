@@ -1,6 +1,38 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Progress } from './Progress';
 
+/**
+ * A determinate task-completion bar (`role="progressbar"`) — the fill advances
+ * proportional to `value / max`. `variant="segments"` renders discrete cells that
+ * light up instead of a continuous fill. Lead job: reveal state — a read-out that
+ * accompanies an operation, never a control.
+ *
+ * ### When to use it
+ * - A task with measurable completion: uploads, installs, multi-step imports.
+ * - Not for an unknown-length wait — use `Spinner` (or `Skeleton` when the coming
+ *   layout is known).
+ * - Not for a static measurement against capacity (disk, quota) — use `Meter`.
+ *
+ * ### Data & key props
+ * - `value` (required) against `max` (default `100`); the fill clamps to 0–100%.
+ * - `variant` — `solid` (default) or `segments` (+ `segments` cell count, default `10`).
+ * - `tone` (default `accent`) · `size` (`sm|md|lg`, default `md`) · `glow` (opt-in
+ *   neon HUD skin) · `icon` (leading chip) · `showValue` (right-side % read-out,
+ *   default `true`).
+ * - `label` — the accessible name; always pass one.
+ *
+ * ### Accessibility
+ * - The track is `role="progressbar"` with `aria-valuenow` (clamped), `aria-valuemin`/
+ *   `aria-valuemax`, and `label` as `aria-label`.
+ * - The icon chip and cells are decorative; not interactive — no focus stop.
+ * - The fill's width transition collapses to an instant change under
+ *   `prefers-reduced-motion` (library-wide guard in `styles/a11y.css`).
+ *
+ * ### Theming & setup
+ * - Tones map to `var(--tcl-accent)` / `var(--tcl-status-*)`; works in light ·
+ *   dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Progress',
   component: Progress,

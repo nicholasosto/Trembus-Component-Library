@@ -23,7 +23,9 @@ export interface ClassNode {
   name: string;
   /** UML stereotype shown above the name, e.g. `«interface»` | `«abstract»` | `«enum»`. */
   stereotype?: string;
+  /** Attribute compartment rows. */
   attributes?: ClassMember[];
+  /** Method compartment rows. */
   methods?: ClassMember[];
   /** Color-coded tone (accent bar). */
   tone?: ClassTone;
@@ -77,9 +79,13 @@ export interface ClassDiagramContract {
 }
 
 export interface ClassDiagramProps {
+  /** The diagram contract — class nodes + typed relations. */
   data: ClassDiagramContract;
+  /** Controlled selected class id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the class id when one is selected. */
   onSelect?: (id: string) => void;
   className?: string;
 }

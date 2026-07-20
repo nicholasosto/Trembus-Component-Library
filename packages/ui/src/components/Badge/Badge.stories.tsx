@@ -4,6 +4,35 @@ import type { BadgeTone } from './Badge';
 
 const TONES: BadgeTone[] = ['accent', 'success', 'info', 'warning', 'danger', 'neutral'];
 
+/**
+ * A small non-interactive chip that maps a status word onto the color-coded tone
+ * ontology (success · info · warning · danger · neutral · accent). Lead job is
+ * **reveal state**: the word IS the meaning, the tone reinforces it — Badge never
+ * carries meaning in color alone.
+ *
+ * ### When to use it
+ * - Inline status on rows, cards, and headings: "Shipped", "Draft", "Deprecated".
+ * - Not interactive — for a clickable/togglable chip use `Button` or `Pressable`;
+ *   Badge renders a plain `<span>` with no focus or press affordance.
+ * - Not for block-level messages with a body — that's `Callout`; not for transient
+ *   confirmations — that's Toast (`useToast`).
+ *
+ * ### Data & key props
+ * - `children` — the status label text (required in practice; it is the meaning).
+ * - `tone` (default `neutral`) — status/intent from the ontology.
+ * - `variant` (`soft` | `solid` | `outline`, default `soft`) — tint strength.
+ * - `size` (`sm` | `md`, default `md`) · `dot` (default `false`) — leading status dot.
+ *
+ * ### Accessibility
+ * - A plain `<span>`: the label is ordinary text for assistive tech; no role, no
+ *   tab stop, no focus ring (presentational by design).
+ * - The optional dot glyph is `aria-hidden` — decoration, never the message.
+ *
+ * ### Theming & setup
+ * - Tones and variants resolve entirely through `var(--tcl-status-*)` /
+ *   `var(--tcl-accent)` tokens; works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Badge',
   component: Badge,

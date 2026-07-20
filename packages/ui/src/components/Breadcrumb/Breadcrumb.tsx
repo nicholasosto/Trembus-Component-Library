@@ -24,9 +24,9 @@ export interface BreadcrumbItemProps {
 export interface BreadcrumbProps {
   /** Declarative crumb path. Omit to compose <Breadcrumb.Item> children instead. */
   items?: BreadcrumbItemData[];
-  /** Accessible name for the navigation landmark. */
+  /** Accessible name for the navigation landmark (default `Breadcrumb`). */
   'aria-label'?: string;
-  /** Decorative glyph rendered between crumbs. */
+  /** Decorative glyph rendered between crumbs (default `›`). */
   separator?: ReactNode;
   className?: string;
   style?: CSSProperties;

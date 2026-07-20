@@ -5,6 +5,35 @@ import type { SparklineTone } from './Sparkline';
 // A DIRT-lag series lifted from the PMO dashboard's KPI cards.
 const dirt = [2.1, 1.9, 2.0, 1.7, 1.5, 1.6, 1.3, 1.2, 1.4, 1.1, 0.9, 1.0];
 
+/**
+ * A word-sized trend line — the series becomes one path in a tiny box so its
+ * trajectory reads at a glance. An accent, not a chart: no axes, no interaction.
+ * Presentational by design — pair it with a `Stat` value or a table cell (`Stat`
+ * embeds one via its `trend` prop).
+ *
+ * ### When to use it
+ * - Showing the direction/shape of a series beside a number or in a dense row.
+ * - Not when values must be read precisely or series compared — use `LineChart`.
+ *
+ * ### Data & key props
+ * - `values: (number | null | undefined)[]` — `null`/non-finite entries are gaps
+ *   the line skips over (never zero-fill missing data).
+ * - `tone` (default `accent`) or `color` (explicit stroke, overrides `tone`).
+ * - `area` fill (default `true`) · `markLast` dot on the final point (default
+ *   `true`) · `min`/`max` force the y-domain so sibling sparklines share one scale.
+ * - `width`/`height` set the intrinsic viewBox (100×30); CSS may stretch it — the
+ *   stroke stays crisp (`vectorEffect="non-scaling-stroke"`).
+ *
+ * ### Accessibility
+ * - `label` given → exposed as `role="img"` with `aria-label` + an SVG `<title>`;
+ *   omitted → decorative (`aria-hidden`). Not focusable; takes no input.
+ * - A forced `min`/`max` on the wrong side clamps rather than inverting the domain.
+ *
+ * ### Theming & setup
+ * - Tones map to `var(--tcl-accent)` / `var(--tcl-status-*)`; works in light ·
+ *   dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Sparkline',
   component: Sparkline,

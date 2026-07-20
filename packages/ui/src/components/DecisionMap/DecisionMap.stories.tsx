@@ -231,6 +231,47 @@ const sessionStateDecided: DecisionMapContract = {
   ],
 };
 
+/**
+ * ONE open decision, the moment before the call: the question, 2–5 option cards,
+ * the assistant's recommendation (which option, how strongly, why), per-option
+ * confidence, and each option's downstream consequence cascade — first- and
+ * second-order effects with a likelihood word on every edge. Lead job is
+ * **reveal state**: map the choice space while it is still open; with
+ * `status: 'decided'` it doubles as the decision ledger after the fact.
+ *
+ * ### When to use it
+ * - Laying out a call BEFORE it's made, or rendering the decided record after.
+ * - Not for whole documents (→ `Brief`, whose `decisions` section is a static
+ *   question → choice list) or dated event sequences (→ `Timeline`).
+ *
+ * ### Data & key props
+ * - `data` (required) — `{ title, context?, options, recommendation?, status?, … }`
+ *   plus `decidedId` / `decidedNote` for the decided ledger; options carry
+ *   `summary` / `tone` / `effort` /
+ *   `reversibility` / `confidence` (clamped 0–100) / `consequences` (nested via
+ *   `then`, each with `likelihood` + `horizon`).
+ * - LLM-robust by design: everything but `title` and option `label` is optional;
+ *   unknown enum strings degrade to safe defaults; duplicate ids uniquify
+ *   (first wins); an unresolvable `optionId`/`decidedId` is ignored — never throws.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio;
+ *   uncontrolled selection auto-seeds to the decided option, else the recommended
+ *   one, so a cascade is visible on first paint (mount-only, like any default).
+ *
+ * ### Accessibility
+ * - The option row is a `role="group"` named by the question; each card is one
+ *   focusable `<button>` with `aria-pressed` whose accessible name is a composed
+ *   sentence (label · recommended + strength · confidence · effort · door type ·
+ *   consequence tally).
+ * - Selection is announced through the `aria-live` inspector (pick, rationale,
+ *   tally); the consequence cascade is real nested `<ul>`/`<li>` semantics.
+ * - Likelihood is always a word; dashed rails for `possible`/`unlikely` only
+ *   reinforce it. Card transitions stop under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Tones ride the status tokens; an `accent` tone painted as text falls back to
+ *   `var(--tcl-text)` ink for AA. Works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/DecisionMap',
   component: DecisionMap,

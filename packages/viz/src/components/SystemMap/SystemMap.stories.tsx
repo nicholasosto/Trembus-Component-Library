@@ -72,6 +72,38 @@ const saas: SystemMapContract = {
   ],
 };
 
+/**
+ * A nested, drillable C4-style architecture map. The same flat model reads at every
+ * altitude: the top level is a Context diagram, drilling into a container reveals its
+ * children (semantic zoom), a breadcrumb trail walks back up, and edges that cross the
+ * visible boundary aggregate up to it instead of disappearing.
+ *
+ * ### When to use it
+ * - Architecture with CONTAINMENT — systems holding containers holding components
+ *   (C4 Context → Container → Component), plus provided/required interfaces.
+ * - Not for flat dependency stories → `Lineage`; not for class-level UML members →
+ *   `ClassDiagram`; not for a strict org-style hierarchy without edges → `Tree`.
+ *
+ * ### Data & key props
+ * - `data.nodes` — FLAT list; `parentId` nesting defines the drill levels; `id` is
+ *   REQUIRED and unique (parents, edges, and ports reference it).
+ * - `data.edges` may connect nodes at ANY depth — they aggregate to the visible level.
+ * - `data.ports` — provided/required interfaces pinned to nodes.
+ * - `kind` (`system` | `container` | `component` | `actor` | `datastore` | `external`)
+ *   drives the stereotype + tone default; `direction` is the dagre rankdir.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — selection trio;
+ *   `defaultFocusId` / `onFocus` — the drilled-into container (`undefined` = top).
+ *
+ * ### Accessibility
+ * - The SVG scene is `aria-hidden` decoration; every node is a real focusable HTML
+ *   `<button>`, drill/breadcrumb steps are real controls, and selection is revealed
+ *   in an `aria-live` inspector.
+ *
+ * ### Theming & setup
+ * - `kind` supplies tone defaults; explicit `tone` / `color` overrides per node/edge.
+ * - Setup: import `@trembus/viz/styles.css` once at the app root (it carries the full
+ *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
+ */
 const meta = {
   title: 'Visualizations/SystemMap',
   component: SystemMap,

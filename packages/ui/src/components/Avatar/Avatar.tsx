@@ -11,9 +11,11 @@ export interface AvatarProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'colo
   alt?: string;
   /** Person/entity name — used for initials and as the accessible name. */
   name?: string;
+  /** Avatar size on the fixed scale (default `md`). */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Outline shape (default `circle`). */
   shape?: 'circle' | 'square';
-  /** Tints the initials fallback via the color-coded ontology. */
+  /** Tints the initials fallback via the color-coded ontology (default `neutral`). */
   tone?: StatusTone;
 }
 
@@ -61,7 +63,12 @@ export function Avatar({
           {initials}
         </span>
       ) : (
-        <svg className="tcl-avatar__fallback" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <svg
+          className="tcl-avatar__fallback"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
           <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.7-8 6v1h16v-1c0-3.3-3.6-6-8-6Z" />
         </svg>
       )}

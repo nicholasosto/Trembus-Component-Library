@@ -4,12 +4,17 @@ import { cx } from '../../utils/cx';
 import './Select.css';
 
 export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+  /** Field label — the accessible name (real `<label htmlFor>`). */
   label?: string;
+  /** Helper text under the label (joins aria-describedby). */
   description?: string;
+  /** Error message; sets aria-invalid and announces via role="alert". */
   error?: string;
+  /** Control height (default `md`). */
   size?: 'sm' | 'md' | 'lg';
   /** Shown as a disabled first option when no value is set. */
   placeholder?: string;
+  /** Class for the outer field shell (label + control + messages). */
   containerClassName?: string;
   ref?: Ref<HTMLSelectElement>;
   /** <option> / <optgroup> elements. */

@@ -50,6 +50,44 @@ const TONE_SRC = makeToneWav(8, 220);
 const PEAKS_A = genPeaks(96, 1.2);
 const PEAKS_B = genPeaks(72, 4.8);
 
+/**
+ * An audio preview + player: an amplitude bar-rail waveform with a played/unplayed
+ * split, a play/pause transport, and a keyboard-operable scrubber. Lead job is
+ * **reveal state** — the waveform, the mono time readout, and loading / decode-error
+ * status; it never autoplays on mount (only a user gesture starts sound).
+ *
+ * ### When to use it
+ * - Previewing and playing an audio asset inline: sound-effect libraries, voice
+ *   takes, ambient loops, message attachments.
+ * - `compact` for a waveform-only thumbnail in dense grids (no transport, no scrubber).
+ * - Not for video or captioned media — this is an audio-only preview surface.
+ *
+ * ### Data & key props
+ * - `src` — audio URL or data URI (required).
+ * - `label` — the accessible name for the player and its scrubber (required).
+ * - `peaks` — pre-computed normalized (0–1) amplitude bars; omit and set
+ *   `autoLoadPeaks` to decode real peaks from `src` via the Web Audio API, else a
+ *   dormant placeholder renders.
+ * - `duration` — track length in seconds; falls back to the audio element's metadata.
+ * - `playOnClick` (default `true`) — a pointer click/tap or drag-release on the
+ *   waveform seeks AND starts playback; set `false` to make pointer seeks move the
+ *   playhead only. Keyboard seeks never auto-play regardless.
+ * - `tone` (default `accent`) · `compact` · `onPlay` / `onPause`.
+ *
+ * ### Accessibility
+ * - The transport is a real `<button>` with `aria-pressed` and a "Play/Pause {label}"
+ *   name; the scrubber is `role="slider"` with `aria-valuemin/max/now/valuetext`.
+ * - Keyboard on the scrubber: Arrow keys step 5s, PageUp/PageDown 10s, Home/End jump.
+ * - Loading and decode-error are announced through a `role="status"` `aria-live`
+ *   region and shown as text; tone is always paired with the visible label.
+ * - `compact` renders as a labelled `role="img"`; playhead motion is CSS behind
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - `tone` recolors the waveform via status tokens; works in light · dark · reliquary
+ *   via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/AudioWaveform',
   component: AudioWaveform,
@@ -152,9 +190,10 @@ export const Interaction: Story = {
 };
 
 /**
- * Opt out of click-to-play with `playOnClick={false}`: a pointer click/tap
- * still seeks (moving the playhead), but never starts playback — use the play
- * button to begin sound. Keyboard seeks behave identically to the default.
+ * Job: Acknowledge Input — opt out of click-to-play with `playOnClick={false}`:
+ * a pointer click/tap still seeks (moving the playhead), but never starts
+ * playback — use the play button to begin sound. Keyboard seeks behave
+ * identically to the default.
  */
 export const SeekOnly: Story = {
   args: {

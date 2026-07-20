@@ -16,6 +16,7 @@ export type HubSlot = 'center' | 'n' | 'ne' | 'se' | 's' | 'sw' | 'nw';
 export type HubSource = string | { label: string; href?: string };
 
 export interface HubDomain {
+  /** Required stable id — the selection identity (a duplicate id is dropped, first wins). */
   id: string;
   /** Hex slot — legacy VG names (hub/robot/blood/decay/spirit/fate/shared),
    *  generic slots (center/n/ne/se/s/sw/nw), or omit to auto-place by order. */
@@ -53,10 +54,13 @@ export interface HubContract {
 }
 
 export interface HubProps {
+  /** The authored hub contract (domains + header stats/tagline chrome). */
   data: HubContract;
   /** Controlled selected domain id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the domain id on every selection. */
   onSelect?: (id: string) => void;
   /** Hex tile width in px (height derives as ~0.866×). */
   size?: number;

@@ -76,12 +76,15 @@ export interface BarChartContract {
 }
 
 export interface BarChartProps {
+  /** The bar-chart contract: single-series `bars`, or clustered `series` + `categories`. */
   data: BarChartContract;
   /** Controlled selected bar id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the bar id when a bar is selected. */
   onSelect?: (id: string) => void;
-  /** Plot height in px (vertical orientation only; horizontal sizes intrinsically). */
+  /** Plot height in px (vertical orientation only; horizontal sizes intrinsically). Default `240`. */
   height?: number;
   className?: string;
 }

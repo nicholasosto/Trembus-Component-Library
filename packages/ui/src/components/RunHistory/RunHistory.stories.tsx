@@ -93,6 +93,43 @@ const log: RunHistoryContract = {
   ],
 };
 
+/**
+ * A selectable log of past executions ("runs") of a workflow — CI pipelines, ETL
+ * jobs, agent sessions — built on the public `Table`. Each run is a row revealing
+ * status, a relative `<time>` when, duration, a per-status step tally, and an
+ * output count; selecting one surfaces its note and its real output links in a
+ * live inspector. Lead job: reveal state.
+ *
+ * ### When to use it
+ * - Execution history: what ran, when, how it went, what it produced.
+ * - Not for the workflow's shape (who does what, in what order) — use `Swimlane`;
+ *   pair the two with `applyRun(swimlaneData, run)` (exported from `@trembus/ui`)
+ *   to replay a selected run's `stepOutcomes` onto the board.
+ * - Not for arbitrary tabular data — use `Table` directly.
+ *
+ * ### Data & key props
+ * - `data.runs` — `{ id?, label?, status, startedAt, durationMs?, trigger?, … }[]`
+ *   (plus `stepOutcomes` / `outputs` / `tally`); `status` is `succeeded` · `failed` ·
+ *   `running` · `cancelled` · `partial` · `queued`. Ids fall back to the index
+ *   (`r0`…), never the label.
+ * - `outputs` — `{ label, href?, kind?, op? }[]`; `href` makes the chip a real link,
+ *   `op` (`create|modify|delete`) adds a git-style `+`/`~`/`−` mark.
+ * - `selectedRunId` / `defaultSelectedRunId` / `onSelectRun` — the selection trio.
+ * - `density` — `comfortable` (default) | `compact`, passed through to `Table`.
+ *
+ * ### Accessibility
+ * - Each row is `Table`'s stretched, keyboard-accessible `<button>`; its accessible
+ *   name spells out status · label · when · duration · steps · outputs in words.
+ * - The inspector is one `aria-live="polite"` region; an output op mark pairs its
+ *   `aria-hidden` sign with an sr-only word ("created", never "plus").
+ * - Started/Duration headers sort (default newest first); in-flight runs with no
+ *   duration sink to the end of a duration sort.
+ *
+ * ### Theming & setup
+ * - Run statuses and output kinds map to the tone tokens (`--tcl-status-*` /
+ *   `--tcl-accent`); works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/RunHistory',
   component: RunHistory,

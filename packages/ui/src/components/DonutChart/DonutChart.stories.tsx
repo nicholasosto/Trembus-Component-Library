@@ -50,6 +50,39 @@ const hoursMix: DonutContract = {
   ],
 };
 
+/**
+ * A part-of-whole proportion ring with a center readout and an interactive legend.
+ * It consumes the Trembus Visual Grammar **donut contract**. Lead job: **reveal
+ * state** — the ring shows composition at a glance; selecting a legend row
+ * emphasizes its segment, dims the rest, and swaps the center readout to that part.
+ *
+ * ### When to use it
+ * - Part-of-whole composition with up to ~6 slices (hours mix, budget split).
+ * - Not for more slices or nested composition — use `Treemap`; not for categories
+ *   against a shared axis — use `BarChart`.
+ *
+ * ### Data & key props
+ * - `data.segments` — `{ id?, label, value, tone?, color?, note? }[]`; give stable
+ *   `id`s (a missing id falls back to the segment index, never the label).
+ *   Negative values are floored at 0; untoned segments cycle the tone ontology.
+ * - `data.centerValue` / `centerLabel` — the center readout (defaults to the
+ *   total); `unit` suffixes every value.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio.
+ * - `size` — ring diameter in px (default 160).
+ *
+ * ### Accessibility
+ * - The ring SVG is decorative (`aria-hidden`); each legend row is a real
+ *   `<button>` with `aria-pressed` and a "label: value, share%" accessible name,
+ *   grouped under `role="group"` named by the title.
+ * - The selected segment's value, share, and note are announced through the
+ *   `aria-live` inspector; segment/legend transitions stop under
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Tones map to `--tcl-accent` / `--tcl-status-*`; explicit `color` hex overrides.
+ *   Correct in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/DonutChart',
   component: DonutChart,

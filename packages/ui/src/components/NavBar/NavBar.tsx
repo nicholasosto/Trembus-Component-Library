@@ -5,6 +5,7 @@ import { Slot } from '../../utils/Slot';
 import './NavBar.css';
 
 export interface NavBarLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+  /** Destination for the built-in `<a>`; unused in `asChild` mode. */
   href?: string;
   /**
    * Mark as the current destination (sets aria-current="page"). In `asChild`
@@ -20,6 +21,7 @@ export interface NavBarProps {
   'aria-label'?: string;
   className?: string;
   style?: CSSProperties;
+  /** `NavBar.Link` entries; each child is wrapped in its own list item. */
   children?: ReactNode;
 }
 

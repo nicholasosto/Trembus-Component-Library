@@ -39,20 +39,30 @@ export interface GraphEdge {
 
 export interface GraphContract {
   view?: 'lineage' | 'graph';
+  /** Masthead eyebrow above the title. */
   brand?: string;
+  /** Mono code chip in the masthead. */
   code?: string;
+  /** Diagram heading. */
   title?: string;
+  /** Support line beneath the heading. */
   caption?: string;
+  /** Graph nodes — ids must be unique. */
   nodes: GraphNode[];
+  /** Directed edges between node ids. */
   edges: GraphEdge[];
   /** Layered flow direction (Dagre rankdir). Default `TB` (top→bottom). */
   direction?: 'TB' | 'LR' | 'BT' | 'RL';
 }
 
 export interface LineageProps {
+  /** The graph contract — nodes + directed edges. */
   data: GraphContract;
+  /** Controlled selected node id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the node id when one is selected. */
   onSelect?: (id: string) => void;
   className?: string;
 }

@@ -5,6 +5,35 @@ import { EmptyState } from './EmptyState';
 import { Button } from '../Button/Button';
 import { Badge } from '../Badge/Badge';
 
+/**
+ * The deliberate "nothing here (yet)" placeholder: a glyph, a headline naming
+ * what's missing, and the next step. Lead job: **reveal state** — genuine absence
+ * (no data, an unconnected source, a pending confirmation) is a state worth
+ * showing, never a blank region.
+ *
+ * ### When to use it
+ * - Zero-data states: empty lists, unmatched filters, feeds awaiting connection.
+ * - Not for content that is *loading* — use `Skeleton` (known layout) or
+ *   `Spinner` (short indeterminate wait); not for transient confirmations — `Toast`.
+ *
+ * ### Data & key props
+ * - `title` — required headline naming what's missing.
+ * - `icon` — leading glyph; defaults to an empty-set mark, pass `null` to hide.
+ * - `description` — why it's empty / what to do; `pendingSource` — a mono code
+ *   chip naming the not-yet-exposed feed (e.g. `wsc.pending`).
+ * - `badge` — status pill slot (e.g. a `<Badge>`); `action` — call-to-action slot
+ *   (e.g. a `<Button>`); the rest spreads onto the root `<div>`.
+ *
+ * ### Accessibility
+ * - Presentational by itself — the glyph is `aria-hidden` and the copy is plain
+ *   text; whatever you place in `action` is the real focusable control and owns
+ *   the interaction feedback.
+ *
+ * ### Theming & setup
+ * - Sits on the sunken-surface / faint-text tokens; correct in light · dark ·
+ *   reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/EmptyState',
   component: EmptyState,

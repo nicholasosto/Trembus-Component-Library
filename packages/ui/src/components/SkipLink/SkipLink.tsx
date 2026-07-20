@@ -5,6 +5,7 @@ import './SkipLink.css';
 export interface SkipLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
   /** In-page target to jump to. Defaults to the main landmark (`#main`). */
   href?: string;
+  /** Link text (default `"Skip to main content"`). */
   children?: ReactNode;
 }
 

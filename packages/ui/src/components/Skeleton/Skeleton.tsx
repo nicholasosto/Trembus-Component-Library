@@ -3,8 +3,11 @@ import { cx } from '../../utils/cx';
 import './Skeleton.css';
 
 export interface SkeletonProps extends HTMLAttributes<HTMLSpanElement> {
+  /** Placeholder shape (default `rect`). */
   variant?: 'text' | 'rect' | 'circle';
+  /** Number (px) or any CSS length. */
   width?: number | string;
+  /** Number (px) or any CSS length. */
   height?: number | string;
   /** For variant="text": number of lines (the last is shortened). */
   lines?: number;

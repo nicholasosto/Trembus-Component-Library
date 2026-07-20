@@ -2,6 +2,37 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../Button/Button';
 import { Card } from './Card';
 
+/**
+ * A raised grouping surface that makes related content read as one unit, with a
+ * compound section API (`Card.Header` / `Card.Body` / `Card.Footer`). Lead job is
+ * **reveal state** — the grouping itself; any actions live in its children.
+ *
+ * ### When to use it
+ * - Grouping a coherent chunk of a page: a summary, a form section, a preview
+ *   tile with its actions in the footer.
+ * - A Card grid that wants sorting/filtering wanted to be a `Table`.
+ * - For a scene-setting skinned surface (glass, relic, …) use `Box` with
+ *   `material` — Card is the plain raised workhorse.
+ *
+ * ### Data & key props
+ * - Compound parts: `Card.Header` (lead line) · `Card.Body` (content) ·
+ *   `Card.Footer` (actions row); compose any subset.
+ * - `interactive` — adds a hover-lift affordance; pair it with an interactive
+ *   child or wrap the card in a link — the card itself never becomes focusable.
+ * - Root and sections accept all `<div>` props (`style`, `onClick`, …).
+ *
+ * ### Accessibility
+ * - A static `<div>` surface with no role — semantics come from its content
+ *   (headings, buttons, links), which handles its own focus and input.
+ * - `interactive` is visual only; keep a real focusable element inside so the
+ *   affordance is reachable by keyboard.
+ *
+ * ### Theming & setup
+ * - Surface, border, radius, and elevation come from `var(--tcl-surface-raised)`,
+ *   `var(--tcl-border)`, `var(--tcl-radius-lg)`, `var(--tcl-elevation-1)`; works in
+ *   light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Card',
   component: Card,

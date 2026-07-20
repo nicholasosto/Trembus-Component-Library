@@ -3,6 +3,36 @@ import { expect, screen, userEvent, within } from 'storybook/test';
 import { Button } from '../Button/Button';
 import { Tooltip } from './Tooltip';
 
+/**
+ * Supplemental text attached to one interactive trigger — shown on hover or focus,
+ * bound via `aria-describedby`, portaled above everything else. Lead job:
+ * **acknowledge input** — pause on or focus a control and it answers with context.
+ *
+ * ### When to use it
+ * - Clarifying a control whose label is terse: icon buttons, abbreviations.
+ * - Not for essential text (put that in the UI), not for event confirmations
+ *   ("Saved!" — use `ToastProvider`), and never on a non-focusable trigger —
+ *   keyboard users would never see it.
+ *
+ * ### Data & key props
+ * - `content` — the supplemental text.
+ * - `children` — exactly ONE interactive element; the handlers and
+ *   `aria-describedby` merge onto YOUR element (Slot pattern, no wrapper node).
+ * - `openDelay` — hover delay in ms (default `400`); keyboard focus shows it
+ *   immediately.
+ * - `side` — `top` (default) | `bottom`.
+ *
+ * ### Accessibility
+ * - The bubble is `role="tooltip"`, linked to the trigger with `aria-describedby`
+ *   while open; the tooltip itself is non-interactive (`pointer-events: none`).
+ * - Opens on pointer-enter (after the delay) and instantly on focus; Escape, blur,
+ *   and pointer-leave dismiss it; it repositions on scroll and resize.
+ *
+ * ### Theming & setup
+ * - Inverse surface (`--tcl-text` background, `--tcl-bg` text) on the
+ *   `--tcl-z-tooltip` layer; works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Tooltip',
   component: Tooltip,

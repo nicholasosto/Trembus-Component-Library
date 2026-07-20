@@ -130,6 +130,44 @@ const PYROMANCY: TalentTreeContract = {
   ],
 };
 
+/**
+ * A game-style skill tree: a prerequisite DAG of multi-rank talents in tier rows, with
+ * point gates and a points-budget ALLOCATION ENGINE — the one viz whose lead job is
+ * **afford action**, not display. Click / Enter / Space buys a rank; Shift+click, `-`,
+ * or Delete refunds one; every change passes the engine's guards (budget, tier gate,
+ * prerequisites, and safe deallocation that never orphans a dependent).
+ *
+ * ### When to use it
+ * - Skill/talent/perk allocation, tech trees, build planners — anywhere a budget is
+ *   SPENT against a prerequisite structure.
+ * - Pure display of a dependency graph → `Lineage`. The gothic idiom → game-viz
+ *   `Constellation` (the same contract and props, skinned).
+ *
+ * ### Data & key props
+ * - `data.nodes` — `{ id + label (REQUIRED), maxRank?, cost?, tier?, requires? }`;
+ *   `maxRank` / `cost` default 1, an omitted `tier` derives from prerequisite depth;
+ *   `requires` has AND semantics — a bare id means rank ≥ 1, `{ id, rank }` demands a
+ *   minimum rank.
+ * - `data.tiers` — authored rows, each with an optional point `gate` (points spent in
+ *   earlier tiers to unlock); `data.points` — the budget (omit for unlimited).
+ * - `allocated` / `defaultAllocated` / `onAllocatedChange(next, change)` — the id → rank
+ *   map trio. Don't re-implement budget math outside — the engine owns legality.
+ * - `readOnly` — display a finished build · `selectedId` trio — inspector selection.
+ *
+ * ### Accessibility
+ * - Talents are real focusable HTML `<button>`s over an `aria-hidden` SVG; rank, cost,
+ *   and lock state ride the accessible name in words, and every allocation change is
+ *   announced by the `aria-live` inspector.
+ * - Statuses derive locked → available → allocated → maxed; state never rides color
+ *   alone.
+ *
+ * ### Theming & setup
+ * - The whole tree re-tints through the `--tcl-talenttree-accent` hook (read via
+ *   fallback, never declared on the root — that's what lets a skin remap it from an
+ *   ancestor). Unknown `glyph` names degrade to an initial.
+ * - Setup: import `@trembus/viz/styles.css` once at the app root (it carries the full
+ *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
+ */
 const meta = {
   title: 'Visualizations/TalentTree',
   component: TalentTree,

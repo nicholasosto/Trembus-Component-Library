@@ -3,10 +3,15 @@ import type { InputHTMLAttributes, ReactNode, Ref } from 'react';
 import { cx } from '../../utils/cx';
 import './Switch.css';
 
-export interface SwitchProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'role'> {
+export interface SwitchProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'size' | 'role'
+> {
+  /** Visible name; the whole label is the click target. */
   label?: ReactNode;
+  /** Helper text below the control, wired via `aria-describedby`. */
   description?: string;
+  /** Ref to the underlying `<input role="switch">`. */
   ref?: Ref<HTMLInputElement>;
 }
 

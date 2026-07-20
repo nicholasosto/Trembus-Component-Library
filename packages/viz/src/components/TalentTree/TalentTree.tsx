@@ -66,9 +66,11 @@ export interface TalentTreeContract {
 }
 
 export interface TalentTreeProps {
+  /** The tree contract — nodes, tiers, and the points budget. */
   data: TalentTreeContract;
   /** Controlled allocation map: id → rank. Rank-0 entries are treated as absent. */
   allocated?: Readonly<Record<string, number>>;
+  /** Uncontrolled initial allocation. */
   defaultAllocated?: Readonly<Record<string, number>>;
   /** Fires on every rank change that passes the guards. `next` is the full next map. */
   onAllocatedChange?: (next: Record<string, number>, change: { id: string; rank: number }) => void;
@@ -76,7 +78,9 @@ export interface TalentTreeProps {
   readOnly?: boolean;
   /** Standard selection trio (spine parity; drives the inspector). */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the node id when a talent is selected. */
   onSelect?: (id: string) => void;
   className?: string;
 }

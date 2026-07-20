@@ -4,6 +4,40 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Table } from './Table';
 import type { SortDescriptor } from './Table';
 
+/**
+ * A composable data table on real `<table>` semantics — compound parts
+ * (`Table.Caption/Head/Body/Foot/Row/HeaderCell/Cell/Empty`) instead of a
+ * column-config API, so the markup stays yours. Lead job: **reveal state** — rows of
+ * records with sort, selection, and emptiness all perceivable.
+ *
+ * ### When to use it
+ * - Records with mixed columns: names, owners, figures, row links.
+ * - Not for rows × columns intensity matrices — use `Heatmap`; execution logs
+ *   already have `RunHistory`, which builds on this Table.
+ *
+ * ### Data & key props
+ * - Sorting is CONTROLLED: `sortDescriptor: {column, direction}` + `onSortChange` —
+ *   the table renders the indicators; YOUR code reorders the data. Mark sortable
+ *   columns with `HeaderCell sortKey`.
+ * - `selectionMode="multiple"` adds a checkbox column with a tri-state select-all;
+ *   wire `selectedKeys` / `defaultSelectedKeys` / `onSelectionChange` and give each
+ *   body `Row` a `rowKey`.
+ * - `Table.Row href` / `onClick` — the whole row becomes a stretched link/button.
+ * - Levers: `density` (`comfortable` default | `compact`) · `striped` · `sticky` +
+ *   `maxHeight` · `Cell align` / `numeric` · `Table.Empty colSpan`.
+ *
+ * ### Accessibility
+ * - Header cells are `<th scope="col">`; sortable ones render a real `<button>` and
+ *   reflect `aria-sort` on the column.
+ * - Selection checkboxes carry accessible names ("Select all rows" / "Select row").
+ * - Row links/buttons are real focusable elements hosted in the first cell, so
+ *   keyboard activation works; name the table with `Table.Caption` or `aria-label`.
+ *
+ * ### Theming & setup
+ * - Zebra, hover, and `[data-selected]` states paint from surface tokens; works in
+ *   light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Table',
   component: Table,
@@ -43,10 +77,6 @@ function sortBy(rows: Engagement[], sort: SortDescriptor): Engagement[] {
 
 const money = (n: number): string => `$${n.toLocaleString('en-US')}`;
 
-/**
- * Job: Afford Action — sortable column headers are real buttons, and each row is
- * a stretched link (click anywhere on the row to open it).
- */
 function SortableTable() {
   const [sort, setSort] = useState<SortDescriptor>({ column: 'name', direction: 'asc' });
   const rows = useMemo(() => sortBy(DATA, sort), [sort]);
@@ -75,12 +105,12 @@ function SortableTable() {
   );
 }
 
+/**
+ * Job: Afford Action — sortable column headers are real buttons, and each row is
+ * a stretched link (click anywhere on the row to open it).
+ */
 export const Default: Story = { render: () => <SortableTable /> };
 
-/**
- * Job: Reveal State — zebra striping, a selected row, a live sort caret (aria-sort),
- * a sticky header over a scroll area, and the empty state.
- */
 function StatesShowcase() {
   const [sort, setSort] = useState<SortDescriptor>({ column: 'revenue', direction: 'desc' });
   const rows = useMemo(() => sortBy(DATA, sort), [sort]);
@@ -155,12 +185,12 @@ function StatesShowcase() {
   );
 }
 
+/**
+ * Job: Reveal State — zebra striping, a selected row, a live sort caret (aria-sort),
+ * a sticky header over a scroll area, and the empty state.
+ */
 export const States: Story = { render: () => <StatesShowcase /> };
 
-/**
- * Job: Acknowledge Input — clicking a sort header toggles aria-sort; the
- * select-all checkbox selects every row.
- */
 function InteractiveTable() {
   const [sort, setSort] = useState<SortDescriptor | null>(null);
   const rows = useMemo(() => (sort ? sortBy(DATA, sort) : DATA), [sort]);
@@ -195,6 +225,10 @@ function InteractiveTable() {
   );
 }
 
+/**
+ * Job: Acknowledge Input — clicking a sort header toggles aria-sort; the
+ * select-all checkbox selects every row.
+ */
 export const Interaction: Story = {
   render: () => <InteractiveTable />,
   play: async ({ canvasElement }) => {

@@ -80,6 +80,39 @@ const portfolio: TreemapContract = {
   ],
 };
 
+/**
+ * A space-filling share-of-whole chart — a deterministic squarified layout sizes
+ * each node's rectangle to its share of the total, so relative magnitude reads
+ * directly from area. Lead job: **reveal state**, on the standard Tier-1 interaction
+ * spine (every cell is a real button; selection feeds a live inspector).
+ *
+ * ### When to use it
+ * - Many-part composition where area comparison beats a legend: hours by
+ *   engagement, revenue by line, storage by folder.
+ * - For a handful of slices a `DonutChart` reads faster; zero/negative values get
+ *   NO cell here (by design) — this chart shows only positive shares.
+ *
+ * ### Data & key props
+ * - `data.nodes` — `{id?, label, value, tone?, color?, sub?, note?}[]`; give stable
+ *   `id`s (the fallback is the node index, never the label).
+ * - Omitted `tone`s cycle through the ontology by node order; a custom hex `color`
+ *   overrides the tone.
+ * - `data.unit` — suffix on every value ("h", "k"); `selectedId` /
+ *   `defaultSelectedId` / `onSelect` — the standard selection trio.
+ *
+ * ### Accessibility
+ * - Cells are HTML `<button>`s overlaid by percentage on the tiling (`aria-pressed`),
+ *   each named "label: value, N% of total" — small cells hide their printed text but
+ *   keep the full accessible name.
+ * - The plot is a `role="group"` named by the title; selection details announce
+ *   through the `aria-live` inspector.
+ *
+ * ### Theming & setup
+ * - Text on a solid tone uses that tone's `-fg` token (AA in both themes); custom
+ *   hex fills fall back to `--tcl-text` with a `--tcl-bg` halo. Works in light ·
+ *   dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Treemap',
   component: Treemap,

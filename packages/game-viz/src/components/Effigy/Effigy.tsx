@@ -62,6 +62,7 @@ export interface EffigyContract {
 }
 
 export interface EffigyProps {
+  /** The relic contract — `src` and `alt` are the only required fields. */
   data: EffigyContract;
   /** Stage aspect ratio (any CSS `aspect-ratio` value). Default `'1 / 1'`. */
   ratio?: string;

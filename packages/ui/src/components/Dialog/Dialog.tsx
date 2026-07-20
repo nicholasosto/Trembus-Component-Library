@@ -7,14 +7,22 @@ import { cx } from '../../utils/cx';
 import './Dialog.css';
 
 export interface DialogProps {
+  /** Controls visibility — the dialog is fully controlled (keep this in state). */
   open: boolean;
+  /** Called when the user dismisses (Escape / overlay press); also call it from your footer actions. */
   onClose: () => void;
+  /** Heading text, wired to the dialog via `aria-labelledby`. */
   title?: string;
+  /** Supporting text, wired via `aria-describedby`. */
   description?: string;
   children?: ReactNode;
+  /** Action-row slot rendered below the body (host your Buttons here). */
   footer?: ReactNode;
+  /** Panel width preset (default `md`). */
   size?: 'sm' | 'md' | 'lg';
+  /** Press outside the panel to close (default `true`); presses inside a portaled `[role="menu"]` are exempt. */
   closeOnOverlayClick?: boolean;
+  /** Escape closes (default `true`). */
   closeOnEsc?: boolean;
   className?: string;
 }

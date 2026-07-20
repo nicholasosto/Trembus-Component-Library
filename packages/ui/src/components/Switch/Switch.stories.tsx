@@ -2,6 +2,31 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { Switch } from './Switch';
 
+/**
+ * An immediate on/off toggle — a native checkbox exposed as `role="switch"` whose
+ * state applies the moment it flips, no submit step. Lead job: **acknowledge input**
+ * — the thumb slides and the track fills the instant you act.
+ *
+ * ### When to use it
+ * - Settings that take effect now: notifications, Wi-Fi, feature flags, theme.
+ * - Not for a value collected and submitted later with a form — use `Checkbox`.
+ *
+ * ### Data & key props
+ * - `label` — the visible name; the whole label is the click target.
+ * - `description` — helper text wired to the input via `aria-describedby`.
+ * - Everything else is the native input surface: `checked` / `defaultChecked` /
+ *   `onChange`, `disabled`, `name`, …
+ *
+ * ### Accessibility
+ * - A real `<input type="checkbox" role="switch">` — assistive tech reads on/off from
+ *   the checked state; the track and thumb are decorative (`aria-hidden`).
+ * - Space toggles; keyboard focus draws a `:focus-visible` ring on the track.
+ *
+ * ### Theming & setup
+ * - The on-state track fills with `--tcl-accent`; works in light · dark · reliquary
+ *   via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Switch',
   component: Switch,

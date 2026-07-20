@@ -68,6 +68,37 @@ const minimal: SoulCardContract = {
   stats: [{ label: 'Integrity', value: 'No reading' }],
 };
 
+/**
+ * A flippable character dossier in the liturgical-gothic idiom: a portrait face (index
+ * tab, state tag, name, epithet, stat rows, bio, pull-quote) and an optional reverse
+ * (`back`) for the deeper lore. Supplying `back` is what makes the card flippable —
+ * without it the dossier is a static plate and no flip control renders.
+ *
+ * ### When to use it
+ * - Character sheets, bestiary entries, collectible/relic reveals — one entity, one card.
+ * - Not for product content cards (ui `Card`) or dense records (ui `Table`).
+ *
+ * ### Data & key props
+ * - `data: SoulCardContract` — only `name` is required; every other field layers on.
+ * - `data.back` — the reverse face (`heading`, `body`, labeled `items`, `quote`); its
+ *   presence creates the flip affordance.
+ * - `flipped` / `defaultFlipped` / `onFlip` — the controlled/uncontrolled flip trio.
+ * - `data.tone` — accent for the epithet, quote rule, and portrait bloom; default `danger`.
+ *
+ * ### Accessibility
+ * - The flip control is a real button with `aria-pressed`, named for what it shows next
+ *   ("Show the reverse of …" / "Show the front of …").
+ * - The hidden face is `inert` — a screen reader or the keyboard can never land on both
+ *   faces at once.
+ * - Omit `portraitAlt` and the portrait is treated as decorative.
+ * - The flip transition collapses under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Display serif is Cinzel when you load it (`@fontsource/cinzel`), else serif; most at
+ *   home in `data-theme="reliquary"`, correct in light and dark.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/SoulCard',
   component: SoulCard,

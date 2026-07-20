@@ -50,8 +50,11 @@ export interface VirtualAssetGridProps<T> {
   virtualize?: boolean;
 
   // ── single selection (controlled / uncontrolled) ──
+  /** Controlled selected tile id (a `getKey` value). */
   selectedId?: string;
+  /** Initial selection for uncontrolled use. */
   defaultSelectedId?: string;
+  /** Called with the tile id + item on click or Enter/Space. */
   onSelect?: (id: string, item: T) => void;
 
   // ── misc ──

@@ -82,9 +82,13 @@ export interface SystemMapContract {
 }
 
 export interface SystemMapProps {
+  /** The architecture contract — flat nodes (nesting via `parentId`), edges, ports. */
   data: SystemMapContract;
+  /** Controlled selected node id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the node id when one is selected. */
   onSelect?: (id: string) => void;
   /** Seed the drilled-into container (uncontrolled; `undefined` = top level). */
   defaultFocusId?: string;

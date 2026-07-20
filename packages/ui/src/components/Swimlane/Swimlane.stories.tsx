@@ -56,6 +56,41 @@ const shipFeature: SwimlaneContract = {
   ],
 };
 
+/**
+ * A process board for cross-actor workflows — each lane (row) is an actor (human · ai ·
+ * system · tool), each step a status-toned card ordered left-to-right by turn, with SVG
+ * connectors tracing the handoffs as work crosses lanes. Lead job: **reveal state** —
+ * who does what, in what order, and where it hands off.
+ *
+ * ### When to use it
+ * - Turn-by-turn human ↔ agent loops, approval chains, delivery pipelines — flows where
+ *   WHO acts matters as much as what happens.
+ * - Not for execution logs — use `RunHistory`, then replay a selected run onto this
+ *   board with the exported `applyRun`.
+ *
+ * ### Data & key props
+ * - `data` — a Visual Grammar swimlane contract: `lanes` (`{id?, label, kind?}`) plus
+ *   `steps` (`{id?, lane, label, col?, status?, detail?, note?, to?, markers?}`).
+ * - Steps reference their lane by `id` OR `label`; give steps stable `id`s — the
+ *   fallback is the index, never the label.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio.
+ * - `density` — `cozy` (default) | `comfortable` (step labels wrap to two lines).
+ *
+ * ### Accessibility
+ * - Every step is a real `<button>` (`aria-pressed`) whose accessible name carries
+ *   actor, step, and status in words ("Tools: Run tests — Active"), never color alone;
+ *   marker titles join the name too.
+ * - One roving Tab stop; Arrow keys + Home/End walk the steps. The accent selection
+ *   ring stays distinct from the `:focus-visible` focus ring.
+ * - Selection announces through the `aria-live` inspector; lanes, stripes, and the
+ *   connector SVG are decorative (`aria-hidden`); the active-step pulse stops under
+ *   `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Lane kinds and step statuses paint via status tokens; works in light · dark ·
+ *   reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Swimlane',
   component: Swimlane,

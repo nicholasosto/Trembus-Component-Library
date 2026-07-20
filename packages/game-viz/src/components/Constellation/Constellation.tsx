@@ -27,13 +27,17 @@ export interface ConstellationProps {
   data: TalentTreeContract;
   /** Controlled allocation map: id → rank. */
   allocated?: Readonly<Record<string, number>>;
+  /** Uncontrolled initial allocation. */
   defaultAllocated?: Readonly<Record<string, number>>;
+  /** Called with the next full map plus the changed `{ id, rank }`. */
   onAllocatedChange?: (next: Record<string, number>, change: { id: string; rank: number }) => void;
   /** Display a finished build (allocate/remove affordances hidden). */
   readOnly?: boolean;
   /** Selection trio (drives the inspector). */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the node id when a talent is selected. */
   onSelect?: (id: string) => void;
   /** Frame accent (met edges · meter · node default · tier labels). Default `accent`. */
   tone?: ConstellationTone;

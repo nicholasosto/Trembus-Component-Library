@@ -11,6 +11,43 @@ const FILTERS: DataFilter[] = [
   { id: 'status', label: 'Stage', value: 'Active' },
 ];
 
+/**
+ * The data-trust header for any dashboard or data surface: a color-coded status
+ * dot + word (live · stale · loading · error · partial · paused), a freshness
+ * `<time>`, scope metrics, and the parameter chips that produced the slice. Lead
+ * job is **reveal state** — "can I trust this data right now, and what scoped it?"
+ *
+ * ### When to use it
+ * - Directly above any KPI grid, report, or table whose freshness matters.
+ * - Presentational by default — without `onRemoveFilter`/`onRefresh` it is a
+ *   static readout; pass them to turn chips removable and add a re-pull control.
+ * - Not for one-off event confirmations — that's Toast; not for a section notice
+ *   with a body — that's `Callout`.
+ *
+ * ### Data & key props
+ * - `status` (default `live`) — drives the tone rail, dot, and announced word;
+ *   `statusLabel` overrides the word.
+ * - `updatedAt` (machine time for `<time>`) + `updatedLabel` (human text).
+ * - `metrics: { label, value }[]` — record counts, coverage.
+ * - `filters: { id?, label, value, tone? }[]` — give stable `id`s (fallback is the
+ *   index, never the label).
+ * - `onRemoveFilter(id, filter)` · `onRefresh` (button disabled while `loading`) ·
+ *   `dense` for embedding above tight tables.
+ *
+ * ### Accessibility
+ * - The bar is a labelled `<section>` (default name "Data status"); only the
+ *   status signal is a `role="status"` live region, so a status flip announces
+ *   but a ticking freshness label does not.
+ * - Chip remove buttons are named "Remove {label} filter" (customizable via
+ *   `removeFilterLabel`); refresh carries `aria-busy` while loading.
+ * - The dot is `aria-hidden` — the word carries the meaning; dot pulse/beacon
+ *   animations stop under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Status tones resolve through `var(--tcl-status-*)` / `var(--tcl-accent)`;
+ *   works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/DataStatusBar',
   component: DataStatusBar,

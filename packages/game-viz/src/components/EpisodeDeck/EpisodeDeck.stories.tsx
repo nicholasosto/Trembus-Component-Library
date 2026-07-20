@@ -41,6 +41,39 @@ const season: EpisodeDeckContract = {
   ],
 };
 
+/**
+ * A season's episode rail — the chaptered-content selector of the game-viz idiom. Each
+ * episode is a real focusable button row (Roman numeral or authored glyph, title, code)
+ * carrying its release state (available · streaming · locked with a release date), and
+ * the selected row's synopsis surfaces in a live inspector. Lead job: **afford action**
+ * — this is a selector, not a listing.
+ *
+ * ### When to use it
+ * - Choosing among chaptered content: episodes, missions, acts, quest chains.
+ * - Not for site navigation (ui `NavBar` / `Menu`) or hierarchies (ui `FolderTree`).
+ *
+ * ### Data & key props
+ * - `data.episodes` — `{ id?, numeral?, title, code?, state?, releaseAt?, synopsis? }[]`;
+ *   give stable `id`s (selection falls back to a synthetic index id, never the title).
+ * - `numeral` auto-derives as a Roman numeral from position when omitted.
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the standard selection trio.
+ * - `tone` — selection accent + the "now streaming" pulse, default `accent`.
+ *
+ * ### Accessibility
+ * - Rows are `<button>`s with `aria-pressed`, grouped under a `role="group"` named by
+ *   the deck title.
+ * - State lives in the accessible name in words ("locked — releases APR 26"), never in
+ *   color or glyphs alone; locked rows stay focusable and selectable (you can inspect
+ *   what you cannot yet watch).
+ * - Selection is announced through the `aria-live` inspector; the streaming pulse stops
+ *   under `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - Display serif is Cinzel when you load it (`@fontsource/cinzel`), else serif; most at
+ *   home in `data-theme="reliquary"`, correct in light and dark.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/EpisodeDeck',
   component: EpisodeDeck,

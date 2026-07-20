@@ -6,6 +6,40 @@ import { Badge } from '../Badge/Badge';
 const dirt = [2.1, 1.9, 2.0, 1.7, 1.5, 1.6, 1.3, 1.2, 1.4, 1.1, 0.9, 1.0];
 const revenue = [210, 224, 198, 240, 232, 251, 268, 274, 281, 296, 305, 318];
 
+/**
+ * The KPI tile: a labeled headline value with an optional period-over-period delta
+ * chip, target/context line, status badge, and an embedded trend sparkline — the
+ * signature card of the PMO dashboard. Presentational by default; `onSelect` or
+ * `href` turns the whole tile into a drill-in control. Lead job: reveal state.
+ *
+ * ### When to use it
+ * - One metric per tile, at dashboard/hero altitude.
+ * - Not for a series that must be read precisely — use `LineChart`; the embedded
+ *   `trend` is a `Sparkline` accent, not a chart.
+ * - Not for a measurement against capacity — use `Meter` or `Gauge`.
+ *
+ * ### Data & key props
+ * - `label` (required) · `value` (defaults to `"—"` for awaiting-data tiles) ·
+ *   `unit` · `strap` (eyebrow) · `target` (context line) · `badge` (slot, e.g. a
+ *   `Badge`).
+ * - `delta: { value, text?, invert? }` — signed change as a ▲/▼ chip; set `invert`
+ *   when a DECREASE is good (latency/lag metrics).
+ * - `trend: (number | null)[]` — embeds a tone-matched sparkline strip.
+ * - `tone` (default `accent`) · `onSelect` (renders a `<button>`) · `href` (renders
+ *   an `<a>`; takes precedence over `onSelect`).
+ *
+ * ### Accessibility
+ * - The delta chip carries a worded `aria-label` ("down by 0.20d", "no change, …");
+ *   the arrow glyph is `aria-hidden`, so direction is never glyph- or color-only.
+ * - As a drill-in the tile is a real `<button>`/`<a>`: focusable with the library
+ *   focus ring, activated by click or Enter/Space.
+ * - The embedded sparkline is decorative (no label), so it adds no SR noise.
+ *
+ * ### Theming & setup
+ * - `tone` drives the top accent rail, strap, and sparkline; delta good/bad colors
+ *   come from the status tokens. Works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Stat',
   component: Stat,

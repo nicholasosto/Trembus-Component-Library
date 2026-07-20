@@ -5,7 +5,10 @@ import { Button } from '../Button/Button';
 import { Dialog } from './Dialog';
 import type { DialogProps } from './Dialog';
 
-function DialogDemo({ triggerLabel = 'Open dialog', ...props }: Partial<DialogProps> & { triggerLabel?: string }) {
+function DialogDemo({
+  triggerLabel = 'Open dialog',
+  ...props
+}: Partial<DialogProps> & { triggerLabel?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -33,6 +36,38 @@ function DialogDemo({ triggerLabel = 'Open dialog', ...props }: Partial<DialogPr
   );
 }
 
+/**
+ * A focus-trapped modal on the overlay layer — the portal + focus-trap + ARIA spine
+ * the other floating surfaces build on. Lead job: **acknowledge input** — it holds
+ * the user in one short, blocking exchange (confirm, small form) and hands focus
+ * back when it's done.
+ *
+ * ### When to use it
+ * - Blocking confirmations and short focused tasks that must interrupt the page
+ *   (destructive confirms, quick edits).
+ * - Not for transient event confirmations — use `Toast`; not for page/section
+ *   notices that can sit inline — use `Callout`.
+ *
+ * ### Data & key props
+ * - `open` / `onClose` — required; the dialog is fully controlled (keep `open` in state).
+ * - `title` / `description` — rendered and wired to `aria-labelledby` / `aria-describedby`.
+ * - `children` — the body; `footer` — the action row slot (host your Buttons there).
+ * - `size` — `sm | md | lg` (default `md`); `closeOnOverlayClick` / `closeOnEsc` (both default `true`).
+ *
+ * ### Accessibility
+ * - `role="dialog"` + `aria-modal="true"`; on open focus moves inside and Tab is
+ *   trapped; on close focus returns to the element that opened it; background
+ *   scroll is locked while open.
+ * - Escape closes; a press outside the panel closes — but presses inside a portaled
+ *   popup opened from the dialog (`[role="menu"]`) are exempt, so a `Menu` inside
+ *   survives its own clicks and Escape peels one layer per press
+ *   (`Components/Menu → InsideDialog` is the regression story).
+ *
+ * ### Theming & setup
+ * - Overlay + raised panel ride the `--tcl-overlay` / `--tcl-surface-raised` /
+ *   `--tcl-z-modal` tokens; correct in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Components/Dialog',
   component: Dialog,

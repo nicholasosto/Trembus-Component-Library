@@ -623,6 +623,44 @@ const openCloudPlan: BriefContract = {
   ],
 };
 
+/**
+ * Renders a whole instruction or planning document (CLAUDE.md, AGENTS.md, a plan,
+ * a spec) as data — kind-tagged header, meta pills, and typed sections, each
+ * collapsible. Lead job is **reveal state**: the entire doc at a glance. The
+ * contract is deliberately permissive — lenient parse, strict render — so a
+ * partial or slightly-off LLM generation still renders.
+ *
+ * ### When to use it
+ * - Showing a doc-shaped thing as a first-class UI surface: agent instructions,
+ *   specs, plans, runbooks, README-grade outlines.
+ * - Not for interactive decision-making visuals (→ `DecisionMap`) or dated event
+ *   sequences (→ `Timeline`); Brief's `decisions`/`phases` sections are static lists.
+ *
+ * ### Data & key props
+ * - `data` (required) — `{ kind?, id?, title?, summary?, meta?, sections? }`; section
+ *   `kind` is one of `prose` · `rules` · `commands` · `checklist` · `phases` ·
+ *   `artifacts` · `boundaries` · `decisions` · `reference` (unknown kinds degrade to
+ *   prose); items are bare strings or `{ text, desc?, status?, severity?, ref?, choice? }`.
+ * - `headingLevel` (default `2`) — rank of the doc title; sections use the next rank.
+ * - `defaultCollapsed` — section ids to start collapsed (give sections stable `id`s;
+ *   they fall back to `s{index}`).
+ * - Helpers exported alongside: `parseBrief` (never throws; coerces messy input and
+ *   returns `issues`) and `fromMarkdown` (markdown → contract, deterministic).
+ *
+ * ### Accessibility
+ * - The doc is an `<article>` labelled by its title; headings are real `h2`/`h3`
+ *   elements at the configured rank.
+ * - Every section heading contains a disclosure `<button>` with `aria-expanded` +
+ *   `aria-controls`; the collapsed body is `hidden`. This per-section collapse is
+ *   the library's only accordion.
+ * - Chevrons and glyphs are `aria-hidden`; refs render as real links only for
+ *   http(s) URLs.
+ *
+ * ### Theming & setup
+ * - The `kind` drives the header accent via tokens; meta pills accept a `tone` hex.
+ *   Works in light · dark · reliquary via `[data-theme]`.
+ * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
+ */
 const meta = {
   title: 'Visualizations/Brief',
   component: Brief,
@@ -650,16 +688,16 @@ export const Interaction: Story = {
   },
 };
 
-/** Scope B — an instruction doc that also carries a lightweight plan. */
+/** Job: Reveal State — Scope B: an instruction doc that also carries a lightweight plan. */
 export const WithPlan: Story = { args: { data: withPlan } };
 
-/** Scope C — any sectioned markdown (a design spec). */
+/** Job: Reveal State — Scope C: any sectioned markdown (a design spec). */
 export const GenericDoc: Story = { args: { data: genericDoc } };
 
-/** Scope D — a full architecture brief: every section kind + every item facet. */
+/** Job: Reveal State — Scope D: a full architecture brief: every section kind + every item facet. */
 export const WebServerArchitecture: Story = { args: { data: webArchitecture } };
 
-/** Scope E — a real engineering plan (Roblox OpenCloud MCP V1) transcribed to a Brief. */
+/** Job: Reveal State — Scope E: a real engineering plan (Roblox OpenCloud MCP V1) transcribed to a Brief. */
 export const OpenCloudMcpPlan: Story = { args: { data: openCloudPlan } };
 
 // A raw markdown doc — exactly what you'd paste from an AGENTS.md — converted to
@@ -694,5 +732,5 @@ An operating brief an agent can act on cold. Local markdown is the source of tru
 The worker owns auth + routing only; business logic lives in the API service.
 `;
 
-/** Generator: a raw markdown doc → BriefContract via fromMarkdown(), rendered live. */
+/** Job: Reveal State — generator path: a raw markdown doc → BriefContract via fromMarkdown(), rendered live. */
 export const FromMarkdown: Story = { args: { data: fromMarkdown(SAMPLE_MD) } };

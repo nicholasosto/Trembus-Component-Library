@@ -41,10 +41,13 @@ export interface FunnelContract {
 }
 
 export interface FunnelProps {
+  /** The authored funnel contract (stages in flow order + optional header). */
   data: FunnelContract;
   /** Controlled selected stage id. */
   selectedId?: string;
+  /** Uncontrolled initial selection. */
   defaultSelectedId?: string;
+  /** Called with the stage id on every selection. */
   onSelect?: (id: string) => void;
   className?: string;
 }

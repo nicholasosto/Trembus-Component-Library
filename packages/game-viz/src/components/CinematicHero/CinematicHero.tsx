@@ -64,6 +64,7 @@ export interface CinematicHeroContract {
 }
 
 export interface CinematicHeroProps {
+  /** The hero contract — `title` is the only required field. */
   data: CinematicHeroContract;
   className?: string;
 }

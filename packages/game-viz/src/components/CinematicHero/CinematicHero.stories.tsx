@@ -28,6 +28,42 @@ const soulSteel: CinematicHeroContract = {
   ],
 };
 
+/**
+ * The title plate — a cinematic identity hero: kicker eyebrow, a display title with the
+ * fill + outline treatment, an italic tagline with an accented highlight word, a
+ * call-to-action row, and an accolade strip. Reveal-state chrome around real
+ * link/button actions; there is no selection model. This is the package's most
+ * reusable piece outside games — it works as a landing or launch hero anywhere the
+ * idiom fits.
+ *
+ * ### When to use it
+ * - Title screens, season/launch landings, marketing heroes.
+ * - Not for everyday app page headers — compose ui `Stack`/`Text`/`Button`; reach for
+ *   the hero when the moment is cinematic.
+ *
+ * ### Data & key props
+ * - One `data: CinematicHeroContract`; `title` is required — a plain string, or
+ *   `{ text, outline? }[]` lines for the fill + outline display treatment.
+ * - `actions` — `href` renders a real `<a>`, `onPress` a `<button>`; `variant` picks
+ *   primary/secondary weight; `meta` is the trailing note ("2:14 · trailer").
+ * - `tagline` + `highlight` — the highlight substring renders in the accent tone.
+ * - `accolades` — `{ value, source? }[]`, the press-quote strip.
+ * - `data.tone` — outline stroke, highlight, primary CTA, kicker dot; default `accent`.
+ *
+ * ### Accessibility
+ * - The title renders as an `<h1>` — one hero per page, at the top of the heading
+ *   outline.
+ * - Actions are real controls (link vs button decided by the data); their `icon` is
+ *   `aria-hidden` decoration.
+ * - The tagline highlight is emphasis on top of readable text — meaning never rides
+ *   color alone. Motion honors `prefers-reduced-motion`.
+ *
+ * ### Theming & setup
+ * - The display title wants Cinzel (`@fontsource/cinzel`), else serif; most at home in
+ *   `data-theme="reliquary"`, correct in light and dark.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/CinematicHero',
   component: CinematicHero,

@@ -13,9 +13,13 @@ type Align = 'start' | 'center' | 'end' | 'stretch' | 'baseline';
 type Justify = 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
 
 export interface StackOwnProps extends BoxOwnProps {
+  /** Space step between children (token scale — steps, never pixels). */
   gap?: SpaceToken;
+  /** Cross-axis alignment. */
   align?: Align;
+  /** Main-axis distribution. */
   justify?: Justify;
+  /** Allow children to wrap onto new lines/rows. */
   wrap?: boolean;
 }
 

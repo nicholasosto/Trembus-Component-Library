@@ -17,18 +17,29 @@ import './Box.css';
  * abstraction stays honest. Polymorphic via `as`.
  */
 export interface BoxOwnProps {
+  /** Surface elevation intent — `raised` · `sunken` · `overlay`. */
   surface?: SurfaceTone;
   /** Material skin (e.g. frosted `glass`) applied via [data-material]; tune with the --tcl-mat-* knobs. */
   material?: MaterialTone;
+  /** Corner radius token. */
   radius?: RadiusToken;
+  /** Draw a border — `true`, `soft`, or `strong`. */
   border?: boolean | 'soft' | 'strong';
+  /** Layer from the z-index token scale. */
   z?: ZToken;
+  /** Padding step, all sides (space scale — steps, never pixels). */
   p?: SpaceToken;
+  /** Horizontal padding step. */
   px?: SpaceToken;
+  /** Vertical padding step. */
   py?: SpaceToken;
+  /** Top padding step. */
   pt?: SpaceToken;
+  /** Right padding step. */
   pr?: SpaceToken;
+  /** Bottom padding step. */
   pb?: SpaceToken;
+  /** Left padding step. */
   pl?: SpaceToken;
   className?: string;
   style?: CSSProperties;

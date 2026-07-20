@@ -6,9 +6,11 @@ import './Badge.css';
 export type BadgeTone = StatusTone | 'accent';
 
 export interface BadgeProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'> {
-  /** Status/intent — the color-coded ontology. */
+  /** Status/intent — the color-coded ontology (default `neutral`). */
   tone?: BadgeTone;
+  /** Visual weight of the tone: tinted, filled, or bordered (default `soft`). */
   variant?: 'soft' | 'solid' | 'outline';
+  /** Chip size (default `md`). */
   size?: 'sm' | 'md';
   /** Leading status dot glyph. */
   dot?: boolean;

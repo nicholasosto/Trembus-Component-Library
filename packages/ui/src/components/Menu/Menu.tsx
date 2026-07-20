@@ -45,8 +45,11 @@ function ownItems(content: HTMLElement): HTMLElement[] {
 }
 
 export interface MenuProps {
+  /** Controlled open state. */
   open?: boolean;
+  /** Uncontrolled initial open state (default `false`). */
   defaultOpen?: boolean;
+  /** Called on every open/close, controlled or not. */
   onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
 }
@@ -116,6 +119,7 @@ function MenuTrigger({ children }: MenuTriggerProps) {
 }
 
 export interface MenuContentProps extends HTMLAttributes<HTMLDivElement> {
+  /** Horizontal alignment against the trigger (default `start`; `end` right-aligns). */
   align?: 'start' | 'end';
   /** Which side of the trigger the menu opens toward. `top` suits a bottom-docked bar. */
   side?: 'bottom' | 'top';
@@ -238,7 +242,9 @@ function MenuContent({
 }
 
 export interface MenuItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect'> {
+  /** Called on activation (click / Enter / Space); selecting collapses the whole menu tree. */
   onSelect?: () => void;
+  /** Inert item (aria-disabled, skipped by roving focus); default `false`. */
   disabled?: boolean;
 }
 

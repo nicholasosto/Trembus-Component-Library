@@ -53,6 +53,37 @@ const fileTree: TreeContract = {
   ],
 };
 
+/**
+ * A strict parent→child hierarchy as a node-link diagram — org charts, file trees,
+ * dendrograms — laid out by `d3-hierarchy` (tidy Reingold–Tilford or aligned-leaf
+ * `dendrogram`) in vertical, horizontal, or radial orientation.
+ *
+ * ### When to use it
+ * - One-parent structure: reporting lines, folder contents, taxonomies, call trees.
+ * - Not for graphs — any node with TWO parents or cross-links → `Lineage`.
+ * - Not for containment drill-down (boxes inside boxes) → `SystemMap`; not for an
+ *   interactive file EXPLORER (checkboxes, filtering, lazy loading) → ui `FolderTree`.
+ *
+ * ### Data & key props
+ * - `data.nodes` — a FLAT list; hierarchy derives from `parentId`. Node `id` is
+ *   REQUIRED and unique (the Tier-2 rule: no index fallback — parents reference it).
+ * - Forgiving input: multiple roots get a synthetic root; a `parentId` that doesn't
+ *   exist re-parents to it — rendered, never thrown.
+ * - `orientation` (`vertical` | `horizontal` | `radial`) · `variant` (`tidy` | `dendrogram`).
+ * - `selectedId` / `defaultSelectedId` / `onSelect` — the selection trio; `collapsedIds`
+ *   / `onToggle` — controlled subtree collapse (a node's `collapsed` seeds it).
+ * - Per node: `tone` / `color`, `sub`, `note` (inspector detail), decorative `icon`.
+ *
+ * ### Accessibility
+ * - The SVG scene is `aria-hidden` decoration; every node is a real focusable HTML
+ *   `<button>` overlaid on it, and selection is revealed in an `aria-live` inspector.
+ * - Node glyphs are decorative — the accessible name is the label (+ `sub`).
+ *
+ * ### Theming & setup
+ * - Untoned nodes cycle tone by depth; explicit `tone` / `color` overrides per node.
+ * - Setup: import `@trembus/viz/styles.css` once at the app root (it carries the full
+ *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
+ */
 const meta = {
   title: 'Visualizations/Tree',
   component: Tree,

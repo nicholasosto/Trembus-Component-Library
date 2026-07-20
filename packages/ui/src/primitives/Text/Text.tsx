@@ -32,11 +32,17 @@ function toneColor(tone: TextTone): string {
 }
 
 export interface TextOwnProps {
+  /** Type-scale step (`xs`–`xl`). */
   size?: TypeToken;
+  /** Font-weight token. */
   weight?: FontWeightToken;
+  /** Ink color from the text-tone vocabulary (status tones included). Default `default`. */
   tone?: TextTone;
+  /** Use the mono stack. */
   mono?: boolean;
+  /** Clamp to a single line with an ellipsis. */
   truncate?: boolean;
+  /** Text alignment. */
   align?: 'start' | 'center' | 'end';
   className?: string;
   style?: CSSProperties;

@@ -19,14 +19,22 @@ function useRadioContext(): RadioContextValue {
 }
 
 export interface RadioGroupProps {
+  /** Shared native radio `name`; auto-generated when omitted. */
   name?: string;
+  /** Controlled selected value. */
   value?: string;
+  /** Uncontrolled initial selection. */
   defaultValue?: string;
+  /** Called with the newly selected value. */
   onValueChange?: (value: string) => void;
+  /** Group label (wired via aria-labelledby). */
   label?: string;
+  /** Helper text under the label (joins aria-describedby). */
   description?: string;
+  /** Error message; renders below the items and announces via role="alert". */
   error?: string;
   className?: string;
+  /** `RadioGroup.Item` options. */
   children?: ReactNode;
 }
 
@@ -86,9 +94,13 @@ function RadioGroupRoot({
 }
 
 export interface RadioItemProps {
+  /** Value this option contributes to the group. */
   value: string;
+  /** Option label; part of the click target. */
   label?: ReactNode;
+  /** Per-option helper text (wired to the input via aria-describedby). */
   description?: string;
+  /** Disables just this option (default `false`). */
   disabled?: boolean;
   className?: string;
 }

@@ -8,6 +8,39 @@ function poster(label: string, hue: number): string {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
+/**
+ * The polymorphic asset tile — one surface that inspects its `data` and renders the
+ * right medium: `image` → framed `<img>` · `audio` → playable waveform (ui
+ * `AudioWaveform`) · loadable `model` (glb/gltf) → `Effigy` turntable · unloadable
+ * model with a `poster` → the poster · `doc`/anything else → a glyph plate; the
+ * `loading` flag → a `Skeleton`. Built as the asset-browser tile: a mixed grid where
+ * every file type gets the same chrome.
+ *
+ * ### When to use it
+ * - Grids and galleries of MIXED asset types (the asset-studio / command-center tile).
+ * - A single known medium deserves its dedicated surface instead: `Effigy` for one
+ *   model, ui `AudioWaveform` for one clip, a plain `<img>` in a ui `Card` for one image.
+ *
+ * ### Data & key props
+ * - `data.medium` + `data.ext` + `data.alt` are required — `alt` IS the accessible name.
+ * - `interactive` — promotes the frame to a real focusable button firing `onActivate`
+ *   (click / Enter / Space). Not applied when the surface is the 3D turntable, which
+ *   owns its own pointer and controls.
+ * - `data.poster` — the reveal frame for a model, or a stand-in for the image itself.
+ * - `data.glyph` — force a specific glyph on the doc/fallback plate.
+ * - `ratio` — tile aspect, default `'1 / 1'` · `loading` — force the Skeleton state.
+ *
+ * ### Accessibility
+ * - Every surface carries `data.alt` as its name; the glyph plate is `role="img"`.
+ * - Tone tints the chrome but the file identity always lives in the alt text — never
+ *   color alone.
+ * - `interactive` frames show the shared focus ring and press feedback of a real button.
+ *
+ * ### Theming & setup
+ * - Most at home in `data-theme="reliquary"`; correct in light and dark too.
+ * - game-viz builds on ui + viz: import all three stylesheets —
+ *   `@trembus/ui/styles.css`, `@trembus/viz/styles.css`, `@trembus/game-viz/styles.css`.
+ */
 const meta = {
   title: 'Game/MediaFrame',
   component: MediaFrame,
