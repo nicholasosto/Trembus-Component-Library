@@ -13,12 +13,17 @@ member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ bel
   `var(--tcl-*)` token CSS (`src/css/tokens.*.css` + `layers.css`), the type-safe token ontology,
   the color-coded tone vocabulary, the `ComponentContract` type (`@trembus/tokens/contract`), and
   the axe `a11yViolations` helper (`@trembus/tokens/testing`). React-free; exported from source.
-- **`@trembus/icons`** (`packages/icons/`) — the shared glyph set (node-kind / file-type marks +
-  UI affordances) de-duplicated out of `ui` and `viz`. A React-only foundation **leaf**: no
-  `@trembus/tokens` dep, no CSS, `sideEffects:false`. Ships tree-shakeable `*Icon` components + a
-  `GLYPHS` / `<Glyph name>` registry + `SYSTEM_KIND_GLYPH` / `extToGlyph` maps; consumed by `ui`,
-  `viz`, `game-viz`. Lives in `src/icons/` (not `src/components/`), so it sits outside the contract
-  gate. `viz` re-exports it from `src/internal/index.ts`; `ui`'s FolderTree imports it directly.
+- **`@trembus/icons`** (`packages/icons/`) — the shared glyph set (50 glyphs: node-kind /
+  file-type marks + the workflow-output vocabulary + UI affordances) de-duplicated out of `ui` and
+  `viz`. A React-only foundation **leaf**: no `@trembus/tokens` dep, no CSS, `sideEffects:false`.
+  Ships tree-shakeable `*Icon` components + a `GLYPHS` / `<Glyph name>` registry + string-only
+  maps: `SYSTEM_KIND_GLYPH`, the 0.3.0 workflow-output trio `OUTPUT_CATEGORY_GLYPH` /
+  `OUTPUT_KIND_GLYPH` / `PROVENANCE_GLYPH` (kind glyph × provenance badge — human/user ·
+  ai/robot · conjoined/venn), and `extToGlyph` / `fileToGlyph` (well-known basenames beat
+  extensions: SKILL.md → book, CLAUDE.md/AGENTS.md → robot, MEMORY.md → brain, .env → key);
+  consumed by `ui`, `viz`, `game-viz`. Lives in `src/icons/` (not `src/components/`), so it sits
+  outside the contract gate. `viz` re-exports it from `src/internal/index.ts`; `ui`'s FolderTree
+  imports it directly (glyph inference via `fileToGlyph`).
 - **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; keeps
   re-export shims (`src/tokens`, `src/types/contract`, `src/test/a11y`) so its internal import
   paths and public API are unchanged.

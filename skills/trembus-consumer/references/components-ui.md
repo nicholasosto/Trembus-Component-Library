@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-20 · tokens 0.2.2 · icons 0.2.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-21 · tokens 0.2.2 · icons 0.3.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -576,9 +576,24 @@ Storybook: components-audiowaveform--default
 
 ## @trembus/icons (consumed alongside ui)
 
-Tree-shakeable `*Icon` components (FolderIcon, SearchIcon, WarningIcon, …37 glyphs) or the
+Tree-shakeable `*Icon` components (FolderIcon, SearchIcon, BrainIcon, …50 glyphs) or the
 by-name registry: `<Glyph name="folder-open" />` (`GlyphName` union; unknown names render
-the fallback — lookups are own-property guarded). Maps: `SYSTEM_KIND_GLYPH` (architecture
-node kinds), `extToGlyph('tsx')` (file extensions). No CSS, no tokens dep — glyphs inherit
-`currentColor`. Prefer direct `*Icon` imports in app code (tree-shaking); use `Glyph` when
-the name comes from data.
+nothing — lookups are own-property guarded). Maps: `SYSTEM_KIND_GLYPH` (architecture
+node kinds), `extToGlyph('Button.tsx')` (file extensions). No CSS, no tokens dep — glyphs
+inherit `currentColor`. Prefer direct `*Icon` imports in app code (tree-shaking); use
+`Glyph` when the name comes from data.
+
+Since icons 0.3.0 — the workflow-output vocabulary (what human+AI workflow steps emit),
+composition grammar = kind glyph × provenance badge:
+
+- `OUTPUT_CATEGORY_GLYPH` — 5 command-center categories: tools · application · media ·
+  configuration · context.
+- `OUTPUT_KIND_GLYPH` — kind → glyph: engram/memory→brain · skill→book · job→clock ·
+  game→gamepad · secret→key · audio→waveform · video→video · model→model-3d ·
+  controller→gear · config→sliders · prompt/message→message …
+- `PROVENANCE_GLYPH` — human→user · ai→robot · conjoined→venn; render as a small badge
+  beside the kind glyph, always with a text label (marks are decorative).
+- `fileToGlyph('SKILL.md')` — well-known basenames beat extensions (SKILL.md→book,
+  CLAUDE.md/AGENTS.md→robot, MEMORY.md→brain, .env/.env.\*→key, package.json→box), then
+  falls back to `extToGlyph` (which now also covers image/audio/video/3D — .rbxm/.blend —
+  shell, YAML/TOML). Spec sheet: storybook foundations-icons--output-language.

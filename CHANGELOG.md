@@ -6,9 +6,20 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Changed
+
+- **`@trembus/ui`: `FolderTree` infers file glyphs via `fileToGlyph`** (was bare
+  `extToGlyph`) — file trees now recognize well-known basenames (SKILL.md, CLAUDE.md,
+  `.env`, package.json…) and the widened extension coverage. Explicit `icon` overrides
+  are untouched. (Needs `@trembus/icons` ^0.3.0; ships with the next ui release.)
+- Documentation pass: monorepo landing README, per-package npm READMEs with badges,
+  package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
+
+## [@trembus/icons 0.3.0] — 2026-07
+
 ### Added
 
-- **`@trembus/icons`: the workflow-output icon language** — 13 new hand-authored glyphs
+- **The workflow-output icon language** — 13 new hand-authored glyphs
   (clock · gear · gamepad · waveform · video · model-3d · sliders · key · brain · book ·
   message · venn · play) covering what human+AI workflow steps emit, organized into five
   command-center categories (Code—Tools · Application · Media · Configuration · Context).
@@ -22,15 +33,6 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
   `.env.*` → key, `package.json` → box, `Dockerfile` → box, `Makefile` → terminal,
   `README.md` → book. The `Foundations/Icons` Storybook page gains an **Output Language**
   spec-sheet story (categories, provenance marks, badge composition, well-known files).
-
-### Changed
-
-- **`@trembus/ui`: `FolderTree` infers file glyphs via `fileToGlyph`** (was bare
-  `extToGlyph`) — file trees now recognize well-known basenames (SKILL.md, CLAUDE.md,
-  `.env`, package.json…) and the widened extension coverage. Explicit `icon` overrides
-  are untouched.
-- Documentation pass: monorepo landing README, per-package npm READMEs with badges,
-  package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
 ## [@trembus/tokens 0.2.2] — 2026-07
 
