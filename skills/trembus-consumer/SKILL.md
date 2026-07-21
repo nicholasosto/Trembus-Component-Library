@@ -12,7 +12,7 @@ TCL is five published ESM npm packages (React `^19` peer, Node ≥ 20): `@trembu
 components; every component carries a machine-checked "3 UI jobs" contract and ships
 axe-clean. Live gallery: <https://nicholasosto.github.io/Trembus-Component-Library/>
 
-> Stamp 2026-07-21 · tokens 0.2.2 · icons 0.3.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-21 · tokens 0.2.2 · icons 0.3.0 · ui 0.8.4 · viz 0.5.1 · game-viz 0.4.1
 
 - **Self-contained.** Everything you need is this skill's files, the consumer repo,
   `node_modules/@trembus/*`, and public URLs. Never go looking for the library author's

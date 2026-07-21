@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-21 · tokens 0.2.2 · icons 0.3.0 · ui 0.8.3 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-21 · tokens 0.2.2 · icons 0.3.0 · ui 0.8.4 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -530,6 +530,8 @@ tri-state checkboxes, lazy children.
 
 Key data: `FolderNode[]` — `{id?, label, kind?: folder|file, icon?, children?, hasChildren? (lazy), disabled?}`.
 Key props: `expandedIds`/`defaultExpandedIds`/`onExpandedChange` · sel-trio · `checkable` + `checkedIds` trio (tri-state parents) · `filter` + `onFilterChange` · `onLoadChildren` (async) · `label` (REQUIRED tree name).
+Since ui 0.8.4: default file glyphs come from icons' `fileToGlyph` — well-known basenames
+(SKILL.md→book, CLAUDE.md→robot, .env→key) beat extensions; `icon` still overrides.
 Storybook: components-foldertree--default
 
 ### VirtualAssetGrid · structure · reveal-state

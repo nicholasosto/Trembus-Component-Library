@@ -8,12 +8,25 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ### Changed
 
-- **`@trembus/ui`: `FolderTree` infers file glyphs via `fileToGlyph`** (was bare
-  `extToGlyph`) — file trees now recognize well-known basenames (SKILL.md, CLAUDE.md,
-  `.env`, package.json…) and the widened extension coverage. Explicit `icon` overrides
-  are untouched. (Needs `@trembus/icons` ^0.3.0; ships with the next ui release.)
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
+
+## [@trembus/ui 0.8.4] — 2026-07
+
+### Changed
+
+- **`FolderTree` infers file glyphs via `fileToGlyph`** (was bare `extToGlyph`) — file
+  trees now recognize well-known basenames (SKILL.md → book, CLAUDE.md/AGENTS.md → robot,
+  MEMORY.md → brain, `.env`/`.env.*` → key, package.json → box…) and the widened extension
+  coverage (images, audio, video, 3D models, shell, YAML). Explicit `icon` overrides are
+  untouched. Requires `@trembus/icons` ^0.3.0 (the dependency range moves with this release).
+
+### Added
+
+- **Storybook gallery: `Examples/Package Dossier`** — a monorepo package-viewer page
+  composed from the public barrel (Brief as the progressively-disclosed API spine +
+  Badge/Callout/Table/Button chrome, master rail + detail layout). Example-only: ships in
+  the Storybook gallery, not in the npm package.
 
 ## [@trembus/icons 0.3.0] — 2026-07
 
