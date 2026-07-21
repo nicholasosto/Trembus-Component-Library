@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
-import { Glyph, extToGlyph } from '@trembus/icons';
+import { Glyph, fileToGlyph } from '@trembus/icons';
 import { Input } from '../Input/Input';
 import { Spinner } from '../Spinner/Spinner';
 import './FolderTree.css';
@@ -19,7 +19,7 @@ export interface FolderNode {
   label: string;
   /** Folder vs file. Inferred when omitted: children/hasChildren ⇒ folder, else file. */
   kind?: 'folder' | 'file';
-  /** Explicit glyph name override (else inferred: folder/folder-open, or file type). */
+  /** Explicit glyph name override (else inferred: folder/folder-open, or the icons package's `fileToGlyph` — well-known basenames like SKILL.md / .env first, then extension). */
   icon?: string;
   /** Nested children. A folder with no children is still expandable if `hasChildren`. */
   children?: FolderNode[];
@@ -529,7 +529,11 @@ export function FolderTree({
             const check = checkable ? checkStateOf(node) : undefined;
             const iconName =
               node.icon ??
-              (row.expandable ? (row.expanded ? 'folder-open' : 'folder') : extToGlyph(node.label));
+              (row.expandable
+                ? row.expanded
+                  ? 'folder-open'
+                  : 'folder'
+                : fileToGlyph(node.label));
             return (
               <div
                 key={node.id}

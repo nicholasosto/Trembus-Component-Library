@@ -50,6 +50,8 @@ const SAMPLE: FolderNode[] = [
   },
   { id: 'index-html', label: 'index.html' },
   { id: 'workspace', label: 'pnpm-workspace.yaml' },
+  { id: 'claude-md', label: 'CLAUDE.md' },
+  { id: 'env', label: '.env' },
 ];
 
 /**

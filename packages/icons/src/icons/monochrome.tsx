@@ -167,7 +167,93 @@ export const ImageIcon = (p: GlyphProps): ReactElement => (
   </Svg>
 );
 
+// ── workflow-output kinds (what a human+AI workflow step emits) ──
+export const ClockIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="clock" {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
+  </Svg>
+);
+export const GearIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="gear" {...p}>
+    <path d="M10.31 5.21 10.71 2.79 13.29 2.79 13.69 5.21 15.61 6 17.6 4.57 19.43 6.4 18 8.39 18.79 10.31 21.21 10.71 21.21 13.29 18.79 13.69 18 15.61 19.43 17.6 17.6 19.43 15.61 18 13.69 18.79 13.29 21.21 10.71 21.21 10.31 18.79 8.39 18 6.4 19.43 4.57 17.6 6 15.61 5.21 13.69 2.79 13.29 2.79 10.71 5.21 10.31 6 8.39 4.57 6.4 6.4 4.57 8.39 6Z" />
+    <circle cx="12" cy="12" r="3.2" />
+  </Svg>
+);
+export const GamepadIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="gamepad" {...p}>
+    <rect x="3.5" y="8" width="17" height="9" rx="4.5" />
+    <path d="M7.5 10.5v4M5.5 12.5h4" />
+    <path d="M15.5 11h.01M18 13.5h.01" />
+  </Svg>
+);
+export const WaveformIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="waveform" {...p}>
+    <path d="M4 9.5v5M8 6.5v11M12 4v16M16 6.5v11M20 9.5v5" />
+  </Svg>
+);
+export const VideoIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="video" {...p}>
+    <rect x="3" y="4.5" width="18" height="15" rx="2" />
+    <path d="M10 9l5.5 3-5.5 3Z" />
+  </Svg>
+);
+export const Model3dIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="model-3d" {...p}>
+    <path d="M12 3.5 19.5 15.5 12 19.5 4.5 15.5Z" />
+    <path d="M12 3.5V19.5" />
+  </Svg>
+);
+export const SlidersIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="sliders" {...p}>
+    <path d="M3.5 6.5h9.3M17.2 6.5h3.3" />
+    <circle cx="15" cy="6.5" r="2.2" />
+    <path d="M3.5 12h2.8M10.7 12h9.8" />
+    <circle cx="8.5" cy="12" r="2.2" />
+    <path d="M3.5 17.5h7.3M15.2 17.5h5.3" />
+    <circle cx="13" cy="17.5" r="2.2" />
+  </Svg>
+);
+export const KeyIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="key" {...p}>
+    <circle cx="7" cy="16.5" r="3.2" />
+    <path d="M9.3 14.2 19.5 4" />
+    <path d="M16.3 7.2l2.4 2.4" />
+  </Svg>
+);
+export const BrainIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="brain" {...p}>
+    <path d="M12 4.7A1.87 1.87 0 0 0 8.83 6.09A2.24 2.24 0 0 0 6.86 9.74A2.44 2.44 0 0 0 6.86 14.26A2.24 2.24 0 0 0 8.83 17.91A1.87 1.87 0 0 0 12 19.3" />
+    <path d="M12 4.7A1.87 1.87 0 0 1 15.17 6.09A2.24 2.24 0 0 1 17.14 9.74A2.44 2.44 0 0 1 17.14 14.26A2.24 2.24 0 0 1 15.17 17.91A1.87 1.87 0 0 1 12 19.3" />
+    <path d="M12 4.7v14.6" />
+  </Svg>
+);
+export const BookIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="book" {...p}>
+    <path d="M12 6.8C10.2 5.1 7.7 4.5 4.5 4.5v13c3.2 0 5.7.6 7.5 2.3 1.8-1.7 4.3-2.3 7.5-2.3v-13c-3.2 0-5.7.6-7.5 2.3Z" />
+    <path d="M12 6.8v13" />
+  </Svg>
+);
+export const MessageIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="message" {...p}>
+    <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H10l-4.5 4v-4H6a2 2 0 0 1-2-2Z" />
+  </Svg>
+);
+
+// ── provenance marks (who produced an output) ──
+export const VennIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="venn" {...p}>
+    <circle cx="8.8" cy="12" r="5.2" />
+    <circle cx="15.2" cy="12" r="5.2" />
+  </Svg>
+);
+
 // ── core UI affordances ──
+export const PlayIcon = (p: GlyphProps): ReactElement => (
+  <Svg name="play" {...p}>
+    <path d="M8.5 5.5 18.5 12 8.5 18.5Z" />
+  </Svg>
+);
 export const ChevronRightIcon = (p: GlyphProps): ReactElement => (
   <Svg name="chevron-right" {...p}>
     <path d="M9 6l6 6-6 6" />

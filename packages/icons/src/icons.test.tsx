@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
-import { DatabaseIcon, Glyph, GLYPHS, SYSTEM_KIND_GLYPH, EXT_GLYPH, extToGlyph } from './index';
+import {
+  DatabaseIcon,
+  Glyph,
+  GLYPHS,
+  SYSTEM_KIND_GLYPH,
+  OUTPUT_CATEGORY_GLYPH,
+  OUTPUT_KIND_GLYPH,
+  PROVENANCE_GLYPH,
+  EXT_GLYPH,
+  extToGlyph,
+  WELL_KNOWN_FILE_GLYPH,
+  fileToGlyph,
+} from './index';
 
 describe('icons', () => {
   it('renders a known glyph carrying its data-glyph + aria-hidden', () => {
@@ -53,5 +65,47 @@ describe('icons', () => {
     expect(extToGlyph('readme.md')).toBe('markdown');
     expect(extToGlyph('noext')).toBe('file');
     expect(GLYPHS[extToGlyph('Button.tsx')]).toBeTruthy();
+  });
+
+  it('every workflow-output category, kind, and provenance maps to a real glyph', () => {
+    for (const [map, entries] of Object.entries({
+      OUTPUT_CATEGORY_GLYPH,
+      OUTPUT_KIND_GLYPH,
+      PROVENANCE_GLYPH,
+      WELL_KNOWN_FILE_GLYPH,
+    })) {
+      for (const [key, name] of Object.entries(entries)) {
+        expect(GLYPHS[name], `${map} "${key}" → "${name}"`).toBeTruthy();
+      }
+    }
+  });
+
+  it('extends extension inference across media / config / script types', () => {
+    expect(extToGlyph('Photo.PNG')).toBe('image');
+    expect(extToGlyph('clip.mp4')).toBe('video');
+    expect(extToGlyph('theme.wav')).toBe('waveform');
+    expect(extToGlyph('Effigy.rbxm')).toBe('model-3d');
+    expect(extToGlyph('deploy.sh')).toBe('terminal');
+    expect(extToGlyph('config.yaml')).toBe('json');
+    expect(extToGlyph('settings.ini')).toBe('sliders');
+  });
+
+  it('fileToGlyph recognizes well-known basenames before falling back to extension', () => {
+    expect(fileToGlyph('SKILL.md')).toBe('book');
+    expect(fileToGlyph('CLAUDE.md')).toBe('robot');
+    expect(fileToGlyph('AGENTS.md')).toBe('robot');
+    expect(fileToGlyph('MEMORY.md')).toBe('brain');
+    expect(fileToGlyph('package.json')).toBe('box');
+    expect(fileToGlyph('.env')).toBe('key');
+    expect(fileToGlyph('.env.local')).toBe('key');
+    expect(fileToGlyph('notes.md')).toBe('markdown'); // non-special .md → extension path
+    expect(fileToGlyph('Button.tsx')).toBe('typescript');
+    expect(fileToGlyph('noext')).toBe('file');
+  });
+
+  it('fileToGlyph never resolves prototype-chain names', () => {
+    for (const name of ['constructor', 'toString', '__proto__', 'hasOwnProperty']) {
+      expect(fileToGlyph(name)).toBe('file');
+    }
   });
 });
