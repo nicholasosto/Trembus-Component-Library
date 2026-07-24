@@ -1,5 +1,8 @@
-import { useId, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent } from 'react';
 import { cx } from '../../utils/cx';
+import { vars } from '../../internal/fillbar';
+import { useElementSize } from '../../internal/useElementSize';
 import './Brief.css';
 
 /**
@@ -16,7 +19,7 @@ import './Brief.css';
  * accept a bare string OR an object, and an unknown section `kind` degrades to
  * prose. Lenient parse, strict render.
  */
-export type BriefKind = 'claude' | 'agents' | 'plan' | 'spec' | (string & {});
+export type BriefKind = 'claude' | 'agents' | 'plan' | 'spec' | 'session' | (string & {});
 
 export type SectionKind =
   | 'prose'
@@ -29,7 +32,7 @@ export type SectionKind =
   | 'decisions'
   | 'reference';
 
-export type Severity = 'info' | 'warn' | 'danger' | (string & {});
+export type Severity = 'info' | 'warn' | 'danger' | 'success' | (string & {});
 
 /** A list item — a bare string is the common case; the object adds optional facets. */
 export type BriefItem =
@@ -91,6 +94,18 @@ export interface BriefProps {
   /** Section ids collapsed initially (everything expanded otherwise). */
   defaultCollapsed?: string[];
   className?: string;
+  /** Render a drag/keyboard resize handle on the inline-end edge (window-splitter pattern). */
+  resizable?: boolean;
+  /** Controlled width in px — pair with `onWidthChange`. */
+  width?: number;
+  /** Uncontrolled starting width in px; omit to start at the CSS default width. */
+  defaultWidth?: number;
+  /** Fires with the clamped px width on drag moves, keyboard steps, and resets to `defaultWidth` (a reset to the CSS default width is silent). */
+  onWidthChange?: (width: number) => void;
+  /** Resize floor in px (default `360` — keeps a readable measure). An inverted min/max pair swaps. */
+  minWidth?: number;
+  /** Resize ceiling in px (default `1200`); commits are also capped to the live container width. */
+  maxWidth?: number;
 }
 
 type HeadingLevel = NonNullable<BriefProps['headingLevel']>;
@@ -109,6 +124,7 @@ const KIND_LABEL: Record<string, string> = {
   agents: 'Agents',
   plan: 'Plan',
   spec: 'Spec',
+  session: 'Session',
 };
 
 const SECTION_LABEL: Record<string, string> = {
@@ -267,9 +283,53 @@ function SectionBody({ kind, section }: { kind: SectionKind; section: BriefSecti
   );
 }
 
-export function Brief({ data, headingLevel = 2, defaultCollapsed, className }: BriefProps) {
+/** Resize keyboard steps (px) and the narrow-layout threshold. */
+const STEP = 16;
+const STEP_LARGE = 64;
+const NARROW_MAX = 480;
+/** Pre-measure ARIA fallback when no width is set yet (mirrors the CSS default width). */
+const FALLBACK_MEASURE = 760;
+
+function clampNum(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+export function Brief({
+  data,
+  headingLevel = 2,
+  defaultCollapsed,
+  className,
+  resizable = false,
+  width,
+  defaultWidth,
+  onWidthChange,
+  minWidth = 360,
+  maxWidth = 1200,
+}: BriefProps) {
   const uid = useId();
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(defaultCollapsed));
+  const [ownWidth, setOwnWidth] = useState<number | null>(() =>
+    defaultWidth !== undefined
+      ? Math.round(
+          clampNum(defaultWidth, Math.min(minWidth, maxWidth), Math.max(minWidth, maxWidth)),
+        )
+      : null,
+  );
+  const [dragging, setDragging] = useState(false);
+  const [setSizeRef, measured] = useElementSize();
+  const rootRef = useRef<HTMLElement | null>(null);
+  // Container-aware ceiling + drag anchor/direction, refreshed at each interaction start.
+  const boundRef = useRef(Math.max(minWidth, maxWidth));
+  const dragAnchorRef = useRef(0);
+  const rtlRef = useRef(false);
+
+  const setRootRef = useCallback(
+    (node: HTMLElement | null) => {
+      rootRef.current = node;
+      setSizeRef(node);
+    },
+    [setSizeRef],
+  );
 
   const toggle = (id: string): void =>
     setCollapsed((prev) => {
@@ -279,14 +339,140 @@ export function Brief({ data, headingLevel = 2, defaultCollapsed, className }: B
       return next;
     });
 
+  const controlled = width !== undefined;
+  const widthValue = controlled ? width : ownWidth;
+  // House rule: forced domains clamp, inverted pairs swap.
+  const loBound = Math.min(minWidth, maxWidth);
+  const hiBound = Math.max(minWidth, maxWidth);
+
+  /** Rendered border-box width — the same space commits live in; 0 pre-layout. */
+  const renderedWidth = (): number => {
+    const rect = rootRef.current?.getBoundingClientRect();
+    return rect && rect.width > 0 ? Math.round(rect.width) : 0;
+  };
+
+  const currentWidth = (): number => widthValue ?? (renderedWidth() || FALLBACK_MEASURE);
+
+  const isRtl = (): boolean =>
+    rootRef.current !== null && getComputedStyle(rootRef.current).direction === 'rtl';
+
+  const measureBound = (): void => {
+    const parent = rootRef.current?.parentElement;
+    const rect = parent?.getBoundingClientRect();
+    let avail = rect && rect.width > 0 ? rect.width : 0;
+    if (avail > 0 && parent) {
+      // The rect is the parent's border box; the pane's containing block excludes
+      // its paddings (a grid column can still be narrower — arrows self-correct below).
+      const cs = getComputedStyle(parent);
+      avail -= (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+    }
+    // Floor at the lower bound so a cramped container can't drive commits (and
+    // aria-valuenow) below the declared minimum — CSS min(…, 100%) caps visually.
+    boundRef.current = avail > 0 ? Math.max(loBound, Math.min(hiBound, avail)) : hiBound;
+  };
+
+  const commit = (next: number): void => {
+    const clamped = Math.round(clampNum(next, loBound, boundRef.current));
+    if (!controlled) setOwnWidth(clamped);
+    onWidthChange?.(clamped);
+  };
+
+  const reset = (): void => {
+    if (defaultWidth !== undefined) {
+      measureBound();
+      commit(defaultWidth);
+      return;
+    }
+    // No defaultWidth → back to the CSS default width; silent, since there is no
+    // numeric value to report until the next layout.
+    if (!controlled) setOwnWidth(null);
+  };
+
+  const onResizerKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
+    measureBound();
+    // Step from the visible width when the stored value overshoots the container
+    // (End in a narrow box) so arrows never wander a dead zone above the render.
+    const rendered = renderedWidth();
+    const base = rendered > 0 ? Math.min(currentWidth(), rendered) : currentWidth();
+    // In RTL the pane grows toward the LEFT, so the arrow senses flip.
+    const step = (e.shiftKey ? STEP_LARGE : STEP) * (isRtl() ? -1 : 1);
+    let next: number;
+    switch (e.key) {
+      case 'ArrowRight':
+        next = base + step;
+        break;
+      case 'ArrowLeft':
+        next = base - step;
+        break;
+      case 'Home':
+        next = loBound;
+        break;
+      case 'End':
+        next = boundRef.current;
+        break;
+      case 'Enter':
+        e.preventDefault();
+        reset();
+        return;
+      default:
+        return;
+    }
+    e.preventDefault();
+    commit(next);
+  };
+
+  const onResizerPointerDown = (e: PointerEvent<HTMLDivElement>): void => {
+    if (dragging) return; // one pointer drives; a second grab must not re-anchor
+    // Anchor so the grab point keeps its offset (width′ = w0 + pointer delta) —
+    // no snap-to-edge on the first move, and direction-aware for RTL.
+    const rtl = isRtl();
+    rtlRef.current = rtl;
+    const w = currentWidth();
+    dragAnchorRef.current = rtl ? e.clientX + w : e.clientX - w;
+    measureBound();
+    setDragging(true);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+
+  const onResizerPointerMove = (e: PointerEvent<HTMLDivElement>): void => {
+    if (!dragging) return;
+    commit(rtlRef.current ? dragAnchorRef.current - e.clientX : e.clientX - dragAnchorRef.current);
+  };
+
+  const endDrag = (e: PointerEvent<HTMLDivElement>): void => {
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    setDragging(false);
+  };
+
   const kind = data.kind ?? 'spec';
   const title = data.title ?? data.id ?? 'Untitled';
   const sections = data.sections ?? [];
   const TitleHeading = HEADING_TAG[headingLevel];
   const SectionHeading = HEADING_TAG[Math.min(6, headingLevel + 1) as HeadingLevel];
 
+  // Dash-free suffix: section region ids are `${uid}-${sectionId}`, so a section
+  // authored `id: 'doc'` can never collide with the article's own id.
+  const docId = `${uid}doc`;
+  const valueNow = Math.round(currentWidth());
+  const sizeBucket =
+    measured.width > 0 ? (measured.width < NARROW_MAX ? 'narrow' : 'regular') : undefined;
+
   return (
-    <article className={cx('tcl-brief', className)} data-kind={kind} aria-label={title}>
+    <article
+      className={cx('tcl-brief', className)}
+      data-kind={kind}
+      aria-label={title}
+      id={resizable ? docId : undefined}
+      data-resizable={resizable || undefined}
+      data-dragging={dragging || undefined}
+      data-size={sizeBucket}
+      ref={setRootRef}
+      style={
+        resizable && widthValue != null
+          ? vars({ '--tcl-brief-width': `${widthValue}px` })
+          : undefined
+      }
+    >
       <header className="tcl-brief__header">
         <div className="tcl-brief__kindrow">
           <span className="tcl-brief__kind">{KIND_LABEL[kind] ?? kind}</span>
@@ -348,6 +534,35 @@ export function Brief({ data, headingLevel = 2, defaultCollapsed, className }: B
           );
         })}
       </div>
+
+      {/* APG "window splitter": a FOCUSABLE separator with aria-value* is an
+          interactive widget per ARIA 1.1+; jsx-a11y's role taxonomy predates the
+          pattern and misreads it as static. */}
+      {/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
+      {resizable && (
+        <div
+          className="tcl-brief__resizer"
+          role="separator"
+          tabIndex={0}
+          aria-orientation="vertical"
+          aria-label={`Resize document — ${title}`}
+          aria-controls={docId}
+          aria-valuemin={Math.min(loBound, valueNow)}
+          aria-valuemax={Math.max(hiBound, valueNow)}
+          aria-valuenow={valueNow}
+          aria-valuetext={`${valueNow} pixels`}
+          data-dragging={dragging || undefined}
+          onKeyDown={onResizerKeyDown}
+          onDoubleClick={reset}
+          onPointerDown={onResizerPointerDown}
+          onPointerMove={onResizerPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+        >
+          <span className="tcl-brief__resizer-grip" aria-hidden="true" />
+        </div>
+      )}
+      {/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
     </article>
   );
 }
@@ -381,7 +596,7 @@ export interface BriefParseResult {
   ok: boolean;
 }
 
-const KNOWN_KINDS = ['claude', 'agents', 'plan', 'spec'];
+const KNOWN_KINDS = ['claude', 'agents', 'plan', 'spec', 'session'];
 const KNOWN_SECTION_KINDS: string[] = [
   'prose',
   'rules',
@@ -393,7 +608,7 @@ const KNOWN_SECTION_KINDS: string[] = [
   'decisions',
   'reference',
 ];
-const KNOWN_SEVERITIES = ['info', 'warn', 'danger'];
+const KNOWN_SEVERITIES = ['info', 'warn', 'danger', 'success'];
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);

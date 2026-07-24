@@ -5,7 +5,9 @@
     flex-direction: column;
     gap: var(--tcl-space-5);
     width: 100%;
-    max-width: 760px;
+    /* Skin hook — override per-app/theme without a prop (read via fallback, never
+       declared on the root, so ancestor values inherit through). */
+    max-width: var(--tcl-brief-max-width, 760px);
     font-family: var(--tcl-font-sans);
     color: var(--tcl-text);
   }
@@ -260,6 +262,10 @@
     --sev: var(--tcl-status-danger);
     --sev-bg: var(--tcl-status-danger-bg);
   }
+  .tcl-brief__check[data-severity='success'] {
+    --sev: var(--tcl-status-success);
+    --sev-bg: var(--tcl-status-success-bg);
+  }
   .tcl-brief__check-glyph {
     flex-shrink: 0;
     width: 8px;
@@ -357,5 +363,74 @@
     margin: 0;
     font-size: var(--tcl-text-sm);
     color: var(--tcl-text-faint);
+  }
+
+  /* ── resizable (APG window-splitter) ── */
+  .tcl-brief[data-resizable] {
+    position: relative;
+    width: min(var(--tcl-brief-width, var(--tcl-brief-max-width, 760px)), 100%);
+    max-width: 100%;
+    /* As a FLEX ITEM the width's percentage can't resolve during intrinsic sizing
+       (basis:auto → max-content → the pane fills the line and its siblings wrap).
+       A pure-length basis keeps line-breaking honest; shrink+min-width let a
+       narrow container compress the pane instead of overflowing. */
+    flex: 0 1 var(--tcl-brief-width, var(--tcl-brief-max-width, 760px));
+    min-width: 0;
+    /* reserve the handle's lane so section toggles never sit under it */
+    padding-inline-end: calc(24px + var(--tcl-space-2));
+  }
+  .tcl-brief[data-dragging] {
+    user-select: none;
+  }
+  .tcl-brief__resizer {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    border-radius: var(--tcl-radius-sm);
+    cursor: col-resize;
+    touch-action: none;
+  }
+  .tcl-brief__resizer-grip {
+    width: 4px;
+    height: 48px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-border);
+    transition: background var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-brief__resizer:hover .tcl-brief__resizer-grip,
+  .tcl-brief__resizer[data-dragging] .tcl-brief__resizer-grip {
+    background: var(--brief-accent);
+  }
+  .tcl-brief__resizer:focus-visible {
+    outline: 2px solid var(--tcl-focus-ring);
+    outline-offset: -2px;
+  }
+
+  /* ── narrow adaptation (data-size from the measured width) ── */
+  .tcl-brief[data-size='narrow'] {
+    gap: var(--tcl-space-4);
+  }
+  .tcl-brief[data-size='narrow'] .tcl-brief__title {
+    font-size: var(--tcl-text-lg);
+  }
+  .tcl-brief[data-size='narrow'] .tcl-brief__code,
+  .tcl-brief[data-size='narrow'] .tcl-brief__chip {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .tcl-brief[data-size='narrow'] .tcl-brief__section-kind {
+    display: none;
+  }
+  .tcl-brief[data-size='narrow'] .tcl-brief__section-body {
+    padding: 0 var(--tcl-space-4) var(--tcl-space-3) var(--tcl-space-4);
+  }
+  .tcl-brief[data-size='narrow'] .tcl-brief__command {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--tcl-space-1);
   }
 }

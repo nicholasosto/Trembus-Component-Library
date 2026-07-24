@@ -68,7 +68,8 @@ License at 4+). See `packages/video/README.md`.
 
 ## Commands
 
-- `pnpm run validate` — the full gate: lint → typecheck → check:contracts → test → build →
+- `pnpm run validate` — the full gate: build (FIRST, topological — every package's dist is
+  fresh before dependents typecheck) → lint → typecheck → check:contracts → test →
   verify:exports → build:storybook. Run before declaring work done.
   NOTE: it is `validate`, not `ci` (pnpm reserves the `ci` command).
 - `pnpm test` — unit tests (jsdom + axe), runs anywhere.
@@ -83,7 +84,8 @@ adversarial review → fixes WITH regression tests → re-gate) — the done-bar
 work; **`/release <pkg>`** executes `RELEASING.md` end to end (enforced CHANGELOG entry,
 roster docs sync, publish order, git tag + GitHub Release). RELEASING.md stays canonical.
 
-**Consumer-facing skills** (user-level, symlinked into `~/.claude/skills/`):
+**Consumer-facing skills** (user-level, symlinked into `~/.claude/skills/` and
+`~/.codex/skills/`):
 **`trembus-consumer`** (canonical at `skills/trembus-consumer/`, installed by
 `bash skills/link-skill.sh`) teaches agents in CONSUMING repos the published @trembus
 surface — setup, component chooser by data shape/UI job, per-component capsules,
@@ -121,12 +123,17 @@ Every component in `packages/<pkg>/src/components/<Name>/` has EXACTLY:
 ## Example pages (multi-component compositions)
 
 Pages that group several components together are NOT library components — they have no single
-"3 jobs" contract. Put them in `packages/ui/src/examples/`, **not** `…/src/components/` (the
+"3 jobs" contract. Put them in `packages/<pkg>/src/examples/`, **not** `…/src/components/` (the
 contract checker scans every `src/components/<Name>/` dir per package and would fail the gate
 demanding a contract). A plain `<Name>.stories.tsx` there is all you need — no contract / css /
 test files; Storybook still finds it via the `packages/*/src/**/*.stories.tsx` glob. Title them
 `Examples/*` and compose from the public barrel (`../index`) so the example exercises the real
-consumer API. See `packages/ui/src/examples/Dashboard.stories.tsx`.
+consumer API. **Placement rule**: ui-only pages live in `packages/ui/src/examples/` (Dashboard ·
+Package Dossier · Session Brief — the `sessionToBrief` work-log template over real `_project/`
+session records); a cross-package example that needs game-viz lives in
+`packages/game-viz/src/examples/` (Game Design Document), importing game-viz from `'../../index'`
+and ui/viz via real bare specifiers — a ui-hosted copy would force ui's typecheck to resolve its
+own stale dist (self-reference), so it is disqualified.
 
 ## Demo sites (multi-page apps)
 
@@ -157,7 +164,8 @@ shipped: `demos/soul-steel/` (composes all three packages; see its `README.md`).
 **Copy-and-own reference PAGES** (AppShell · WorkflowBoard) — canonical, versioned page
 blueprints iterated HERE (Storybook `Templates/*`) and copied into consuming apps by the
 user-level **`trembus-template` skill** (canonical at `templates/skill/`, installed by
-`bash templates/skill/link-skill.sh` → `~/.claude/skills/trembus-template`). NOT library
+`bash templates/skill/link-skill.sh` → `~/.claude/skills/trembus-template` and
+`~/.codex/skills/trembus-template`). NOT library
 components: no 3-jobs contract. One private workspace member `templates/pages`
 (`@trembus-templates/pages`); each template at `src/<Name>/` with a `template.json` manifest
 (semver · files[] · slots[] + `context` vars · dependencies · changelog).

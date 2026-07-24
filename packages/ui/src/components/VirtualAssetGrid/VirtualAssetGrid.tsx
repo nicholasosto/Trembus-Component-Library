@@ -12,6 +12,7 @@ import {
 import type { CSSProperties, KeyboardEvent, ReactElement, ReactNode, UIEvent } from 'react';
 import { cx } from '../../utils/cx';
 import { isDev } from '../../utils/env';
+import { useElementSize } from '../../internal/useElementSize';
 import './VirtualAssetGrid.css';
 
 export interface VirtualAssetGridProps<T> {
@@ -122,42 +123,6 @@ function buildSections<T>(
     flat += arr.length;
     return sec;
   });
-}
-
-/** ResizeObserver-backed content-box size of an element (SSR-safe, browser-frame-throttled). */
-function useElementSize(): readonly [
-  (node: HTMLElement | null) => void,
-  { width: number; height: number },
-] {
-  const [size, setSize] = useState({ width: 0, height: 0 });
-  const roRef = useRef<ResizeObserver | null>(null);
-
-  const apply = useCallback((width: number, height: number) => {
-    setSize((prev) => (prev.width === width && prev.height === height ? prev : { width, height }));
-  }, []);
-
-  const setRef = useCallback(
-    (node: HTMLElement | null) => {
-      roRef.current?.disconnect();
-      roRef.current = null;
-      if (!node) return;
-      // Seed from the content box (clientWidth excludes border + scrollbar) so the
-      // synchronous seed agrees with the ResizeObserver's contentRect — no off-by-one.
-      apply(node.clientWidth, node.clientHeight);
-      if (typeof ResizeObserver === 'undefined') return;
-      // ResizeObserver is already coalesced to ≤ once per frame by the browser.
-      const ro = new ResizeObserver((entries) => {
-        const e = entries[entries.length - 1];
-        if (e) apply(e.contentRect.width, e.contentRect.height);
-      });
-      ro.observe(node);
-      roRef.current = ro;
-    },
-    [apply],
-  );
-
-  useEffect(() => () => roRef.current?.disconnect(), []);
-  return [setRef, size] as const;
 }
 
 interface TileProps<T> {

@@ -122,6 +122,7 @@ const kindsLegend: BriefContract = {
         { text: 'an info item', severity: 'info' },
         { text: 'a warning item', severity: 'warn' },
         { text: 'a danger item', severity: 'danger' },
+        { text: 'a success item — a met criterion, a cleared gate', severity: 'success' },
       ],
     },
     {
@@ -641,9 +642,15 @@ const openCloudPlan: BriefContract = {
  *   `kind` is one of `prose` · `rules` · `commands` · `checklist` · `phases` ·
  *   `artifacts` · `boundaries` · `decisions` · `reference` (unknown kinds degrade to
  *   prose); items are bare strings or `{ text, desc?, status?, severity?, ref?, choice? }`.
+ * - Doc `kind`: `claude` · `agents` · `plan` · `spec` · `session` (drives the header
+ *   accent; unknown renders neutral). Checklist `severity`: `info` · `warn` · `danger` ·
+ *   `success` (the met-state green — a passed gate, a cleared criterion).
  * - `headingLevel` (default `2`) — rank of the doc title; sections use the next rank.
  * - `defaultCollapsed` — section ids to start collapsed (give sections stable `id`s;
  *   they fall back to `s{index}`).
+ * - `resizable` (default off) — a drag/keyboard width handle on the inline-end edge;
+ *   width in px via `width` / `defaultWidth` / `onWidthChange` (controlled or not),
+ *   bounded by `minWidth`/`maxWidth` (360/1200) and capped to the live container.
  * - Helpers exported alongside: `parseBrief` (never throws; coerces messy input and
  *   returns `issues`) and `fromMarkdown` (markdown → contract, deterministic).
  *
@@ -653,12 +660,17 @@ const openCloudPlan: BriefContract = {
  * - Every section heading contains a disclosure `<button>` with `aria-expanded` +
  *   `aria-controls`; the collapsed body is `hidden`. This per-section collapse is
  *   the library's only accordion.
+ * - The resize handle is a focusable window-splitter (`role="separator"`) announcing
+ *   `aria-valuemin/max/now` + valuetext; Arrow ±16px, Shift+Arrow ±64px, Home/End to
+ *   the bounds, Enter or double-click resets to the starting width.
  * - Chevrons and glyphs are `aria-hidden`; refs render as real links only for
  *   http(s) URLs.
  *
  * ### Theming & setup
  * - The `kind` drives the header accent via tokens; meta pills accept a `tone` hex.
  *   Works in light · dark · reliquary via `[data-theme]`.
+ * - `--tcl-brief-max-width` (default 760px) skins the width cap from any ancestor;
+ *   below ~480px of measured width the layout self-tightens (`data-size="narrow"`).
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
@@ -734,3 +746,18 @@ The worker owns auth + routing only; business logic lives in the API service.
 
 /** Job: Reveal State — generator path: a raw markdown doc → BriefContract via fromMarkdown(), rendered live. */
 export const FromMarkdown: Story = { args: { data: fromMarkdown(SAMPLE_MD) } };
+
+/** Job: Afford Action — the window-splitter: drag the inline-end handle, or focus it and press Arrow / Shift+Arrow / Home / End (Enter resets). Below ~480px the layout self-tightens via data-size="narrow". */
+export const Resizable: Story = {
+  args: { data: genericDoc, resizable: true, defaultWidth: 560, minWidth: 400, maxWidth: 900 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const handle = canvas.getByRole('separator', { name: /resize document/i });
+    await expect(handle).toHaveAttribute('aria-valuenow', '560');
+    handle.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '576');
+    await userEvent.keyboard('{Home}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '400');
+  },
+};

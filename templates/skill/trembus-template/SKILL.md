@@ -83,5 +83,8 @@ Grep the target (the named file if given, else the repo) for
 
 ```sh
 bash ~/Master-Managed/Repositories/Trembus-Component-Library/templates/skill/link-skill.sh
-ls -la ~/.claude/skills/trembus-template   # → symlink into the library repo
+ls -la ~/.claude/skills/trembus-template ~/.codex/skills/trembus-template
 ```
+
+Both paths are symlinks to this repo-owned canonical skill; edit the source here,
+never either user-level exposure.

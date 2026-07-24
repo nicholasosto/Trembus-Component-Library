@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-21 · tokens 0.2.2 · icons 0.3.0 · ui 0.8.4 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-24 · tokens 0.2.2 · icons 0.3.0 · ui 0.9.0 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -58,7 +58,7 @@ live in SKILL.md §4 — capsules don't repeat them. Exact types: `node_modules/
 | FolderTree       | structure    | reveal-state      | `role=tree` file explorer (filter, checkboxes, lazy)                |
 | VirtualAssetGrid | structure    | reveal-state      | windowed 10k+ tile grid (`role=listbox`)                            |
 | Table            | structure    | reveal-state      | real `<table>` (sort, sticky, row selection)                        |
-| Brief            | document     | reveal-state      | renders a whole plan/spec/instruction doc                           |
+| Brief            | document     | reveal-state      | renders a whole plan/spec/instruction/session doc (resizable)       |
 | AudioWaveform    | media        | reveal-state      | waveform player with slider scrubber                                |
 
 ## Primitives
@@ -563,11 +563,12 @@ Storybook: components-table--default
 
 ### Brief · document · reveal-state
 
-Renders a whole structured doc (plan, spec, agent instructions) as data: meta chips,
-typed sections (prose | rules | commands | checklist | phases | artifacts | boundaries |
-decisions | reference), per-section collapse.
-Key data: `{kind?: claude|agents|plan|spec, title?, summary?, meta?: {label, value, tone?}[], sections?: {id?, heading?, kind?, body?, items?: (string | {text, desc?, status?, severity?, ref?})[]}[]}`.
-Key props: `headingLevel` · `defaultCollapsed: string[]`. Helpers exported from ui: `parseBrief` (validate), `fromMarkdown` (convert markdown → contract).
+Renders a whole structured doc (plan, spec, agent instructions, session work-log) as data:
+meta chips, typed sections (prose | rules | commands | checklist | phases | artifacts |
+boundaries | decisions | reference), per-section collapse, optional edge resize.
+Key data: `{kind?: claude|agents|plan|spec|session, title?, summary?, meta?: {label, value, tone?}[], sections?: {id?, heading?, kind?, body?, items?: (string | {text, desc?, status?, severity?, ref?})[]}[]}`; checklist item `severity`: `info|warn|danger|success` (success = met-state, ui 0.9.0+).
+Key props: `headingLevel` · `defaultCollapsed: string[]` · `resizable` (ui 0.9.0+ window-splitter: `width`/`defaultWidth`/`onWidthChange`, `minWidth`/`maxWidth`; `--tcl-brief-max-width` ancestor skin hook; self-tightens below ~480px). Helpers exported from ui: `parseBrief` (validate), `fromMarkdown` (convert markdown → contract).
+Rendering `_project/sessions/` work-logs? Copy the `sessionToBrief` template from the library's `Examples/Session Brief` story (status-toned pills, `filled n/m` pill, placeholders → "Not yet recorded" notes).
 Storybook: visualizations-brief--default
 
 ### AudioWaveform · media · reveal-state

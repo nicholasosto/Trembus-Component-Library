@@ -42,8 +42,8 @@ Install the skill once (symlink; survives repo moves by re-running):
 bash ~/Master-Managed/Repositories/Trembus-Component-Library/templates/skill/link-skill.sh
 ```
 
-Then in any Claude session: “apply the app-shell trembus template” or “update this
-page to the workflow-board template”.
+Then in any Claude or Codex session: “apply the app-shell trembus template” or
+“update this page to the workflow-board template”.
 
 ## Templates
 

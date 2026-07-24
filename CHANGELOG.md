@@ -11,6 +11,39 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.9.0] — 2026-07
+
+### Added
+
+- **`Brief` dynamic resize** — new `resizable` prop renders an APG window-splitter on the
+  inline-end edge: a focusable `role="separator"` handle with live `aria-value*`
+  (Arrow ±16px, Shift+Arrow ±64px, Home/End to the bounds, Enter or double-click resets),
+  offset-preserving pointer drag, RTL-aware senses. Width is controllable
+  (`width` / `defaultWidth` / `onWidthChange`) and clamped to `minWidth`/`maxWidth`
+  (360/1200) plus the live container. Below ~480px of measured width the layout
+  self-tightens (`data-size="narrow"`); new `--tcl-brief-max-width` skin hook. Default
+  off — the rendered DOM is unchanged unless enabled.
+- **`Brief` vocabulary** — doc `kind: 'session'` (the work-log archetype; gold accent,
+  `Session` label) and checklist `severity: 'success'` (the met-state green row), both
+  recognized by `parseBrief` without issues.
+- **Session work-log template** — `Examples/Session Brief`: a deterministic
+  `sessionToBrief` adapter (in-repo example, not in the tarball) that maps project-system
+  `_project/sessions/` records onto Brief sub-components with lifecycle-aware indicators —
+  status-toned pills, a `filled n/m sections` progress pill, scaffold placeholders as
+  "Not yet recorded" notes, blockers as danger rows or one success all-clear, and the
+  records' own `observation → disposition` grammar as decisions rows. Exercised on real
+  records from three project spaces; a `TemplateSpec` story renders the mapping design
+  itself as a Brief.
+- **Gallery: `Examples/Game Design Document`** (lives in `packages/game-viz/src/examples/`,
+  repo/gallery-only) — the full three-package showcase: CinematicHero cover, a resizable
+  Brief beside an auto-fit appendix (Stats, SoulCard class sheets, EpisodeDeck,
+  MediaFrame, Table), Chronicle production timeline, and a Constellation talent page.
+
+### Changed
+
+- **`VirtualAssetGrid`** now consumes the shared `src/internal/useElementSize` (promoted
+  from its inlined copy for `Brief`'s adaptive layout). No behavior change.
+
 ## [@trembus/ui 0.8.4] — 2026-07
 
 ### Changed

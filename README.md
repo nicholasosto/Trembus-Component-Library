@@ -132,8 +132,11 @@ Clone, then from the repo root:
 ```sh
 pnpm install
 pnpm dev               # Storybook (docs + playground) on :6006
-pnpm run validate      # the full gate: lint → typecheck → contracts → test → build → verify:exports → storybook
+pnpm run validate      # the full gate: build → lint → typecheck → contracts → test → verify:exports → storybook
 ```
+
+Ports `:6006` (Storybook) and `:5174` (soul-steel demo) are claimed in the cross-space port
+registry (`~/Master-Managed/Project-Spaces/Project-System/docs/port-registry.md`).
 
 Per-task scripts (run at the root, or scoped with `pnpm --filter @trembus/<pkg> <script>`):
 
