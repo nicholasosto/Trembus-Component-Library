@@ -12,7 +12,7 @@ TCL is five published ESM npm packages (React `^19` peer, Node ≥ 20): `@trembu
 components; every component carries a machine-checked "3 UI jobs" contract and ships
 axe-clean. Live gallery: <https://nicholasosto.github.io/Trembus-Component-Library/>
 
-> Stamp 2026-07-24 · tokens 0.2.2 · icons 0.3.0 · ui 0.9.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-25 · tokens 0.2.2 · icons 0.3.0 · ui 0.10.0 · viz 0.5.1 · game-viz 0.4.1
 
 - **Self-contained.** Everything you need is this skill's files, the consumer repo,
   `node_modules/@trembus/*`, and public URLs. Never go looking for the library author's
@@ -159,19 +159,20 @@ Near-neighbor litmus rules (where agents actually err):
 
 By UI job, when the prompt is "I need to…":
 
-| Job                   | Need               | Components                                                                                                    |
-| --------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
-| **Reveal state**      | a number           | Stat · Meter · Gauge                                                                                          |
-|                       | a status word      | Badge (inline) · Callout (block) · DataStatusBar (data-trust strip)                                           |
-|                       | pending / absent   | Skeleton (loading shape) · Spinner (short wait) · Progress (advancing) · EmptyState (nothing yet + next step) |
-|                       | a collection       | Table · VirtualAssetGrid · the chart rows above                                                               |
-| **Afford action**     | navigate           | NavBar · Tabs · Breadcrumb · Menu · Toolbar · SkipLink                                                        |
-|                       | commit an action   | Button · IconButton · Pressable (custom affordances)                                                          |
-|                       | choose within data | the sel-trio on every data component · TalentTree allocation                                                  |
-|                       | disclose more      | Dialog · Menu · Tooltip                                                                                       |
-| **Acknowledge input** | capture values     | Input · Textarea · Select · Checkbox · RadioGroup · Switch (label/error wiring built in)                      |
-|                       | confirm an event   | Toast (`useToast` via ToastProvider)                                                                          |
-|                       | selection feedback | built into sel-trio components — do not rebuild it                                                            |
+| Job                   | Need                     | Components                                                                                                    |
+| --------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| **Reveal state**      | a number                 | Stat · Meter · Gauge                                                                                          |
+|                       | a status word            | Badge (inline) · Callout (block) · DataStatusBar (data-trust strip)                                           |
+|                       | pending / absent         | Skeleton (loading shape) · Spinner (short wait) · Progress (advancing) · EmptyState (nothing yet + next step) |
+|                       | a collection             | Table · VirtualAssetGrid · the chart rows above                                                               |
+| **Afford action**     | navigate                 | NavBar · Tabs · Breadcrumb · Menu · Toolbar · SkipLink                                                        |
+|                       | commit an action         | Button · IconButton · Pressable (custom affordances)                                                          |
+|                       | many commands, one strip | CommandBar (from a data model) · Toolbar + Menu (hand-written)                                                |
+|                       | choose within data       | the sel-trio on every data component · TalentTree allocation                                                  |
+|                       | disclose more            | Dialog · Menu · Tooltip                                                                                       |
+| **Acknowledge input** | capture values           | Input · Textarea · Select · Checkbox · RadioGroup · Switch (label/error wiring built in)                      |
+|                       | confirm an event         | Toast (`useToast` via ToastProvider)                                                                          |
+|                       | selection feedback       | built into sel-trio components — do not rebuild it                                                            |
 
 ## 4 · Use a component — universal conventions
 

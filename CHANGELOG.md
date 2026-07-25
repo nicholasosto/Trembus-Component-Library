@@ -11,6 +11,29 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.10.0] — 2026-07
+
+### Added
+
+- **`CommandBar`** — a data-driven command dock over the `Toolbar` + `Menu` spine, promoted
+  from the `Examples/Command Bar` composition (that example story is retired). One
+  `groups: CommandGroup[]` model renders separator-divided `role="group"` clusters of real
+  controls under a single Tab stop; a `Command` with nested `commands` progressively
+  discloses into a menu and one submenu; groups that no longer fit the container collapse
+  into a "⋯" overflow menu under their group headings; and an `aria-live` readout under the
+  bar echoes the command just invoked (`status` controlled, or `formatStatus` uncontrolled —
+  the readout node is replaced per activation so a repeat is re-announced). Commands carry
+  `glyph` (`@trembus/icons` name), `tone` (`neutral`/`accent`/`danger`, painted as text so it
+  stays AA in every theme), `disabled`, `pressed` (→ `aria-pressed`), `showLabel` and `hint`
+  (part of the accessible name — "offline" is why a command is unavailable). Bar props:
+  `label` (required) · `side` · `align` · `overflow` · `overflowLabel` · `meta` ·
+  `showStatus` · `onCommand`.
+
+  Overflow is measured, not guessed: natural group edges are captured once while nothing is
+  collapsed, and an unmeasurable width (jsdom / SSR / `display:none`) shows every group
+  rather than hiding the bar behind a "⋯". The root is full-width by design, so overflow
+  needs a width-constrained parent.
+
 ## [@trembus/ui 0.9.0] — 2026-07
 
 ### Added

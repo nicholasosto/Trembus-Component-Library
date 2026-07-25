@@ -265,6 +265,19 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   needs Dialog's press-outside-to-close to ignore presses inside the portaled popup (it exempts
   `[role="menu"]`) and the popup's Escape to `stopPropagation` so layers peel one per press
   (ui 0.8.1 / tokens 0.2.0; `Components/Menu → InsideDialog` is the regression story).
+- **An `aria-live` readout does NOT re-announce identical text.** Same string = no DOM
+  mutation = silence, so a repeated action (retry a send, run the same command twice) is
+  never confirmed. Wrap the message in a `<span key={n}>` where `n` counts activations —
+  React swaps the node, the mutation fires, the screen reader speaks (CommandBar's status
+  line; the regression test asserts the node identity changed).
+- **Responsive "collapse what doesn't fit" must measure the ROOT, never the bar.** Measuring
+  the content-sized element feeds back into itself (collapse → narrower → collapse again).
+  Give the component a full-width block root, measure THAT, keep bar children `flex: none`
+  (a squished cluster corrupts the natural measurement), capture each group's right edge
+  ONCE while nothing is collapsed (edges, not summed widths, fold in gaps/separators/padding),
+  and treat an unmeasurable width (jsdom / SSR / `display:none`) as "show everything" —
+  collapsing on a `0` measurement hides the whole bar behind a `⋯` nobody asked for
+  (CommandBar).
 - **Never `@import` a sibling package's `styles.css` from a package style entry.** Vite's CSS
   pipeline inlines dependency CSS even when the JS is externalized (`rollupOptions.external`
   does not apply to CSS), so the dist bundle freezes a stale snapshot of the dep's styles that

@@ -1,0 +1,90 @@
+@layer tcl.components {
+  .tcl-command-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+    /* Full-width root, bar aligned inside it: the root's width is set by the parent
+       and never by the bar's content, so the overflow measurement can't feed back
+       into itself (collapsing → narrower root → collapse again). */
+    width: 100%;
+    min-width: 0;
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+  .tcl-command-bar--start {
+    align-items: flex-start;
+  }
+  .tcl-command-bar--center {
+    align-items: center;
+  }
+  .tcl-command-bar--end {
+    align-items: flex-end;
+  }
+
+  /* Bar children never shrink — a squished cluster would corrupt the natural-width
+     measurement that drives overflow (and read as a layout bug when it's off). */
+  .tcl-command-bar__bar > * {
+    flex: none;
+  }
+  .tcl-command-bar__label {
+    white-space: nowrap;
+  }
+  .tcl-command-bar [data-glyph] {
+    flex: none;
+  }
+
+  .tcl-command-bar__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+  }
+
+  /* ── live readout ── */
+  .tcl-command-bar__status {
+    margin: 0;
+    /* Reserve the line so the first acknowledgement doesn't shift the layout. */
+    min-height: 1.25rem;
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+  }
+
+  /* ── menu rows ── */
+  .tcl-command-bar__row {
+    /* Menu.SubTrigger appends its caret after our content; the hint claims the
+       slack between label and caret. */
+    gap: var(--tcl-space-2);
+  }
+  .tcl-command-bar__hint {
+    margin-inline-start: auto;
+    padding-inline-start: var(--tcl-space-3);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+  }
+  /* Group heading inside the overflow menu — presentational (Menu.Label names the
+     whole menu, so it can't be reused per group). */
+  .tcl-command-bar__heading {
+    padding: var(--tcl-space-2) var(--tcl-space-3) var(--tcl-space-1);
+    color: var(--tcl-text-dim);
+    font-size: var(--tcl-text-sm);
+    font-weight: var(--tcl-weight-semibold);
+    user-select: none;
+  }
+
+  /* ── destructive tone ──
+     Tone-as-TEXT on a transparent control (never a solid fill), so the AA-tuned
+     status token stays legible in every theme. */
+  .tcl-command-bar__bar .tcl-toolbar__button[data-cmd-tone='danger'],
+  .tcl-command-bar__row[data-cmd-tone='danger'] {
+    color: var(--tcl-status-danger);
+  }
+  .tcl-command-bar__bar .tcl-toolbar__button[data-cmd-tone='danger']:hover:not(:disabled),
+  .tcl-command-bar__row[data-cmd-tone='danger']:hover:not(.is-disabled),
+  .tcl-command-bar__row[data-cmd-tone='danger']:focus {
+    background: color-mix(in oklab, var(--tcl-status-danger) 12%, var(--tcl-surface-raised));
+    color: var(--tcl-status-danger);
+  }
+  /* Disabled beats tone: a dimmed red would read as available-but-destructive. */
+  .tcl-command-bar__row.is-disabled[data-cmd-tone='danger'] {
+    color: var(--tcl-text-faint);
+  }
+}

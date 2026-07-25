@@ -1,6 +1,6 @@
 {
   "name": "@trembus/ui",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Trembus React component library — first-principles UX, claude.ai-clean light, Trembus dark, and reliquary themes.",
   "type": "module",
   "keywords": [
@@ -10,6 +10,8 @@
     "design-system",
     "ui-components",
     "data-visualization",
+    "command-bar",
+    "toolbar",
     "decision-map",
     "swimlane",
     "accessibility",

@@ -276,3 +276,10 @@ export type {
   DecisionMapEffort,
   DecisionMapReversibility,
 } from './components/DecisionMap/DecisionMap';
+export { CommandBar } from './components/CommandBar/CommandBar';
+export type {
+  CommandBarProps,
+  Command,
+  CommandGroup,
+  CommandTone,
+} from './components/CommandBar/CommandBar';

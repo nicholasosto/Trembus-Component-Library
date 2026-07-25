@@ -50,7 +50,8 @@ any `--tcl-*` token to re-skin, or flip `[data-theme]` (`light` · `dark` ·
 `Pressable` (Affordance; owns the idle→hover→pressed→focus FSM). Compose these into
 your own components.
 
-**Afford-Action** — `Button`, `IconButton`, `Tabs`, `Menu`.
+**Afford-Action** — `Button`, `IconButton`, `Tabs`, `Menu`, `Toolbar`, `CommandBar`
+(data-driven command dock: progressive disclosure into menus + overflow collapsing).
 
 **Reveal-State** — `Badge`, `Avatar`, `Spinner`, `Skeleton`, `Card`, `Callout`,
 `EmptyState`, `Stat`, `Table`, `Progress`, `Meter`, `AudioWaveform` (audio preview + player),

@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-24 · tokens 0.2.2 · icons 0.3.0 · ui 0.9.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-25 · tokens 0.2.2 · icons 0.3.0 · ui 0.10.0 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -28,6 +28,7 @@ live in SKILL.md §4 — capsules don't repeat them. Exact types: `node_modules/
 | Tabs             | nav          | afford-action     | ARIA tablist (`Tabs.List/Tab/Panel`)                                |
 | Menu             | nav          | afford-action     | portal command menu with submenus                                   |
 | Toolbar          | nav          | afford-action     | control cluster under one Tab stop                                  |
+| CommandBar       | nav          | afford-action     | data-driven command dock (menus + overflow ⋯)                       |
 | Tooltip          | nav          | acknowledge-input | supplemental text on hover/focus                                    |
 | Badge            | feedback     | reveal-state      | tone-coded status chip                                              |
 | Callout          | feedback     | reveal-state      | tinted banner with accent rail                                      |
@@ -192,6 +193,22 @@ Many controls, ONE Tab stop (roving arrows). Compound: `Toolbar.Button` (`tone` 
 Key props: `orientation` · `aria-label` (name the toolbar).
 Use when: an icon command bar (editor chrome, canvas tools) — pairs with Menu for overflow.
 Storybook: components-toolbar--default
+
+### CommandBar · nav · afford-action (ui ≥ 0.10.0)
+
+Data-driven command dock over Toolbar+Menu — pass a model, not JSX.
+Key props: `label` (REQUIRED, names the toolbar) · `groups: {id,label,commands}[]` ·
+`side` top|bottom · `align` start|center|end · `overflow` · `overflowLabel` · `meta` (static
+trailing content) · `showStatus` · `status` (controlled readout) · `formatStatus` · `onCommand`.
+`Command`: `{ id, label, glyph?, tone? neutral|accent|danger, disabled?, pressed?, showLabel?, hint?, commands?, onSelect? }`.
+Use when: commands are DATA (mapped, flag-gated, server-driven) and must fit a small strip —
+floating canvas chrome, editor header, panel footer.
+Not when: a fixed hand-written cluster (use `Toolbar` + `Menu`) · site nav (`NavBar`) ·
+a search-and-run palette (no component yet).
+Gotchas: nesting is TWO levels (menu → submenu), deeper `commands` are not rendered. The root
+is full-width (`align` places the bar), so overflow needs a width-CONSTRAINED parent; an
+unmeasurable width shows every group instead of collapsing. `hint` joins the accessible name.
+Storybook: components-commandbar--default (also --overflow)
 
 ### Tooltip · nav · acknowledge-input
 
