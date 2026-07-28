@@ -14,9 +14,17 @@ const TONE_VARS: Record<FillBarTone, string> = {
   neutral: 'var(--tcl-status-neutral)',
 };
 
-/** The `var(--tcl-*)` reference for a tone (for per-segment inline overrides). */
+/** Whether an authored string is a real tone — JSON-driven tones must be checked
+ *  with an own-property guard so 'constructor'/'toString' never resolve the
+ *  prototype chain (the Glyph-registry precedent). */
+export function isFillBarTone(tone: string): tone is FillBarTone {
+  return Object.hasOwn(TONE_VARS, tone);
+}
+
+/** The `var(--tcl-*)` reference for a tone (for per-segment inline overrides).
+ *  Junk that slipped past the type falls back to accent rather than a function. */
 export function toneVar(tone: FillBarTone): string {
-  return TONE_VARS[tone];
+  return isFillBarTone(tone) ? TONE_VARS[tone] : TONE_VARS.accent;
 }
 
 /** Clamp a value to a 0–100 percentage of [min, max]. */

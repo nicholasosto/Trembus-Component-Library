@@ -40,7 +40,12 @@ member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ bel
     `@trembus/icons`, and `@trembus/tokens` (the `@trembus/icons` dep arrived with `MediaFrame`'s
     doc/fallback `Glyph` plate; the `@trembus/viz` dep arrived with `Constellation`, the gothic skin
     over the viz `TalentTree` — the first `game-viz → viz` edge, needing a `/^@trembus\/viz$/` source
-    alias in `.storybook/main.ts` or the skinned component renders unstyled). Same 3-jobs
+    alias in `.storybook/main.ts` or the skinned component renders unstyled). **Not every
+    component composes the primitives** — `Chronicle`, `CinematicHero`, `MediaFrame`, `SoulCard`
+    and `Constellation` do; `Reliquary`, `Effigy` and `EpisodeDeck` are self-contained chrome
+    importing only game-viz's own `cx`/`vars` (audited 2026-07-25, see `COMPONENT-REVIEW.md`
+    §3.1 — rebuilding `Reliquary` on `Box` + `material` is a queued improvement, not a bug).
+    Same 3-jobs
     contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
     `aria-hidden`, interactive bits are real focusable controls, tone-coding always paired with a
     word, motion behind `prefers-reduced-motion`). **Tone-as-text gotcha:** a tone painted as TEXT
@@ -287,6 +292,11 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   cascade-order one-liner); the tokens FOUNDATION inlined by ui/viz styles.css is the one
   deliberate exception (tokens changes ship as lockstep releases). Consumers import each
   package's styles.css themselves.
+- **Never animate the SIZE of a container whose children measure it.** `VirtualAssetGrid`,
+  `Hub`, `Swimlane` and `Timeline` lay out from a measured container width/height; a CSS
+  transition on the box around them fires a ResizeObserver relayout per animation frame.
+  Snap between sizes instead — Dialog's `expandable` toggles `size` ↔ `full` with no
+  transition for exactly this reason (ui 0.11.0).
 
 ## Visualizations
 

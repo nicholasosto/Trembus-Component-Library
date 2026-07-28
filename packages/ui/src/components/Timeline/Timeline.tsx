@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
+import { useSelection } from '../../internal/useSelection';
 import { cx } from '../../utils/cx';
 import { clampPct, toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -199,13 +200,13 @@ export function Timeline({
   onSelect,
   className,
 }: TimelineProps) {
-  const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
   const [rovingId, setRovingId] = useState<string | undefined>(defaultSelectedId ?? selProp);
-  const selectedId = selProp ?? internal;
+  const [selectedId, selectId] = useSelection(selProp, defaultSelectedId, onSelect);
+  // Selecting also moves the roving tab stop, so the keyboard resumes from the
+  // event the user just picked.
   const select = (id: string): void => {
     setRovingId(id);
-    if (selProp === undefined) setInternal(id);
-    onSelect?.(id);
+    selectId(id);
   };
 
   const layout = useMemo(() => buildLayout(data), [data]);

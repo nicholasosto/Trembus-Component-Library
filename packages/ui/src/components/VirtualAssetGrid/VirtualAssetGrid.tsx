@@ -230,6 +230,8 @@ export function VirtualAssetGrid<T>({
 
   // ── selection (controlled / uncontrolled) ──
   const selControlled = selectedId !== undefined;
+  // NOT the shared `useSelection` hook: selection is paired with the 2D roving
+  // `focusId` above and `select` re-homes focus, so the shapes differ (see FolderTree).
   const [selInternal, setSelInternal] = useState<string | undefined>(defaultSelectedId);
   const selected = selControlled ? selectedId : selInternal;
 

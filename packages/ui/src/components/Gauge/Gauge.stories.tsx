@@ -19,6 +19,8 @@ const dirtZones: GaugeProps['zones'] = [
  * - One current value judged against quality bands: latency, utilization, lag.
  * - Not for task completion — use `Progress`; not for value-against-capacity with
  *   segments/thresholds — use `Meter`; not for trends — `Sparkline` / `LineChart`.
+ * - `Meter` also recolours as a value crosses markers and shares `role="meter"` with this
+ *   component, so SHAPE decides: reach for the dial when the reading deserves the space.
  *
  * ### Data & key props
  * - `value` + `max` — required; `min` defaults to 0.

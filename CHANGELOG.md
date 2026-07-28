@@ -11,6 +11,54 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.11.0] — 2026-07
+
+### Added
+
+- **`MilestoneTrack` (`@trembus/ui`)** — `Visualizations/MilestoneTrack`, a lead-time rail: one
+  horizontal pipeline whose rail **swells into measured interval bubbles** between milestone
+  stations (value + sample count + a share-of-total meter, so a 26 d interval visibly outweighs a
+  2.6 d one), with source-system group bands (`@trembus/icons` glyphs), dashed handoff dividers at
+  band seams, dashed pending segments, a dotted whisker underlining non-adjacent measured spans,
+  and a flow arrowhead. Standard Tier-1 spine: every station and bubble is a focusable button,
+  controlled/uncontrolled `selectedId`, aria-live inspector (which carries the share-of-total),
+  computed "measured" total in the header meta, `--tcl-milestonetrack-accent` skin hook read via
+  fallback. Metrics reference stations by id or label, may span several stations (the bubble takes
+  the last free gap before `to`), and invalid/negative/crowded-out metrics are dropped rather than
+  rendered wrong.
+- **`Dialog` grows to host the data-dense tier** — `size` gains `xl` (960px) and `full`
+  (viewport-filling), plus `expandable` with a header control that toggles `size` ↔ `full`
+  (controllable via `expanded` / `defaultExpanded` / `onExpandedChange`, named by `expandLabel` /
+  `collapseLabel`). `DialogSize` is exported. Until now the largest panel was `lg` at 640px while
+  `Brief` alone wants 760, so every document and visualization component had to take over a page
+  instead of opening in a modal.
+
+  Two properties make the dense case actually work: the panel is now a **flex column whose BODY
+  scrolls** — a long table keeps its sticky header and its footer actions instead of scrolling
+  them away — and `full` gives the panel a **resolved height**, which is what `VirtualAssetGrid`,
+  `Hub`, `Swimlane` and `Timeline` need, since they measure their container to lay out. Nothing
+  animates on expand, deliberately: a width/height transition would fire a ResizeObserver storm in
+  exactly those children. Existing `sm`/`md`/`lg` dialogs are visually unchanged.
+
+### Changed
+
+- **Component review (`COMPONENT-REVIEW.md`)** — first audit of the library as a set: 60
+  components, 8 overlapping families, three tests per family (intent / semantics / duplication).
+  Verdict: **zero merges, zero deprecations** — every family's boundary is load-bearing and
+  already documented. Rendered in Storybook as `Examples/Component Review` (Brief + two
+  DecisionMaps).
+- **`useSelection` internal (`@trembus/ui`)** — the controlled/uncontrolled `selectedId` spine was
+  inlined verbatim in 9 places; `@trembus/viz` had extracted the same five lines long ago and it
+  was never back-ported. Now shared by `Hub`, `BarChart`, `LineChart`, `DonutChart`, `Treemap`,
+  `Funnel`, `Swimlane`, `Timeline` and `Heatmap` (twice — cell + row). Behaviour-preserving, no
+  public API change. `DecisionMap`, `FolderTree` and `VirtualAssetGrid` keep their own for
+  documented reasons (lazy data-seeded initial state; selection paired with a roving-focus id).
+- **`Meter` no longer calls its `threshold` variant "a gauge"** — `Gauge` is a separate component
+  carrying the same `role="meter"`, so shape is the only separator. Both components' boundary
+  lines now say so, and `Treemap` gained the hard "not for" line its siblings already had.
+- **`CLAUDE.md` / `AGENTS.md`** — corrected the claim that game-viz composes the `ui` primitives:
+  five of eight do; `Reliquary`, `Effigy` and `EpisodeDeck` are self-contained chrome.
+
 ## [@trembus/ui 0.10.0] — 2026-07
 
 ### Added

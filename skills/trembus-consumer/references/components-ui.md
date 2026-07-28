@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-25 · tokens 0.2.2 · icons 0.3.0 · ui 0.10.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-28 · tokens 0.2.2 · icons 0.3.0 · ui 0.11.0 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -34,14 +34,14 @@ live in SKILL.md §4 — capsules don't repeat them. Exact types: `node_modules/
 | Callout          | feedback     | reveal-state      | tinted banner with accent rail                                      |
 | Spinner          | feedback     | reveal-state      | short-wait busy indicator                                           |
 | Skeleton         | feedback     | reveal-state      | loading placeholder shape                                           |
-| Progress         | feedback     | reveal-state      | determinate task completion bar                                     |
-| Meter            | feedback     | reveal-state      | value against capacity (solid/stacked/threshold)                    |
+| Progress         | feedback     | reveal-state      | task ADVANCING to completion (role=progressbar)                     |
+| Meter            | feedback     | reveal-state      | measurement vs capacity — linear (cf. Gauge = dial)                 |
 | Toast            | feedback     | acknowledge-input | transient event confirmations (`useToast`)                          |
 | DataStatusBar    | feedback     | reveal-state      | data-trust header (live/stale + metrics + filters)                  |
 | EmptyState       | feedback     | reveal-state      | deliberate "nothing here yet" + next step                           |
 | Card             | container    | reveal-state      | raised grouping surface (`Header/Body/Footer`)                      |
 | Avatar           | container    | reveal-state      | image → initials → glyph identity                                   |
-| Dialog           | container    | acknowledge-input | focus-trapped modal                                                 |
+| Dialog           | container    | acknowledge-input | focus-trapped modal (sm→full, expandable, scroll-body)              |
 | Stat             | single-value | reveal-state      | KPI tile (delta, target, embedded trend)                            |
 | Sparkline        | single-value | reveal-state      | word-sized trend line (presentational)                              |
 | Gauge            | single-value | reveal-state      | 180° dial with zones (`role=meter`)                                 |
@@ -52,6 +52,7 @@ live in SKILL.md §4 — capsules don't repeat them. Exact types: `node_modules/
 | Funnel           | chart        | reveal-state      | ordered stage drop-off                                              |
 | Heatmap          | chart        | reveal-state      | rows × columns intensity matrix                                     |
 | Timeline         | process      | reveal-state      | dated events on a horizontal axis                                   |
+| MilestoneTrack   | process      | reveal-state      | lead-time rail — interval bubbles swell between milestones          |
 | Swimlane         | process      | reveal-state      | steps across actor lanes with handoffs                              |
 | RunHistory       | process      | reveal-state      | execution log table (status, duration, outputs)                     |
 | DecisionMap      | process      | reveal-state      | options + consequence cascades / ADR ledger                         |
@@ -250,12 +251,19 @@ Storybook: components-skeleton--default
 
 Determinate `role=progressbar` fill: how far through a task.
 Key props: `value` · `max` · `tone` · `label`.
+Not a `Meter`: progressbar promises "advancing toward completion", meter promises "a measurement".
+Same shared track internally — pick by that promise, never by looks.
 Storybook: components-progress--default
 
 ### Meter · feedback · reveal-state
 
 A measurement against capacity (`role=meter`): disk, quota, load.
 Key props: `value`/`min`/`max` · `variant` (solid|stacked|threshold) · `segments: {value, tone?, label?}[]` (stacked) · `thresholds: {value, tone?}[]` (recolor on cross) · `size` · `glow` · `showValue` · `label`.
+Choosing between the three fill bars: **is it advancing toward completion?** → `Progress`
+(`role=progressbar`). **A measurement in a known range?** → this. `Gauge` measures the same thing
+with the same `role=meter`, so SHAPE decides — a linear track fits a table row or dense HUD, a dial
+earns its space when the reading is the point. `variant="threshold"` recolours on crossing; it is
+NOT a small gauge.
 Storybook: components-meter--default
 
 ### Toast · feedback · acknowledge-input
@@ -304,8 +312,13 @@ Storybook: components-avatar--default
 ### Dialog · container · acknowledge-input
 
 Focus-trapped modal on the overlay layer; returns focus on close.
-Key props: `open` · `onClose` · `title` · `description` · `footer` · `size` (sm|md|lg) · `closeOnOverlayClick` · `closeOnEsc`.
+Key props: `open` · `onClose` · `title` · `description` · `footer` · `size` (sm|md|lg|xl|full = 360/480/640/960/viewport) · `expandable` + `expanded`/`defaultExpanded`/`onExpandedChange` · `closeOnOverlayClick` · `closeOnEsc`.
+Hosting a data-dense or viz component (ui ≥ 0.11.0): use `size="xl"` or `expandable`, NOT `lg` —
+`Brief` alone wants 760px. Header and footer are pinned and the BODY scrolls, so a long table keeps
+its sticky header and its action row. `full` (or expanded) is the ONLY preset with a resolved
+height, which is what `VirtualAssetGrid`/`Hub`/`Swimlane`/`Timeline` need to measure and lay out.
 Gotchas: keep it controlled (`open` in state). Menus inside are fine (ui ≥ 0.8.1) — Escape closes the Menu first, then the Dialog.
+A component that IS the page (a full Hub map, a doc you edit for minutes) wants its own route — a modal is for a look, not a workspace.
 Storybook: components-dialog--default
 
 ## Single-value
@@ -412,6 +425,8 @@ Storybook: visualizations-donutchart--default
 Squarified cells, area = share. Zero/negative values get no cell (by design).
 Key data: `nodes: {id?, label, value, tone?, color?, sub?}[]`.
 Key props: sel-trio.
+Not for categories against a shared axis (`BarChart`) or ordered stage drop-off (`Funnel`); under
+~6 slices a `DonutChart` reads faster.
 Storybook: visualizations-treemap--default
 
 ### Funnel · chart · reveal-state
@@ -476,6 +491,33 @@ Dated events on a horizontal axis, above/below the rail, category-toned.
 Key data: `events: {id?, at: number, dateLabel?, label, category?, tone?, sub?, detail?, side?}[]` · `categories: {key, label, tone?}[]` · `scale` (ordinal = evenly spaced | time = proportional) · `range`.
 Key props: sel-trio (arrow keys walk events). Gothic skin: game-viz `Chronicle`.
 Storybook: visualizations-timeline--default
+
+### MilestoneTrack · process · reveal-state (ui ≥ 0.11.0)
+
+One pipeline as a horizontal rail: milestone stations, with the rail swelling into a
+measured interval bubble (value · count · share-of-total meter) wherever a station pair
+carries a metric. Source-system bands above, dashed pending segments, whisker under
+non-adjacent measured spans.
+
+```tsx
+<MilestoneTrack
+  data={{
+    title: 'Completed lead time',
+    unit: 'd',
+    stations: [
+      { id: 'ticket', label: 'Ticket created' },
+      { id: 'project', label: 'Project created' },
+      { id: 'invoice', label: 'First invoice', status: 'pending', badge: 'pending source' },
+    ],
+    metrics: [{ from: 'ticket', to: 'project', value: 2.6, count: '605 completed' }],
+    groups: [{ label: 'Jira Service Desk', glyph: 'zap', from: 'ticket', to: 'project' }],
+  }}
+/>
+```
+
+Key data: `stations: {id?, label, sub?, status?: done|active|pending, badge?, note?}[]` · `metrics: {from, to, value, unit?, label?, count?, tone?, note?}[]` (from/to = station id or label; may span several stations — bubble lands in the last free gap before `to`, one bubble per gap) · `groups: {label, glyph?, from, to}[]` · `unit` (default `d`).
+Key props: sel-trio. Header meta auto-computes the summed total when units are uniform. Skin hook: `--tcl-milestonetrack-accent`.
+Storybook: visualizations-milestonetrack--default
 
 ### Swimlane · process · reveal-state
 

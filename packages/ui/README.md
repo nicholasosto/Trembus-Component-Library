@@ -62,7 +62,8 @@ your own components.
 
 **Visualizations** (Tier-1, data-driven) — `Hub`, `BarChart`, `LineChart`,
 `DonutChart`, `Heatmap`, `Gauge`, `Sparkline`, `Funnel`, `Treemap`, `Timeline`,
-`Swimlane`, `RunHistory`, `Brief` (structured doc renderer; resizable), `DecisionMap`. (Node-link graphs live in
+`MilestoneTrack` (milestone lead-time rail), `Swimlane`, `RunHistory`, `Brief`
+(structured doc renderer; resizable), `DecisionMap`. (Node-link graphs live in
 [`@trembus/viz`](https://www.npmjs.com/package/@trembus/viz).)
 
 Hooks (`useAffordanceState`, `useFocusTrap`, `useReturnFocus`, `useReducedMotion`,

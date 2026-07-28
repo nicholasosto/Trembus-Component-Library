@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ComponentType, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Glyph, GLYPHS, ServerIcon, SparkleIcon, UserIcon, WrenchIcon } from '@trembus/icons';
 import type { GlyphProps } from '@trembus/icons';
+import { useSelection } from '../../internal/useSelection';
 import { cx } from '../../utils/cx';
 import { toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -276,12 +277,7 @@ export function Swimlane({
   density = 'cozy',
   className,
 }: SwimlaneProps) {
-  const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
-  const selectedId = selProp ?? internal;
-  const select = (id: string): void => {
-    if (selProp === undefined) setInternal(id);
-    onSelect?.(id);
-  };
+  const [selectedId, select] = useSelection(selProp, defaultSelectedId, onSelect);
 
   const geom = GEOMETRY[density] ?? GEOMETRY.cozy;
   const layout = useMemo(() => buildLayout(data, geom), [data, geom]);

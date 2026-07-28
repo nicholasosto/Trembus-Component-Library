@@ -133,6 +133,8 @@ export function FolderTree({
 
   // ── selection state ──
   const selControlled = selectedId !== undefined;
+  // NOT the shared `useSelection` hook: selection here is paired with a separate
+  // roving-focus id (`focusId` below) and `select` does extra work, so the shapes differ.
   const [selInternal, setSelInternal] = useState<string | undefined>(defaultSelectedId);
   const selected = selControlled ? selectedId : selInternal;
 

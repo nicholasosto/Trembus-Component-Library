@@ -1,4 +1,5 @@
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo } from 'react';
+import { useSelection } from '../../internal/useSelection';
 import { cx } from '../../utils/cx';
 import { toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -108,12 +109,7 @@ export function LineChart({
   height = 220,
   className,
 }: LineChartProps) {
-  const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
-  const selectedId = selProp ?? internal;
-  const select = (id: string): void => {
-    if (selProp === undefined) setInternal(id);
-    onSelect?.(id);
-  };
+  const [selectedId, select] = useSelection(selProp, defaultSelectedId, onSelect);
 
   const { series, unit, band, target } = data;
   const H = height;

@@ -1,5 +1,6 @@
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useMemo } from 'react';
 import type { ReactNode } from 'react';
+import { useSelection } from '../../internal/useSelection';
 import { cx } from '../../utils/cx';
 import { clampPct, toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -135,19 +136,8 @@ export function Heatmap({
 }: HeatmapProps) {
   const rowMode = selectionMode === 'row';
 
-  const [internalCell, setInternalCell] = useState<string | undefined>(defaultSelectedId);
-  const selectedId = selProp ?? internalCell;
-  const selectCell = (id: string): void => {
-    if (selProp === undefined) setInternalCell(id);
-    onSelect?.(id);
-  };
-
-  const [internalRow, setInternalRow] = useState<string | undefined>(defaultSelectedRowId);
-  const selectedRowId = selRowProp ?? internalRow;
-  const selectRow = (id: string): void => {
-    if (selRowProp === undefined) setInternalRow(id);
-    onSelectRow?.(id);
-  };
+  const [selectedId, selectCell] = useSelection(selProp, defaultSelectedId, onSelect);
+  const [selectedRowId, selectRow] = useSelection(selRowProp, defaultSelectedRowId, onSelectRow);
 
   const { columns, rows: authoredRows, unit, stops, tone = 'accent', columnTones } = data;
   const rows = useMemo(

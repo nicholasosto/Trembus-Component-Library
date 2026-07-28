@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useSelection } from '../../internal/useSelection';
 import { cx } from '../../utils/cx';
 import './Hub.css';
 
@@ -152,12 +153,7 @@ export function Hub({
   size = 200,
   className,
 }: HubProps) {
-  const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
-  const selectedId = selProp ?? internal;
-  const select = (id: string): void => {
-    if (selProp === undefined) setInternal(id);
-    onSelect?.(id);
-  };
+  const [selectedId, select] = useSelection(selProp, defaultSelectedId, onSelect);
 
   const w = size;
   const h = Math.round(size * 0.866);

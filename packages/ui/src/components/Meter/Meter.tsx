@@ -28,7 +28,7 @@ export interface MeterProps {
   max?: number;
   /** Base fill tone (default `success`). */
   tone?: FillBarTone;
-  /** Track style: solid fill · stacked proportions · threshold gauge (default `solid`). */
+  /** Track style: solid fill · stacked proportions · recolour-on-crossing (default `solid`). */
   variant?: 'solid' | 'stacked' | 'threshold';
   /** Proportional segments for `variant="stacked"`. */
   segments?: MeterSegment[];
@@ -50,8 +50,10 @@ export interface MeterProps {
 /**
  * `Meter` — a static measurement (role=meter). `solid` fills to a value;
  * `stacked` shows proportions that sum across the track; `threshold` recolors
- * the fill as the value crosses configured markers (a gauge). Clean by default;
- * `glow` turns on the HUD skin.
+ * the fill as the value crosses configured markers. Clean by default; `glow`
+ * turns on the HUD skin. Deliberately NOT called a gauge: `Gauge` is the 180°
+ * dial and carries the same `role="meter"`, so SHAPE is the only thing that
+ * separates them — a linear track fits a table row where a dial cannot.
  */
 export function Meter({
   value = 0,

@@ -91,6 +91,8 @@ const portfolio: TreemapContract = {
  *   engagement, revenue by line, storage by folder.
  * - For a handful of slices a `DonutChart` reads faster; zero/negative values get
  *   NO cell here (by design) — this chart shows only positive shares.
+ * - Not for categories against a shared axis — use `BarChart`; not for ordered stage
+ *   drop-off — use `Funnel`.
  *
  * ### Data & key props
  * - `data.nodes` — `{id?, label, value, tone?, color?, sub?, note?}[]`; give stable

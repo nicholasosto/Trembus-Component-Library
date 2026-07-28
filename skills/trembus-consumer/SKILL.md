@@ -12,7 +12,7 @@ TCL is five published ESM npm packages (React `^19` peer, Node ≥ 20): `@trembu
 components; every component carries a machine-checked "3 UI jobs" contract and ships
 axe-clean. Live gallery: <https://nicholasosto.github.io/Trembus-Component-Library/>
 
-> Stamp 2026-07-25 · tokens 0.2.2 · icons 0.3.0 · ui 0.10.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-28 · tokens 0.2.2 · icons 0.3.0 · ui 0.11.0 · viz 0.5.1 · game-viz 0.4.1
 
 - **Self-contained.** Everything you need is this skill's files, the consumer repo,
   `node_modules/@trembus/*`, and public URLs. Never go looking for the library author's
@@ -109,6 +109,7 @@ By what you have (details: the capsule files in `references/`):
 | Ordered stages of one flow (drop-off)       | **Funnel**                                                                |
 | Numbers over time (continuous)              | **LineChart**                                                             |
 | Discrete dated events                       | **Timeline** (gothic skin: **Chronicle**)                                 |
+| Lead time between pipeline milestones       | **MilestoneTrack**                                                        |
 | Executed runs w/ status + duration          | **RunHistory** (replay a run onto **Swimlane** via `applyRun`)            |
 | Work flowing across actors/lanes            | **Swimlane**                                                              |
 | Two categorical axes × intensity            | **Heatmap** (cell- or row-select)                                         |
@@ -143,8 +144,10 @@ Near-neighbor litmus rules (where agents actually err):
   needs sorting → it wanted a Table.
 - **FolderTree vs Tree vs Treemap** — interact/navigate → FolderTree; contemplate
   structure → Tree; compare sizes → Treemap.
-- **Timeline vs RunHistory vs Swimlane** — x-axis is calendar time → Timeline; rows are
-  executions with pass/fail + duration → RunHistory; rows are owners/actors → Swimlane.
+- **Timeline vs MilestoneTrack vs RunHistory vs Swimlane** — x-axis is calendar time →
+  Timeline; the durations BETWEEN milestones of one pipeline are the story →
+  MilestoneTrack; rows are executions with pass/fail + duration → RunHistory; rows are
+  owners/actors → Swimlane.
 - **Hub vs SystemMap vs Lineage** — one center + satellites, edges don't matter → Hub;
   nested containers with drill-down → SystemMap; individual directed edges are the story
   → Lineage.

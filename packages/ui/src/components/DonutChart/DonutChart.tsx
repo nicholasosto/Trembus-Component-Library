@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useSelection } from '../../internal/useSelection';
 import { cx } from '../../utils/cx';
 import { toneVar, vars } from '../../internal/fillbar';
 import type { FillBarTone } from '../../internal/fillbar';
@@ -73,12 +74,7 @@ export function DonutChart({
   size = 160,
   className,
 }: DonutChartProps) {
-  const [internal, setInternal] = useState<string | undefined>(defaultSelectedId);
-  const selectedId = selProp ?? internal;
-  const select = (id: string): void => {
-    if (selProp === undefined) setInternal(id);
-    onSelect?.(id);
-  };
+  const [selectedId, select] = useSelection(selProp, defaultSelectedId, onSelect);
 
   const { segments, unit } = data;
   const total = useMemo(

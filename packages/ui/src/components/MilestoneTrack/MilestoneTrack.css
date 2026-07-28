@@ -1,0 +1,444 @@
+@layer tcl.components {
+  .tcl-milestone-track {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-4);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header (the Timeline header idiom) ── */
+  .tcl-milestone-track__header {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-4);
+  }
+  .tcl-milestone-track__code {
+    flex: none;
+    font-family: var(--tcl-font-display, var(--tcl-font-mono));
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    color: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    line-height: 1;
+  }
+  .tcl-milestone-track__heading {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .tcl-milestone-track__brand {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-bold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-milestone-track__title {
+    margin: 0;
+    font-size: var(--tcl-text-lg);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-milestone-track__caption {
+    margin: var(--tcl-space-1) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-milestone-track__meta {
+    flex: none;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── the rail: a horizontally-scrolling track ── */
+  .tcl-milestone-track__scroller {
+    overflow-x: auto;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface-raised);
+    scrollbar-width: thin;
+  }
+  .tcl-milestone-track__track {
+    position: relative;
+    flex: none;
+  }
+  .tcl-milestone-track__canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .tcl-milestone-track__chrome {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .tcl-milestone-track__stops {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ── rail segments + flow arrow ── */
+  .tcl-milestone-track__segment {
+    stroke: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .tcl-milestone-track__segment.is-pending {
+    stroke: var(--tcl-border-strong);
+    stroke-width: 2.5;
+    stroke-dasharray: 3 7;
+  }
+  .tcl-milestone-track__arrow {
+    fill: none;
+    stroke: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tcl-milestone-track__arrow.is-pending {
+    stroke: var(--tcl-border-strong);
+    stroke-width: 2.5;
+  }
+
+  /* ── group bands + handoff dividers ── */
+  .tcl-milestone-track__band line {
+    stroke: var(--tcl-border);
+    stroke-width: 1;
+  }
+  .tcl-milestone-track__band-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+    padding: 2px var(--tcl-space-3);
+    background: var(--tcl-surface-raised);
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-semibold);
+    letter-spacing: var(--tcl-tracking-caps);
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+    white-space: nowrap;
+  }
+  .tcl-milestone-track__band-label svg {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-milestone-track__divider {
+    stroke: var(--tcl-border);
+    stroke-width: 1;
+    stroke-dasharray: 2 6;
+    stroke-linecap: round;
+  }
+
+  /* ── stations ── */
+  .tcl-milestone-track__station {
+    appearance: none;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: var(--tcl-radius-md);
+    transition: box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-milestone-track__node-svg {
+    flex: none;
+    display: block;
+    overflow: visible;
+  }
+  .tcl-milestone-track__node {
+    fill: var(--tcl-surface-raised);
+    stroke: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    stroke-width: 2.5;
+    transition:
+      fill var(--tcl-dur-fast) var(--tcl-ease-calm),
+      stroke-width var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-milestone-track__halo {
+    fill: none;
+    stroke: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    stroke-width: 1.5;
+    opacity: 0.55;
+  }
+  .tcl-milestone-track__station[data-status='pending'] .tcl-milestone-track__node {
+    fill: var(--tcl-surface-sunken);
+    stroke: var(--tcl-border-strong);
+    stroke-width: 2;
+    stroke-dasharray: 2.5 3;
+  }
+  .tcl-milestone-track__station[data-status='active'] .tcl-milestone-track__node {
+    stroke-width: 3;
+  }
+  .tcl-milestone-track__station:hover .tcl-milestone-track__node {
+    fill: color-mix(
+      in oklab,
+      var(--tcl-milestonetrack-accent, var(--tcl-accent)) 18%,
+      var(--tcl-surface-raised)
+    );
+  }
+  .tcl-milestone-track__station.is-selected .tcl-milestone-track__node {
+    fill: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+  }
+  .tcl-milestone-track__station.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-milestonetrack-accent, var(--tcl-accent));
+  }
+  .tcl-milestone-track__station:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  /* A selected stop that also takes keyboard focus keeps the AA-contrast focus
+     ring — the accent selection ring can dip below the 3:1 indicator bar. */
+  .tcl-milestone-track__station.is-selected:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-milestone-track__station-label {
+    max-width: 108px;
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: var(--tcl-leading-tight, 1.25);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tcl-milestone-track__station[data-status='pending'] .tcl-milestone-track__station-label {
+    color: var(--tcl-text-dim);
+    font-weight: var(--tcl-weight-medium);
+  }
+  .tcl-milestone-track__station-sub {
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-milestone-track__station-badge {
+    margin-top: 2px;
+    padding: 1px var(--tcl-space-2);
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tcl-tracking-wide);
+    color: var(--tcl-text-dim);
+    background: var(--tcl-surface-sunken);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+    white-space: nowrap;
+  }
+
+  /* ── interval bubbles: the rail swell ── */
+  .tcl-milestone-track__tapers .tcl-milestone-track__taper-fill {
+    fill: color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 12%, var(--tcl-surface-raised));
+  }
+  .tcl-milestone-track__tapers .tcl-milestone-track__taper-stroke {
+    fill: none;
+    stroke: color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 60%, var(--tcl-border));
+    stroke-width: 1.5;
+  }
+  .tcl-milestone-track__whisker line {
+    stroke: color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 65%, var(--tcl-border));
+    stroke-width: 1.5;
+  }
+  .tcl-milestone-track__whisker .tcl-milestone-track__whisker-run {
+    stroke-dasharray: 1 5;
+    stroke-linecap: round;
+  }
+
+  .tcl-milestone-track__bubble {
+    appearance: none;
+    position: absolute;
+    margin: 0;
+    padding: 0 var(--tcl-space-3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: var(--tcl-radius-lg);
+    box-shadow: 0 0 20px -6px
+      color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 45%, transparent);
+    transition: box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-milestone-track__bubble-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .tcl-milestone-track__bubble-fill {
+    fill: color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 12%, var(--tcl-surface-raised));
+  }
+  .tcl-milestone-track__bubble-edge {
+    stroke: color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 60%, var(--tcl-border));
+    stroke-width: 1.5;
+  }
+  .tcl-milestone-track__bubble:hover .tcl-milestone-track__bubble-fill {
+    fill: color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 18%, var(--tcl-surface-raised));
+  }
+  .tcl-milestone-track__bubble.is-selected .tcl-milestone-track__bubble-edge,
+  .tcl-milestone-track__tapers.is-selected .tcl-milestone-track__taper-stroke {
+    stroke: var(--bubble-tone, var(--tcl-accent));
+    stroke-width: 2;
+  }
+  .tcl-milestone-track__bubble.is-selected {
+    box-shadow: 0 0 26px -4px
+      color-mix(in oklab, var(--bubble-tone, var(--tcl-accent)) 60%, transparent);
+  }
+  .tcl-milestone-track__bubble:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  /* Selected + focused keeps the AA focus ring by RULE, not by source order —
+     a reorder must never let the glow swallow the indicator (station parity). */
+  .tcl-milestone-track__bubble.is-selected:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+
+  .tcl-milestone-track__bubble-value {
+    position: relative;
+    font-family: var(--tcl-font-display, var(--tcl-font-sans));
+    font-size: var(--tcl-text-xl);
+    font-weight: var(--tcl-weight-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    color: var(--bubble-ink, var(--tcl-text));
+  }
+  .tcl-milestone-track__bubble-label {
+    position: relative;
+    max-width: 100%;
+    font-size: var(--tcl-text-xs);
+    font-weight: var(--tcl-weight-semibold);
+    line-height: var(--tcl-leading-tight, 1.25);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tcl-milestone-track__bubble-count {
+    position: relative;
+    font-family: var(--tcl-font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-milestone-track__bubble-meter {
+    position: relative;
+    margin-top: 3px;
+    width: 72px;
+    height: 3px;
+    border-radius: var(--tcl-radius-full);
+    background: color-mix(
+      in oklab,
+      var(--bubble-tone, var(--tcl-accent)) 18%,
+      var(--tcl-surface-sunken)
+    );
+    overflow: hidden;
+  }
+  .tcl-milestone-track__bubble-meter-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--bubble-tone, var(--tcl-accent));
+  }
+
+  .tcl-milestone-track__empty {
+    margin: 0;
+    padding: var(--tcl-space-6);
+    text-align: center;
+    color: var(--tcl-text-faint);
+    font-size: var(--tcl-text-sm);
+    border: 1px dashed var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+  }
+
+  /* ── inspector ── */
+  .tcl-milestone-track__inspector {
+    min-height: 56px;
+    padding: var(--tcl-space-4) var(--tcl-space-5);
+    background: var(--tcl-surface);
+    border: 1px solid var(--tcl-border);
+    border-left: 3px solid var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    border-radius: var(--tcl-radius-md);
+  }
+  .tcl-milestone-track__inspector-title {
+    margin: 0;
+    font-size: var(--tcl-text-md);
+    font-weight: var(--tcl-weight-semibold);
+  }
+  .tcl-milestone-track__inspector-value {
+    font-family: var(--tcl-font-display, var(--tcl-font-sans));
+    font-weight: var(--tcl-weight-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--bubble-ink, var(--tcl-text));
+  }
+  .tcl-milestone-track__inspector-dim {
+    font-weight: var(--tcl-weight-regular);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-milestone-track__inspector-sub {
+    margin: var(--tcl-space-2) 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: var(--tcl-tracking-wide);
+    text-transform: uppercase;
+    color: var(--tcl-text-faint);
+  }
+  .tcl-milestone-track__inspector-note {
+    margin: var(--tcl-space-2) 0 0;
+    font-size: var(--tcl-text-sm);
+    line-height: var(--tcl-leading-normal);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-milestone-track__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-milestone-track__station,
+    .tcl-milestone-track__bubble,
+    .tcl-milestone-track__node {
+      transition: none;
+    }
+  }
+}

@@ -400,6 +400,8 @@ export function DecisionMap({
   onSelect,
   className,
 }: DecisionMapProps) {
+  // NOT the shared `useSelection` hook: the initial state is seeded LAZILY from the
+  // data (a `decided` option beats a `recommended` one), which a plain default can't do.
   const [internal, setInternal] = useState<string | undefined>(
     () => defaultSelectedId ?? seedIdOf(data),
   );

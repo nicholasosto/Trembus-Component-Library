@@ -53,7 +53,7 @@ export type { BadgeProps } from './components/Badge/Badge';
 export { Input } from './components/Input/Input';
 export type { InputProps } from './components/Input/Input';
 export { Dialog } from './components/Dialog/Dialog';
-export type { DialogProps } from './components/Dialog/Dialog';
+export type { DialogProps, DialogSize } from './components/Dialog/Dialog';
 export { IconButton } from './components/IconButton/IconButton';
 export type { IconButtonProps } from './components/IconButton/IconButton';
 export { Tabs } from './components/Tabs/Tabs';
@@ -283,3 +283,13 @@ export type {
   CommandGroup,
   CommandTone,
 } from './components/CommandBar/CommandBar';
+export { MilestoneTrack } from './components/MilestoneTrack/MilestoneTrack';
+export type {
+  MilestoneTrackProps,
+  MilestoneTrackContract,
+  MilestoneStation,
+  MilestoneMetric,
+  MilestoneGroup,
+  MilestoneStatus,
+  MilestoneTrackTone,
+} from './components/MilestoneTrack/MilestoneTrack';

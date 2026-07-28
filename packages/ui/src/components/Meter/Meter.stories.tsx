@@ -11,7 +11,9 @@ import { Meter } from './Meter';
  * ### When to use it
  * - Showing how much of a fixed capacity is used or measured right now.
  * - Not for task completion that advances over time — use `Progress` (`role="progressbar"`).
- * - Not for a needle dial with zone semantics — use `Gauge`.
+ * - Not for a needle dial with zone semantics — use `Gauge`. Both carry `role="meter"`,
+ *   so SHAPE decides: a linear track fits a table row or a dense HUD; a dial earns its
+ *   space when the reading is the point.
  *
  * ### Data & key props
  * - `value` (default `0`) against `min`/`max` (defaults `0`/`100`).
@@ -55,7 +57,7 @@ type Story = StoryObj<typeof meta>;
 /** Job: Reveal State — a measurement filled to its value. */
 export const Default: Story = {};
 
-/** Job: Afford Action — solid, threshold (recoloring gauge), and stacked proportions. */
+/** Job: Afford Action — solid, threshold (recolour-on-crossing), and stacked proportions. */
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'grid', gap: 16, minWidth: 420 }}>
@@ -69,7 +71,7 @@ export const Variants: Story = {
           { value: 80, tone: 'danger' },
         ]}
         glow
-        label="Threshold gauge (warning at 50, danger at 80)"
+        label="Disk used (recolours at 50, then 80)"
       />
       <Meter
         variant="stacked"
