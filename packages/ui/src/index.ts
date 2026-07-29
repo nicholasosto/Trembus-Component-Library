@@ -292,4 +292,7 @@ export type {
   MilestoneGroup,
   MilestoneStatus,
   MilestoneTrackTone,
+  MilestoneTrackLayout,
+  MilestoneBubbleSizing,
+  MilestoneLabelPlacement,
 } from './components/MilestoneTrack/MilestoneTrack';

@@ -138,6 +138,38 @@
     stroke-linecap: round;
   }
 
+  /* ── serpentine: U-turn connectors, direction cues, row headers ── */
+  .tcl-milestone-track__connector {
+    fill: none;
+    stroke: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .tcl-milestone-track__connector.is-pending {
+    stroke: var(--tcl-border-strong);
+    stroke-width: 2.5;
+    stroke-dasharray: 3 7;
+  }
+  .tcl-milestone-track__flow-cue {
+    fill: none;
+    stroke: var(--tcl-milestonetrack-accent, var(--tcl-accent));
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.7;
+  }
+  .tcl-milestone-track__flow-cue.is-pending {
+    stroke: var(--tcl-border-strong);
+  }
+  /* Row header chips reuse the band-label skin but anchor to the row's start
+     corner instead of centering on a band span. */
+  .tcl-milestone-track__row-label {
+    transform: translate(0, -50%);
+  }
+  .tcl-milestone-track__row-label.is-end {
+    transform: translate(-100%, -50%);
+  }
+
   /* ── stations ── */
   .tcl-milestone-track__station {
     appearance: none;
@@ -378,6 +410,56 @@
     height: 100%;
     border-radius: inherit;
     background: var(--bubble-tone, var(--tcl-accent));
+  }
+
+  /* The count + meter travel together: a contents-only wrapper inside the capsule,
+     a real block once labelPlacement moves them below it. */
+  .tcl-milestone-track__bubble-foot {
+    display: contents;
+  }
+
+  /* ── labelPlacement="outside": only the value stays in the pillow ──
+     An absolutely-positioned box anchored at left:50% shrink-to-fits against the
+     REMAINING half of the capsule, so both escapees need width:max-content or
+     they truncate at 72px. */
+  .tcl-milestone-track[data-labels='outside'] .tcl-milestone-track__bubble-label {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 200px;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    color: var(--tcl-text);
+  }
+  .tcl-milestone-track[data-labels='outside'] .tcl-milestone-track__bubble-foot {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: max-content;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* Compact scaled capsules (small share of total): value + one label line only —
+     the count and meter return via the aria-live inspector on selection. Outside
+     labels already sit clear of the capsule, so they never need hiding. */
+  .tcl-milestone-track[data-labels='inside']
+    .tcl-milestone-track__bubble[data-size='compact']
+    .tcl-milestone-track__bubble-count,
+  .tcl-milestone-track[data-labels='inside']
+    .tcl-milestone-track__bubble[data-size='compact']
+    .tcl-milestone-track__bubble-meter {
+    display: none;
+  }
+  .tcl-milestone-track__bubble[data-size='compact'] .tcl-milestone-track__bubble-value {
+    font-size: var(--tcl-text-md);
+  }
+  .tcl-milestone-track__bubble[data-size='compact'] .tcl-milestone-track__bubble-label {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
   }
 
   .tcl-milestone-track__empty {

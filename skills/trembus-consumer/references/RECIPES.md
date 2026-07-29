@@ -1,6 +1,6 @@
 # TCL consumer recipes
 
-> Stamp 2026-07-28 · tokens 0.2.2 · icons 0.3.0 · ui 0.11.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-29 · tokens 0.2.2 · icons 0.3.0 · ui 0.12.0 · viz 0.5.1 · game-viz 0.4.1
 
 Copy-adaptable patterns for consuming apps. Whole-page scaffolds (AppShell nav shell,
 WorkflowBoard) are versioned copy-and-own templates owned by the sibling

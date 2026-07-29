@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-28 · tokens 0.2.2 · icons 0.3.0 · ui 0.11.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-07-29 · tokens 0.2.2 · icons 0.3.0 · ui 0.12.0 · viz 0.5.1 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -52,7 +52,7 @@ live in SKILL.md §4 — capsules don't repeat them. Exact types: `node_modules/
 | Funnel           | chart        | reveal-state      | ordered stage drop-off                                              |
 | Heatmap          | chart        | reveal-state      | rows × columns intensity matrix                                     |
 | Timeline         | process      | reveal-state      | dated events on a horizontal axis                                   |
-| MilestoneTrack   | process      | reveal-state      | lead-time rail — interval bubbles swell between milestones          |
+| MilestoneTrack   | process      | reveal-state      | lead-time rail — bubbles swell between milestones; wraps to rows    |
 | Swimlane         | process      | reveal-state      | steps across actor lanes with handoffs                              |
 | RunHistory       | process      | reveal-state      | execution log table (status, duration, outputs)                     |
 | DecisionMap      | process      | reveal-state      | options + consequence cascades / ADR ledger                         |
@@ -497,10 +497,15 @@ Storybook: visualizations-timeline--default
 One pipeline as a horizontal rail: milestone stations, with the rail swelling into a
 measured interval bubble (value · count · share-of-total meter) wherever a station pair
 carries a metric. Source-system bands above, dashed pending segments, whisker under
-non-adjacent measured spans.
+non-adjacent measured spans. For long pipelines, `layout="serpentine"` wraps the same
+pipeline into one row per group, and `bubbleSizing="scaled"` grows each capsule with its
+share so bottlenecks read by size (ui ≥ 0.12.0).
 
 ```tsx
 <MilestoneTrack
+  layout="serpentine" // one row per group, U-turn connectors (default 'rail')
+  bubbleSizing="scaled" // capsule height = share of total (default 'uniform')
+  labelPlacement="outside" // value in the pillow, label above, count below (default 'inside')
   data={{
     title: 'Completed lead time',
     unit: 'd',
@@ -515,9 +520,12 @@ non-adjacent measured spans.
 />
 ```
 
-Key data: `stations: {id?, label, sub?, status?: done|active|pending, badge?, note?}[]` · `metrics: {from, to, value, unit?, label?, count?, tone?, note?}[]` (from/to = station id or label; may span several stations — bubble lands in the last free gap before `to`, one bubble per gap) · `groups: {label, glyph?, from, to}[]` · `unit` (default `d`).
-Key props: sel-trio. Header meta auto-computes the summed total when units are uniform. Skin hook: `--tcl-milestonetrack-accent`.
-Storybook: visualizations-milestonetrack--default
+Key data: `stations: {id?, label, sub?, status?: done|active|pending, badge?, note?}[]` · `metrics: {from, to, value, unit?, label?, count?, tone?, weight?, note?}[]` (from/to = station id or label; may span several stations — bubble lands in the last free gap before `to`, one bubble per gap) · `groups: {label, glyph?, from, to}[]` · `unit` (default `d`).
+Key props: sel-trio · `layout` `rail|serpentine` · `bubbleSizing` `uniform|scaled` · `labelPlacement` `inside|outside` (all ui ≥ 0.12.0, all defaulting to the pre-0.12 look).
+Serpentine rows come FROM `groups` — one row each, alternating direction; stations outside any group get their own row; no groups means no wrap. A metric spanning a row break renders as the cross-system handoff capsule on the next row.
+Scaled sizing uses each metric's share of the measured total; when shares are uncomputable (mixed units, single metric) it falls back to per-metric `weight` ratios, then to uniform.
+Header meta auto-computes the summed total when units are uniform. Skin hook: `--tcl-milestonetrack-accent` (also paints the U-turn connectors).
+Storybook: visualizations-milestonetrack--default · visualizations-milestonetrack--serpentine
 
 ### Swimlane · process · reveal-state
 

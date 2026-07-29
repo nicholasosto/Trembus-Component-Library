@@ -89,28 +89,68 @@ const release: MilestoneTrackContract = {
   ],
 };
 
+// The same pipeline snaking through the source systems: serpentine turns each
+// group into a row, and the added project → staffing metric lands on the row
+// break — the cross-system handoff wait, rendered on the next row's lead-in.
+const serpentineLeadTime: MilestoneTrackContract = {
+  ...leadTime,
+  caption: 'One pipeline, a row per source system — capsule size tracks the bottleneck share',
+  metrics: [
+    ...(leadTime.metrics ?? []),
+    {
+      id: 'project-role',
+      from: 'project',
+      to: 'role',
+      value: 11.4,
+      label: 'Project → staffing',
+      count: '318 completed',
+      tone: 'danger',
+      note: 'The cross-system handoff: waiting on staffing after project spin-up.',
+    },
+  ],
+};
+
 /**
  * A lead-time rail: milestones as stations on one horizontal line, with the rail
  * swelling into a measured **interval bubble** wherever a station pair carries a
  * metric — value, sample count, and a share-of-total meter so a 26 d interval
  * reads bigger than a 2.6 d one. Source-system bands sit above the rail, handoff
  * dividers mark the seams between them, and pending stations dash their segments.
+ * `layout='serpentine'` wraps the SAME single pipeline into boustrophedon rows —
+ * one row per group (sub-system), joined by U-turn connectors — and
+ * `bubbleSizing='scaled'` grows each capsule with its share so the worst
+ * bottleneck literally swells the pipe.
  *
  * ### When to use it
  * - Stage-to-stage lead/cycle time along ONE pipeline — opportunity → invoice,
  *   commit → deploy — where the durations BETWEEN milestones are the story.
- * - Not for actor handoffs (`Swimlane`), dated event chronicles (`Timeline`),
- *   stage-count conversion (`Funnel`), or branching pipelines (`@trembus/viz` `Lineage`).
+ * - Serpentine is still that one pipeline, wrapped for long tracks — not for
+ *   branching pipelines (`@trembus/viz` `Lineage`), actor handoffs (`Swimlane`),
+ *   dated event chronicles (`Timeline`), or stage-count conversion (`Funnel`).
  *
  * ### Data & key props
  * - `data.stations` — `{ id?, label, sub?, status?, badge?, note? }[]` in flow order;
  *   give stable `id`s (fallback is the index, never the label).
- * - `data.metrics` — `{ from, to, value, label?, count?, tone?, unit?, note? }[]`;
+ * - `data.metrics` — `{ from, to, value, label?, count?, tone?, weight?, unit?, note? }[]`;
  *   `from`/`to` match a station `id` or `label` and may span several stations — the
  *   bubble takes the last free gap before `to` and a dotted whisker underlines the
  *   full measured span. One bubble per gap; invalid or negative metrics are skipped.
  * - `data.groups` — `{ label, glyph?, from, to }[]` source-system bands; glyph names
  *   come from the `@trembus/icons` registry.
+ * - `layout` — `'rail'` (default) or `'serpentine'`: each group becomes one
+ *   alternating-direction row (row headers replace the band chrome); stations outside
+ *   any group form unlabeled rows, overlapping groups keep only their names, and with
+ *   no groups the track stays a single row. A metric on the row break renders as the
+ *   handoff-wait capsule on the next row's lead-in.
+ * - `bubbleSizing` — `'uniform'` (default) or `'scaled'`: capsule height tracks each
+ *   interval's share of the measured total (the worst bottleneck reaches the max
+ *   height; equal shares all read max). When shares are uncomputable (mixed units or
+ *   a single metric) per-metric `weight` ratios take over; tiny capsules go compact
+ *   (value + one label line).
+ * - `labelPlacement` — `'inside'` (default) or `'outside'`: outside leaves only the
+ *   measured value in the pillow, lifting the interval label above it and dropping the
+ *   sample count + share meter below (the value-stream reading — it keeps small
+ *   capsules legible and lets long interval names breathe past the capsule width).
  * - `data.unit` (default `d`) formats values; the header meta defaults to the summed
  *   total (e.g. "28.9 d measured") when units are uniform.
  * - `selectedId` / `defaultSelectedId` / `onSelect` — controlled or uncontrolled selection.
@@ -118,15 +158,18 @@ const release: MilestoneTrackContract = {
  * ### Accessibility
  * - Every station and bubble is a real `<button>` (`aria-pressed`) — stations are
  *   named "label — sub — status — badge — group", bubbles "label: value, count".
+ *   Reading and tab order remain flow order across serpentine rows; connectors,
+ *   direction chevrons, and row headers are decorative (the group name stays in
+ *   member stations' accessible names).
  * - Selection announces via the `aria-live` inspector (which also carries the
  *   share-of-total percentage); the rail SVG, bands, and meters are decorative
  *   (`aria-hidden`), and status is always paired with a word, never color alone.
  *
  * ### Theming & setup
- * - `--tcl-milestonetrack-accent` skins the rail chrome (read via fallback, never
- *   declared on the root); bubble tones use the status palette (default `warning`);
- *   accent painted as TEXT falls back to `--tcl-text` for AA. Works in light ·
- *   dark · reliquary via `[data-theme]`.
+ * - `--tcl-milestonetrack-accent` skins the rail chrome — including U-turn
+ *   connectors and direction cues (read via fallback, never declared on the root);
+ *   bubble tones use the status palette (default `warning`); accent painted as TEXT
+ *   falls back to `--tcl-text` for AA. Works in light · dark · reliquary via `[data-theme]`.
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
@@ -141,14 +184,64 @@ type Story = StoryObj<typeof meta>;
 /** Job: Afford Action — every milestone and measured interval is a focusable button inviting inspection. */
 export const Default: Story = {};
 
-/** Job: Reveal State — statuses (complete / in progress / pending), per-interval tones, share meters, and the empty state. */
+/** Job: Reveal State — statuses (complete / in progress / pending), per-interval tones, share meters, scaled capsule heights, and the empty state. */
 export const States: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <MilestoneTrack data={release} />
+      <MilestoneTrack
+        data={{
+          ...release,
+          caption: 'Same pipeline with bubbleSizing="scaled" — height tracks share',
+        }}
+        bubbleSizing="scaled"
+      />
       <MilestoneTrack data={{ title: 'Unconfigured pipeline', stations: [] }} />
     </div>
   ),
+};
+
+/**
+ * Job: Reveal State — the same track twice, so the capsule text arrangements read
+ * side by side: labels INSIDE the pillow (default) versus labels OUTSIDE it (the
+ * value-stream reading — only the measured value stays in the swell, the interval
+ * name rides above and the sample count + share meter drop below).
+ */
+export const LabelsOutside: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <MilestoneTrack
+        data={{ ...serpentineLeadTime, caption: 'labelPlacement="inside" (default)' }}
+        layout="serpentine"
+        bubbleSizing="scaled"
+      />
+      <MilestoneTrack
+        data={{ ...serpentineLeadTime, caption: 'labelPlacement="outside"' }}
+        layout="serpentine"
+        bubbleSizing="scaled"
+        labelPlacement="outside"
+      />
+    </div>
+  ),
+};
+
+/**
+ * Job: Reveal State — the same single pipeline wrapped into per-sub-system rows
+ * (serpentine), with capsule height scaled to each interval's share so the worst
+ * bottleneck reads biggest; the danger capsule on the row break is the
+ * cross-system handoff wait.
+ */
+export const Serpentine: Story = {
+  args: { data: serpentineLeadTime, layout: 'serpentine', bubbleSizing: 'scaled' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const big = canvas.getByRole('button', {
+      name: 'Project → first invoice: 26.3 d, 427 completed',
+    });
+    await expect(big.style.height).toBe('128px');
+    await expect(canvasElement.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(2);
+    await expect(canvasElement.querySelectorAll('.tcl-milestone-track__arrow')).toHaveLength(1);
+  },
 };
 
 /** Job: Acknowledge Input — selecting a stop paints the ring and the aria-live inspector announces it. */

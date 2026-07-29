@@ -11,6 +11,49 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.12.0] — 2026-07
+
+### Added
+
+- **`MilestoneTrack` learns to wrap and to weigh** — three additive props turn the single
+  lead-time rail into a business-process map that shows where the work piles up. All three
+  default to the 0.11.0 behavior, so an existing track renders pixel-for-pixel unchanged.
+
+  **`layout="serpentine"`** wraps the SAME one pipeline into alternating-direction rows —
+  **one row per `groups` entry**, so each sub-system (Salesforce · Jira Service Desk ·
+  Projector) gets its own line — joined end-to-start by U-turn connectors that carry the
+  rail, its pending dashes, and a direction chevron around the bend. Row header chips
+  replace the horizontal band chrome; stations outside any group form their own unlabeled
+  rows; overlapping groups keep their accessible names but yield row-making to the first;
+  with no groups the track simply stays one row. A metric that spans a row break — the
+  cross-system handoff wait, very often the real bottleneck — renders as a full capsule on
+  the next row's lead-in, and a measured span crossing rows splits its dotted whisker per
+  row rather than chasing the rail around the turn. Reading order and tab order stay flow
+  order throughout; connectors, chevrons, and row headers are decorative.
+
+  **`bubbleSizing="scaled"`** maps each interval's share of the measured total to its
+  capsule height (60–128px), so the worst bottleneck literally swells the pipe instead of
+  relying on a 72px meter to say so. Where shares are uncomputable — mixed units, or a
+  single metric — the new per-metric **`weight`** field carries the ratio instead; with
+  neither, capsules stay uniform. Small capsules go compact, trading their sample count and
+  meter for legibility (both still announced by the inspector).
+
+  **`labelPlacement="outside"`** leaves only the measured value inside the pillow, lifting
+  the interval label above it and dropping the sample count + share meter below — the
+  value-stream reading. It keeps small capsules legible and lets long interval names run
+  past the capsule width. Still one button, one accessible name, one selection ring.
+
+  New exported types: `MilestoneTrackLayout`, `MilestoneBubbleSizing`,
+  `MilestoneLabelPlacement`.
+
+### Fixed
+
+- **`MilestoneTrack`** — an anonymous metric's index-fallback key could squat on another
+  metric's authored `id` (`[{from,to,…}, {id:'m0',…}]` handed the anonymous bubble the key
+  `m0`), so `selectedId="m0"` pressed the wrong bubble and `onSelect` reported an id absent
+  from the consumer's data. Metric fallbacks now skip authored ids, matching the guarantee
+  stations and groups already had.
+
 ## [@trembus/ui 0.11.0] — 2026-07
 
 ### Added

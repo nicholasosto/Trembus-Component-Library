@@ -6,7 +6,7 @@ export const milestoneTrackContract: ComponentContract = {
   jobs: {
     revealState: {
       satisfiedBy:
-        'Tone-coded rail segments (solid live / dashed pending), station statuses paired with words, swelling interval bubbles with measured values, share-of-total meters, and the computed header total reveal pipeline progress and lead-time magnitude at a glance.',
+        'Tone-coded rail segments (solid live / dashed pending), station statuses paired with words, swelling interval bubbles with measured values, share-of-total meters, and the computed header total reveal pipeline progress and lead-time magnitude at a glance — with opt-in serpentine rows per sub-system group and capsule heights scaled to each interval share, so the worst bottleneck reads biggest.',
       story: 'States',
     },
     affordAction: {
@@ -23,6 +23,8 @@ export const milestoneTrackContract: ComponentContract = {
   a11y: { focusRing: true },
   tokensUsed: [
     '--tcl-accent',
+    '--tcl-milestonetrack-accent',
+    '--tcl-bg',
     '--tcl-status-*',
     '--tcl-surface-raised',
     '--tcl-surface-sunken',

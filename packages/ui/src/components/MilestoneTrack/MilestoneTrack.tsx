@@ -8,6 +8,12 @@ import './MilestoneTrack.css';
 
 export type MilestoneTrackTone = FillBarTone;
 export type MilestoneStatus = 'done' | 'active' | 'pending';
+/** Row layout — `'serpentine'` wraps the ONE pipeline into boustrophedon rows, one per group. */
+export type MilestoneTrackLayout = 'rail' | 'serpentine';
+/** Capsule sizing — `'scaled'` maps an interval's share of the measured total to its height. */
+export type MilestoneBubbleSizing = 'uniform' | 'scaled';
+/** Capsule text — `'outside'` keeps only the value in the pillow (label above, count/meter below). */
+export type MilestoneLabelPlacement = 'inside' | 'outside';
 
 export interface MilestoneStation {
   /** Stable id for selection + metric/group references; falls back to the index (NEVER the label). */
@@ -41,6 +47,11 @@ export interface MilestoneMetric {
   count?: string;
   /** Color-coded tone for the bubble (default `warning`, so it swells apart from the rail accent). */
   tone?: MilestoneTrackTone;
+  /** Manual magnitude stand-in for `bubbleSizing='scaled'` when the cross-metric share is
+   *  uncomputable (mixed units, or a single metric). Any positive finite number — only ratios
+   *  matter (normalized against the largest weight on the track). Ignored whenever shares ARE
+   *  computable; invalid values fall back to the uniform capsule height. */
+  weight?: number;
   /** Inspector detail revealed on selection. */
   note?: string;
 }
@@ -77,13 +88,26 @@ export interface MilestoneTrackContract {
   stations: MilestoneStation[];
   /** Interval measurements between station pairs — each swells the rail into a bubble. */
   metrics?: MilestoneMetric[];
-  /** Source-system bands above the rail; boundaries between bands draw handoff dividers. */
+  /** Source-system bands above the rail; boundaries between bands draw handoff dividers.
+   *  In `layout='serpentine'` each group becomes one row of the snake instead. */
   groups?: MilestoneGroup[];
 }
 
 export interface MilestoneTrackProps {
   /** The authored track contract (stations + metrics + groups) to lay out. */
   data: MilestoneTrackContract;
+  /** Row layout — `'serpentine'` wraps the pipeline into alternating-direction rows, one per
+   *  group (sub-system), joined by U-turn connectors. Rows derive from `data.groups`; with no
+   *  groups the track stays a single row (default `'rail'`). */
+  layout?: MilestoneTrackLayout;
+  /** Capsule sizing — `'scaled'` grows each bubble's height with its share of the measured
+   *  total (the worst bottleneck reaches the max height), falling back to per-metric `weight`
+   *  ratios when shares are uncomputable, then to the uniform height (default `'uniform'`). */
+  bubbleSizing?: MilestoneBubbleSizing;
+  /** Capsule text — `'outside'` leaves only the measured value inside the pillow and lifts the
+   *  interval label above it, dropping the sample count and share meter below (the value-stream
+   *  reading, and the one that keeps small capsules legible). Default `'inside'`. */
+  labelPlacement?: MilestoneLabelPlacement;
   /** Controlled selected station/metric id. */
   selectedId?: string;
   /** Initial selection for uncontrolled use. */
@@ -112,24 +136,33 @@ const statusOf = (station: MilestoneStation): MilestoneStatus => {
 
 // Deterministic geometry (px). The canvas SVG and the absolutely-positioned
 // stop buttons share this exact coordinate space, so tapers always meet their
-// bubbles and nodes always sit on the rail.
+// bubbles and nodes always sit on the rail. Vertical values are per ROW — a
+// row's rail y derives from its tallest bubble, and the single-row rail layout
+// is literally the one-row case of the same formulas.
 const PAD_X = 24; // track inset before the lead-in rail
 const STATION_HALF = 56; // station button half-width (labels wrap inside it)
 const GAP_PLAIN = 126; // node pitch without a bubble
 const GAP_METRIC = 260; // node pitch with a bubble
-const ATTACH = 18; // bare rail between a node and the start of a swell
+const ATTACH = 18; // bare rail between a node (or turn) and the start of a swell
 const PINCH = 40; // horizontal run of each swell taper
 const NODE_R = 7; // station node radius
-const BUBBLE_HALF = 46; // capsule half-height
-const GROUP_H = 44; // group band zone above the rail
-const RAIL_Y = GROUP_H + 10 + BUBBLE_HALF; // 100
+const BUBBLE_HALF = 46; // uniform capsule half-height (and the scaled-mode fallback)
+const MIN_HALF = 30; // scaled-mode floor — keeps value + one label line legible
+const MAX_HALF = 64; // scaled-mode ceiling — the worst bottleneck's half-height
+const COMPACT_HALF = 40; // below this half, bubbles hide count + meter (data-size="compact")
+const GROUP_H = 44; // group band / row header zone above each rail
+const LABEL_OUT_HEAD = 24; // extra headroom so an outside label clears the band chrome
 const RAIL_HALF = 1.5; // half the rail stroke — tapers grow from this thickness
-const STATION_TOP = RAIL_Y - 16; // station button top (covers the node)
 const STATION_H = 104; // node zone + up to two label lines + badge
-const TRACK_H = STATION_TOP + STATION_H + 8;
+const ROW_BELOW_RAIL = STATION_H - 16 + 8; // 96 — rail y to row bottom (station zone)
 const LEAD_OUT = 26; // rail run past the last node, before the arrowhead
-const GROUP_LINE_Y = 22; // group band hairline
-const WHISKER_Y = RAIL_Y + 10; // measured-span underline hugs the rail
+const GROUP_LINE_Y = 22; // group band hairline / row header line (below a row's top)
+const TURN_R = 24; // serpentine U-turn corner radius
+const TURN_MARGIN = 12; // U-turn vertical run inset from the track edge
+const ROW_TAIL = 44; // per-row end allowance past the last station
+// Start inset of a row whose incoming inter-row gap hosts a bubble: turn corner,
+// attach run, full capsule, attach run — the handoff-wait bubble lives on the lead-in.
+const CROSS_START = TURN_MARGIN + TURN_R + ATTACH + (GAP_METRIC - 2 * ATTACH) + ATTACH; // 296
 
 const fmt = (v: number, unit: string): string => `${Math.round(v * 100) / 100} ${unit}`;
 
@@ -139,10 +172,23 @@ const pctText = (share: number): string => {
   return pct === 0 && share > 0 ? '<1' : String(pct);
 };
 
+interface PlacedRow {
+  index: number;
+  start: number; // first station index (inclusive)
+  end: number; // last station index (inclusive)
+  dir: 1 | -1; // flow direction — even rows read left→right, odd rows right→left
+  group?: { key: string; group: MilestoneGroup };
+  top: number;
+  railY: number;
+  stationTop: number;
+  height: number;
+}
+
 interface PlacedStation {
   key: string;
   station: MilestoneStation;
   x: number;
+  top: number;
   status: MilestoneStatus;
   groupLabel?: string;
 }
@@ -153,6 +199,8 @@ interface PlacedBubble {
   gap: number; // bubble occupies the gap between stations `gap` and `gap+1`
   xL: number; // rail attach points (taper start/end)
   xR: number;
+  railY: number; // home row's rail (the `gap+1` row for a cross-row handoff bubble)
+  half: number; // capsule half-height (BUBBLE_HALF unless bubbleSizing='scaled')
   label: string;
   valueText: string;
   tone: MilestoneTrackTone;
@@ -171,25 +219,66 @@ interface PlacedGroup {
 }
 
 interface Segment {
+  key: string;
   x1: number;
   x2: number;
+  y: number;
+  pending: boolean;
+}
+
+interface Whisker {
+  key: string;
+  tone: MilestoneTrackTone;
+  caps: Array<{ x: number; railY: number }>; // verticals at the true span ends
+  runs: Array<{ x1: number; x2: number; y: number }>; // one dotted run per covered row
+}
+
+interface Connector {
+  key: string;
+  d: string;
+  pending: boolean;
+  cue: { x: number; y: number }; // down-chevron on the turn's vertical run
+}
+
+interface RowHeader {
+  key: string;
+  x: number;
+  y: number;
+  end: boolean; // anchored to the right edge (right→left rows)
+  glyph?: string;
+  label: string;
+}
+
+interface FlowCue {
+  key: string;
+  x: number;
+  y: number;
   pending: boolean;
 }
 
 interface Layout {
+  rows: PlacedRow[];
   stations: PlacedStation[];
   bubbles: PlacedBubble[];
   groups: PlacedGroup[];
   segments: Segment[];
   dividers: number[];
-  whiskers: Array<{ key: string; x1: number; x2: number; tone: MilestoneTrackTone }>;
-  arrowX: number;
-  arrowPending: boolean;
+  whiskers: Whisker[];
+  connectors: Connector[];
+  rowHeaders: RowHeader[];
+  flowCues: FlowCue[];
+  arrow?: { x: number; y: number; dir: 1 | -1; pending: boolean };
   width: number;
+  height: number;
   totalText?: string; // e.g. "28.9 d measured" — only when metric units are uniform
 }
 
-function buildLayout(data: MilestoneTrackContract): Layout {
+function buildLayout(
+  data: MilestoneTrackContract,
+  layout: MilestoneTrackLayout,
+  bubbleSizing: MilestoneBubbleSizing,
+  labelPlacement: MilestoneLabelPlacement,
+): Layout {
   const rawStations = data.stations ?? [];
   const trackUnit = data.unit ?? 'd';
 
@@ -236,7 +325,9 @@ function buildLayout(data: MilestoneTrackContract): Layout {
 
   // ── one bubble per gap: each metric takes the last free gap inside its span
   // (so a long-span metric sits just before its destination, like the source
-  // strip). A metric whose span is fully occupied is omitted.
+  // strip). A metric whose span is fully occupied is omitted. In serpentine the
+  // inter-row gap is an ordinary gap — its bubble becomes the handoff-wait
+  // capsule on the next row's lead-in.
   const gapOwner: Array<number | undefined> = new Array(Math.max(0, rawStations.length - 1)).fill(
     undefined,
   );
@@ -250,15 +341,6 @@ function buildLayout(data: MilestoneTrackContract): Layout {
     return [];
   });
 
-  // ── x positions: cumulative pitch, wide where a bubble lives.
-  const xs: number[] = [];
-  keyed.forEach((_, i) => {
-    xs[i] =
-      i === 0
-        ? PAD_X + STATION_HALF
-        : xs[i - 1] + (gapOwner[i - 1] !== undefined ? GAP_METRIC : GAP_PLAIN);
-  });
-
   // ── share of measured total: only meaningful when every placed metric speaks
   // ONE unit (mixed units would sum apples and oranges). Metrics may uniformly
   // override the track unit — the total then reports in THEIR unit.
@@ -268,14 +350,14 @@ function buildLayout(data: MilestoneTrackContract): Layout {
   const total = placedMetrics.reduce((sum, p) => sum + p.metric.value, 0);
   const showShare = uniform && placedMetrics.length >= 2 && total > 0;
 
-  const bubbles: PlacedBubble[] = placedMetrics.map((p) => {
+  // Pre-geometry bubble records — keys uniquified here, BEFORE groups, so the
+  // shared uniquify keeps its station → metric → group call order.
+  const modelBubbles = placedMetrics.map((p) => {
     const unit = p.metric.unit ?? trackUnit;
     return {
-      key: uniquify(p.metric.id ?? `m${p.i}`),
+      key: p.metric.id !== undefined ? uniquify(p.metric.id) : uniquify(`m${p.i}`, true),
       metric: p.metric,
       gap: p.gap,
-      xL: xs[p.gap] + ATTACH,
-      xR: xs[p.gap + 1] - ATTACH,
       label: p.metric.label ?? `${rawStations[p.from].label} → ${rawStations[p.to].label}`,
       valueText: fmt(p.metric.value, unit),
       // Authored junk ('constructor') must not bypass the accent→text ink remap.
@@ -288,113 +370,374 @@ function buildLayout(data: MilestoneTrackContract): Layout {
 
   // ── groups: resolve + normalize; a station's first covering group joins its
   // accessible name (the band chrome itself is decorative).
-  const groups: PlacedGroup[] = (data.groups ?? []).flatMap((group, i) => {
+  const modelGroups = (data.groups ?? []).flatMap((group, i) => {
     const a = resolve(group.from);
     const b = resolve(group.to);
     if (a === undefined || b === undefined) return [];
-    const fromIdx = Math.min(a, b);
-    const toIdx = Math.max(a, b);
     return [
       {
         // Groups build after stations + bubbles, so the shared uniquify can't
         // disturb selectable keys; duplicate group ids must not collide either.
         key: group.id !== undefined ? uniquify(group.id) : uniquify(`g${i}`, true),
         group,
-        fromIdx,
-        toIdx,
-        x0: xs[fromIdx] - 40,
-        x1: xs[toIdx] + 40,
+        fromIdx: Math.min(a, b),
+        toIdx: Math.max(a, b),
       },
     ];
   });
-  groups.sort((a, b) => a.fromIdx - b.fromIdx || a.toIdx - b.toIdx);
+  modelGroups.sort((a, b) => a.fromIdx - b.fromIdx || a.toIdx - b.toIdx);
+
+  // ── rows: rail = one row; serpentine partitions stations by a greedy sweep of
+  // the sorted groups. Overlapping/interleaved groups are skipped as row-makers
+  // (first-sorted wins — they still feed accessible names); stations outside any
+  // accepted group form unlabeled orphan rows. No groups → one row (no wrap).
+  const rows: PlacedRow[] = [];
+  if (rawStations.length > 0) {
+    const runs: Array<{ start: number; end: number; group?: (typeof modelGroups)[number] }> = [];
+    if (layout === 'serpentine') {
+      const accepted: typeof modelGroups = [];
+      let cursor = -1;
+      for (const g of modelGroups) {
+        if (g.fromIdx > cursor) {
+          accepted.push(g);
+          cursor = g.toIdx;
+        }
+      }
+      let idx = 0;
+      for (const g of accepted) {
+        if (idx < g.fromIdx) runs.push({ start: idx, end: g.fromIdx - 1 });
+        runs.push({ start: g.fromIdx, end: g.toIdx, group: g });
+        idx = g.toIdx + 1;
+      }
+      if (idx <= rawStations.length - 1) runs.push({ start: idx, end: rawStations.length - 1 });
+    } else {
+      runs.push({ start: 0, end: rawStations.length - 1 });
+    }
+    runs.forEach((run, index) => {
+      rows.push({
+        index,
+        start: run.start,
+        end: run.end,
+        dir: index % 2 === 0 ? 1 : -1,
+        group: run.group,
+        top: 0,
+        railY: 0,
+        stationTop: 0,
+        height: 0,
+      });
+    });
+  }
+  const rowOf: number[] = [];
+  rows.forEach((r) => {
+    for (let i = r.start; i <= r.end; i++) rowOf[i] = r.index;
+  });
+
+  // ── capsule halves: shares when computable (all-or-nothing across the track),
+  // else authored weights, else the uniform half. Normalized to the max basis so
+  // the worst bottleneck always reaches MAX_HALF.
+  const halves = new Map<string, number>();
+  if (bubbleSizing === 'scaled' && modelBubbles.length > 0) {
+    const sharesOn = modelBubbles.every((b) => b.share !== undefined);
+    const basisOf = (b: (typeof modelBubbles)[number]): number | undefined => {
+      if (sharesOn) return b.share;
+      const w = b.metric.weight;
+      return typeof w === 'number' && Number.isFinite(w) && w > 0 ? w : undefined;
+    };
+    const defined = modelBubbles.map(basisOf).filter((v): v is number => v !== undefined && v > 0);
+    const maxBasis = defined.length > 0 ? Math.max(...defined) : 0;
+    modelBubbles.forEach((b) => {
+      const basis = basisOf(b);
+      halves.set(
+        b.key,
+        basis !== undefined && maxBasis > 0
+          ? Math.round(MIN_HALF + (basis / maxBasis) * (MAX_HALF - MIN_HALF))
+          : BUBBLE_HALF,
+      );
+    });
+  } else {
+    modelBubbles.forEach((b) => halves.set(b.key, BUBBLE_HALF));
+  }
+
+  // ── vertical anatomy: a row's rail sits below its header zone by its tallest
+  // bubble, so capsules never invade the header; the row bottom leaves the full
+  // station zone. Outside labels ride above their capsule, so the whole rail
+  // drops by one label line to clear the band chrome. One uniform inside-label
+  // row reduces to the 0.11.0 constants (railY 100, stationTop 84, height 196).
+  const headroom = labelPlacement === 'outside' ? LABEL_OUT_HEAD : 0;
+  const maxHalfByRow = rows.map(() => BUBBLE_HALF);
+  modelBubbles.forEach((b) => {
+    const r = rowOf[b.gap + 1];
+    maxHalfByRow[r] = Math.max(maxHalfByRow[r], halves.get(b.key) ?? BUBBLE_HALF);
+  });
+  let nextTop = 0;
+  rows.forEach((r) => {
+    r.top = nextTop;
+    r.railY = r.top + GROUP_H + 10 + headroom + maxHalfByRow[r.index];
+    r.stationTop = r.railY - 16;
+    r.height = r.railY - r.top + ROW_BELOW_RAIL;
+    nextTop += r.height;
+  });
+  const height = rows.length > 0 ? nextTop : GROUP_H + 10 + BUBBLE_HALF + ROW_BELOW_RAIL;
+
+  // ── x positions: cumulative pitch per row, wide where a bubble lives; a row
+  // whose incoming inter-row gap hosts a bubble starts at CROSS_START instead.
+  // Right→left rows mirror their local coordinates against the track width.
+  const localXs: number[] = [];
+  rows.forEach((r) => {
+    const incoming = r.index > 0 && r.start > 0 && gapOwner[r.start - 1] !== undefined;
+    for (let i = r.start; i <= r.end; i++) {
+      localXs[i] =
+        i === r.start
+          ? incoming
+            ? CROSS_START
+            : PAD_X + STATION_HALF
+          : localXs[i - 1] + (gapOwner[i - 1] !== undefined ? GAP_METRIC : GAP_PLAIN);
+    }
+  });
+  const width =
+    rows.length > 0
+      ? Math.max(...rows.map((r) => localXs[r.end] + STATION_HALF + ROW_TAIL))
+      : PAD_X * 2;
+  const xs: number[] = [];
+  rows.forEach((r) => {
+    for (let i = r.start; i <= r.end; i++) xs[i] = r.dir === 1 ? localXs[i] : width - localXs[i];
+  });
+
+  const bubbles: PlacedBubble[] = modelBubbles.map((b) => {
+    const homeRow = rows[rowOf[b.gap + 1]];
+    const half = halves.get(b.key) ?? BUBBLE_HALF;
+    let xL: number;
+    let xR: number;
+    if (rowOf[b.gap] === rowOf[b.gap + 1]) {
+      xL = Math.min(xs[b.gap], xs[b.gap + 1]) + ATTACH;
+      xR = Math.max(xs[b.gap], xs[b.gap + 1]) - ATTACH;
+    } else {
+      // Handoff-wait capsule on the lead-in: anchored between the turn corner
+      // exit and the row's first station (which starts at CROSS_START).
+      const nearTurn = TURN_MARGIN + TURN_R + ATTACH;
+      const nearStation = CROSS_START - ATTACH;
+      const a = homeRow.dir === 1 ? nearTurn : width - nearTurn;
+      const b2 = homeRow.dir === 1 ? nearStation : width - nearStation;
+      xL = Math.min(a, b2);
+      xR = Math.max(a, b2);
+    }
+    return { ...b, xL, xR, railY: homeRow.railY, half };
+  });
+
+  const groups: PlacedGroup[] = modelGroups.map((g) => ({
+    ...g,
+    x0: Math.min(xs[g.fromIdx], xs[g.toIdx]) - 40,
+    x1: Math.max(xs[g.fromIdx], xs[g.toIdx]) + 40,
+  }));
 
   const stations: PlacedStation[] = keyed.map(({ station, key }, i) => ({
     key,
     station,
     x: xs[i],
+    top: rows[rowOf[i]].stationTop,
     status: statusOf(station),
-    groupLabel: groups.find((g) => g.fromIdx <= i && i <= g.toIdx)?.group.label,
+    groupLabel: modelGroups.find((g) => g.fromIdx <= i && i <= g.toIdx)?.group.label,
   }));
 
-  // ── handoff dividers between consecutive bands — skipped where a bubble
-  // already separates the systems (no line through a capsule).
+  // ── handoff dividers between consecutive bands (rail only — the row break IS
+  // the handoff in serpentine) — skipped where a bubble already separates the
+  // systems (no line through a capsule).
   const dividers: number[] = [];
-  for (let i = 1; i < groups.length; i++) {
-    const prev = groups[i - 1];
-    const next = groups[i];
-    if (prev.toIdx >= next.fromIdx) continue;
-    const x = (xs[prev.toIdx] + xs[next.fromIdx]) / 2;
-    const covered = bubbles.some((b) => x >= b.xL - 4 && x <= b.xR + 4);
-    if (!covered) dividers.push(x);
+  if (layout === 'rail') {
+    for (let i = 1; i < groups.length; i++) {
+      const prev = groups[i - 1];
+      const next = groups[i];
+      if (prev.toIdx >= next.fromIdx) continue;
+      const x = (xs[prev.toIdx] + xs[next.fromIdx]) / 2;
+      const covered = bubbles.some((b) => x >= b.xL - 4 && x <= b.xR + 4);
+      if (!covered) dividers.push(x);
+    }
   }
 
   const pendingAt = (i: number): boolean => stations[i]?.status === 'pending';
   const segments: Segment[] = [];
-  if (stations.length > 0) {
-    segments.push({ x1: 6, x2: xs[0], pending: pendingAt(0) });
-    for (let i = 0; i < stations.length - 1; i++) {
-      segments.push({ x1: xs[i], x2: xs[i + 1], pending: pendingAt(i) || pendingAt(i + 1) });
+  rows.forEach((r) => {
+    if (r.index === 0) {
+      segments.push({
+        key: 's0-lead',
+        x1: 6,
+        x2: xs[r.start],
+        y: r.railY,
+        pending: pendingAt(r.start),
+      });
     }
-  }
-  const lastX = stations.length ? xs[stations.length - 1] : PAD_X;
-  const arrowPending = stations.length ? pendingAt(stations.length - 1) : false;
-  if (stations.length > 0) {
-    segments.push({ x1: lastX, x2: lastX + LEAD_OUT, pending: arrowPending });
+    for (let i = r.start; i < r.end; i++) {
+      segments.push({
+        key: `s${r.index}-${i}`,
+        x1: xs[i],
+        x2: xs[i + 1],
+        y: r.railY,
+        pending: pendingAt(i) || pendingAt(i + 1),
+      });
+    }
+  });
+
+  let arrow: Layout['arrow'];
+  if (rows.length > 0) {
+    const lastRow = rows[rows.length - 1];
+    const arrowPending = pendingAt(lastRow.end);
+    const ax = xs[lastRow.end] + lastRow.dir * LEAD_OUT;
+    segments.push({
+      key: `s${lastRow.index}-out`,
+      x1: xs[lastRow.end],
+      x2: ax,
+      y: lastRow.railY,
+      pending: arrowPending,
+    });
+    arrow = { x: ax, y: lastRow.railY, dir: lastRow.dir, pending: arrowPending };
   }
 
-  const whiskers = bubbles
+  // ── U-turn connectors: rail thickness carried around the row break, dashed
+  // when either boundary station is pending (the segment rule).
+  const connectors: Connector[] = [];
+  for (let r = 0; r + 1 < rows.length; r++) {
+    const row = rows[r];
+    const next = rows[r + 1];
+    const pending = pendingAt(row.end) || pendingAt(next.start);
+    const y1 = row.railY;
+    const y2 = next.railY;
+    let d: string;
+    let cueX: number;
+    if (row.dir === 1) {
+      const tx = width - TURN_MARGIN;
+      d = `M ${xs[row.end]} ${y1} H ${tx - TURN_R} A ${TURN_R} ${TURN_R} 0 0 1 ${tx} ${y1 + TURN_R} V ${y2 - TURN_R} A ${TURN_R} ${TURN_R} 0 0 1 ${tx - TURN_R} ${y2} H ${xs[next.start]}`;
+      cueX = tx;
+    } else {
+      const tm = TURN_MARGIN;
+      d = `M ${xs[row.end]} ${y1} H ${tm + TURN_R} A ${TURN_R} ${TURN_R} 0 0 0 ${tm} ${y1 + TURN_R} V ${y2 - TURN_R} A ${TURN_R} ${TURN_R} 0 0 0 ${tm + TURN_R} ${y2} H ${xs[next.start]}`;
+      cueX = tm;
+    }
+    connectors.push({ key: `c${r}`, d, pending, cue: { x: cueX, y: (y1 + y2) / 2 } });
+  }
+
+  // ── direction cues on right→left rows: one left-chevron per bubble-less
+  // segment, so a mirrored row can't be misread as flowing rightward.
+  const flowCues: FlowCue[] = [];
+  rows.forEach((r) => {
+    if (r.dir !== -1) return;
+    for (let i = r.start; i < r.end; i++) {
+      if (gapOwner[i] !== undefined) continue;
+      flowCues.push({
+        key: `fc${r.index}-${i}`,
+        x: (xs[i] + xs[i + 1]) / 2,
+        y: r.railY,
+        pending: pendingAt(i) || pendingAt(i + 1),
+      });
+    }
+  });
+
+  const rowHeaders: RowHeader[] =
+    layout === 'serpentine'
+      ? rows.flatMap((r) =>
+          r.group
+            ? [
+                {
+                  key: `h-${r.group.key}`,
+                  x: r.dir === 1 ? PAD_X : width - PAD_X,
+                  y: r.top + GROUP_LINE_Y,
+                  end: r.dir === -1,
+                  glyph: r.group.group.glyph,
+                  label: r.group.group.label,
+                },
+              ]
+            : [],
+        )
+      : [];
+
+  // ── whiskers: caps at the true span ends; one dotted run per row the span
+  // covers with 2+ stations — the run never traverses a turn.
+  const whiskers: Whisker[] = bubbles
     .filter((b) => b.spanTo - b.spanFrom > 1)
-    .map((b) => ({ key: b.key, x1: xs[b.spanFrom], x2: xs[b.spanTo], tone: b.tone }));
+    .map((b) => {
+      const caps = [b.spanFrom, b.spanTo].map((i) => ({ x: xs[i], railY: rows[rowOf[i]].railY }));
+      const runs: Whisker['runs'] = [];
+      for (let ri = rowOf[b.spanFrom]; ri <= rowOf[b.spanTo]; ri++) {
+        const r = rows[ri];
+        const a = Math.max(r.start, b.spanFrom);
+        const z = Math.min(r.end, b.spanTo);
+        if (z > a) {
+          runs.push({
+            x1: Math.min(xs[a], xs[z]),
+            x2: Math.max(xs[a], xs[z]),
+            y: r.railY + 10,
+          });
+        }
+      }
+      return { key: b.key, tone: b.tone, caps, runs };
+    });
 
   return {
+    rows,
     stations,
     bubbles,
     groups,
     segments,
     dividers,
     whiskers,
-    arrowX: lastX + LEAD_OUT,
-    arrowPending,
-    width: stations.length ? lastX + STATION_HALF + 44 : PAD_X * 2,
+    connectors,
+    rowHeaders,
+    flowCues,
+    arrow,
+    width,
+    height,
     totalText:
       uniform && placedMetrics.length > 0 ? `${fmt(total, sharedUnit)} measured` : undefined,
   };
 }
 
 /** The swell taper: rail thickness at `x0`, full bubble height `PINCH` later. */
-function taperPath(x0: number, dir: 1 | -1): { fill: string; top: string; bottom: string } {
+function taperPath(
+  x0: number,
+  dir: 1 | -1,
+  railY: number,
+  half: number,
+): { fill: string; top: string; bottom: string } {
   const xm = x0 + dir * PINCH * 0.55;
   const xr = x0 + dir * PINCH;
-  const top = `M ${x0} ${RAIL_Y - RAIL_HALF} C ${xm} ${RAIL_Y - RAIL_HALF}, ${xm} ${RAIL_Y - BUBBLE_HALF}, ${xr} ${RAIL_Y - BUBBLE_HALF}`;
-  const bottom = `M ${x0} ${RAIL_Y + RAIL_HALF} C ${xm} ${RAIL_Y + RAIL_HALF}, ${xm} ${RAIL_Y + BUBBLE_HALF}, ${xr} ${RAIL_Y + BUBBLE_HALF}`;
-  const fill = `${top} L ${xr} ${RAIL_Y + BUBBLE_HALF} C ${xm} ${RAIL_Y + BUBBLE_HALF}, ${xm} ${RAIL_Y + RAIL_HALF}, ${x0} ${RAIL_Y + RAIL_HALF} Z`;
+  const top = `M ${x0} ${railY - RAIL_HALF} C ${xm} ${railY - RAIL_HALF}, ${xm} ${railY - half}, ${xr} ${railY - half}`;
+  const bottom = `M ${x0} ${railY + RAIL_HALF} C ${xm} ${railY + RAIL_HALF}, ${xm} ${railY + half}, ${xr} ${railY + half}`;
+  const fill = `${top} L ${xr} ${railY + half} C ${xm} ${railY + half}, ${xm} ${railY + RAIL_HALF}, ${x0} ${railY + RAIL_HALF} Z`;
   return { fill, top, bottom };
 }
 
 export function MilestoneTrack({
   data,
+  layout = 'rail',
+  bubbleSizing = 'uniform',
+  labelPlacement = 'inside',
   selectedId: selProp,
   defaultSelectedId,
   onSelect,
   className,
 }: MilestoneTrackProps) {
   const [selectedId, select] = useSelection(selProp, defaultSelectedId, onSelect);
-  const layout = useMemo(() => buildLayout(data), [data]);
-  const { stations, bubbles, groups, segments, dividers, whiskers, width } = layout;
+  const geometry = useMemo(
+    () => buildLayout(data, layout, bubbleSizing, labelPlacement),
+    [data, layout, bubbleSizing, labelPlacement],
+  );
+  const { stations, bubbles, groups, segments, dividers, whiskers, width, height } = geometry;
 
   const hasContent = stations.length > 0;
   const hasHeader = Boolean(
-    data.brand || data.code || data.title || data.caption || data.meta || layout.totalText,
+    data.brand || data.code || data.title || data.caption || data.meta || geometry.totalText,
   );
-  const meta = data.meta ?? layout.totalText;
+  const meta = data.meta ?? geometry.totalText;
 
   const selectedStation = stations.find((s) => s.key === selectedId);
   const selectedBubble = bubbles.find((b) => b.key === selectedId);
   const bubbleByGap = new Map(bubbles.map((b) => [b.gap, b]));
 
   return (
-    <div className={cx('tcl-milestone-track', className)}>
+    <div
+      className={cx('tcl-milestone-track', className)}
+      data-layout={layout}
+      data-labels={labelPlacement}
+    >
       {hasHeader && (
         <header className="tcl-milestone-track__header">
           {data.code && (
@@ -415,14 +758,14 @@ export function MilestoneTrack({
         <div className="tcl-milestone-track__scroller">
           <div
             className="tcl-milestone-track__track"
-            style={vars({ width: `${width}px`, height: `${TRACK_H}px` })}
+            style={vars({ width: `${width}px`, height: `${height}px` })}
           >
-            {/* rail, tapers, whiskers, band chrome — one decorative coordinate space */}
+            {/* rail, turns, tapers, whiskers, band chrome — one decorative coordinate space */}
             <svg
               className="tcl-milestone-track__canvas"
               width={width}
-              height={TRACK_H}
-              viewBox={`0 0 ${width} ${TRACK_H}`}
+              height={height}
+              viewBox={`0 0 ${width} ${height}`}
               aria-hidden="true"
               focusable="false"
             >
@@ -433,50 +776,79 @@ export function MilestoneTrack({
                   x1={x}
                   y1={12}
                   x2={x}
-                  y2={TRACK_H - 20}
+                  y2={height - 20}
                 />
               ))}
-              {groups.map((g) => (
-                <g key={g.key} className="tcl-milestone-track__band">
-                  <line x1={g.x0} y1={GROUP_LINE_Y} x2={g.x1} y2={GROUP_LINE_Y} />
-                  <line x1={g.x0} y1={GROUP_LINE_Y} x2={g.x0} y2={GROUP_LINE_Y + 6} />
-                  <line x1={g.x1} y1={GROUP_LINE_Y} x2={g.x1} y2={GROUP_LINE_Y + 6} />
-                </g>
-              ))}
+              {layout === 'rail' &&
+                groups.map((g) => (
+                  <g key={g.key} className="tcl-milestone-track__band">
+                    <line x1={g.x0} y1={GROUP_LINE_Y} x2={g.x1} y2={GROUP_LINE_Y} />
+                    <line x1={g.x0} y1={GROUP_LINE_Y} x2={g.x0} y2={GROUP_LINE_Y + 6} />
+                    <line x1={g.x1} y1={GROUP_LINE_Y} x2={g.x1} y2={GROUP_LINE_Y + 6} />
+                  </g>
+                ))}
               {segments.map((s) => (
                 <line
-                  key={`s${s.x1}`}
+                  key={s.key}
                   className={cx('tcl-milestone-track__segment', s.pending && 'is-pending')}
                   x1={s.x1}
-                  y1={RAIL_Y}
+                  y1={s.y}
                   x2={s.x2}
-                  y2={RAIL_Y}
+                  y2={s.y}
                 />
               ))}
-              <path
-                className={cx('tcl-milestone-track__arrow', layout.arrowPending && 'is-pending')}
-                d={`M ${layout.arrowX} ${RAIL_Y - 5} L ${layout.arrowX + 7} ${RAIL_Y} L ${layout.arrowX} ${RAIL_Y + 5}`}
-              />
+              {geometry.connectors.map((c) => (
+                <g key={c.key}>
+                  <path
+                    className={cx('tcl-milestone-track__connector', c.pending && 'is-pending')}
+                    d={c.d}
+                  />
+                  <path
+                    className={cx('tcl-milestone-track__flow-cue', c.pending && 'is-pending')}
+                    d={`M ${c.cue.x - 5} ${c.cue.y - 3.5} L ${c.cue.x} ${c.cue.y + 3.5} L ${c.cue.x + 5} ${c.cue.y - 3.5}`}
+                  />
+                </g>
+              ))}
+              {geometry.flowCues.map((c) => (
+                <path
+                  key={c.key}
+                  className={cx('tcl-milestone-track__flow-cue', c.pending && 'is-pending')}
+                  d={`M ${c.x + 3.5} ${c.y - 5} L ${c.x - 3.5} ${c.y} L ${c.x + 3.5} ${c.y + 5}`}
+                />
+              ))}
+              {geometry.arrow && (
+                <path
+                  className={cx(
+                    'tcl-milestone-track__arrow',
+                    geometry.arrow.pending && 'is-pending',
+                  )}
+                  d={`M ${geometry.arrow.x} ${geometry.arrow.y - 5} L ${geometry.arrow.x + 7 * geometry.arrow.dir} ${geometry.arrow.y} L ${geometry.arrow.x} ${geometry.arrow.y + 5}`}
+                />
+              )}
               {whiskers.map((w) => (
                 <g
                   key={`w${w.key}`}
                   className="tcl-milestone-track__whisker"
                   style={vars({ '--bubble-tone': toneVar(w.tone) })}
                 >
-                  <line x1={w.x1} y1={RAIL_Y + 3} x2={w.x1} y2={WHISKER_Y} />
-                  <line
-                    className="tcl-milestone-track__whisker-run"
-                    x1={w.x1}
-                    y1={WHISKER_Y}
-                    x2={w.x2}
-                    y2={WHISKER_Y}
-                  />
-                  <line x1={w.x2} y1={RAIL_Y + 3} x2={w.x2} y2={WHISKER_Y} />
+                  {w.caps.map((c, i) => (
+                    <line key={`c${i}`} x1={c.x} y1={c.railY + 3} x2={c.x} y2={c.railY + 10} />
+                  ))}
+                  {w.runs.map((run, i) => (
+                    <line
+                      key={`r${i}`}
+                      className="tcl-milestone-track__whisker-run"
+                      x1={run.x1}
+                      y1={run.y}
+                      x2={run.x2}
+                      y2={run.y}
+                    />
+                  ))}
                 </g>
               ))}
               {bubbles.map((b) => {
-                const left = taperPath(b.xL, 1);
-                const right = taperPath(b.xR, -1);
+                const left = taperPath(b.xL, 1, b.railY, b.half);
+                const right = taperPath(b.xR, -1, b.railY, b.half);
                 return (
                   <g
                     key={b.key}
@@ -497,19 +869,34 @@ export function MilestoneTrack({
               })}
             </svg>
 
-            {/* group labels — decorative chrome; the label is folded into member
-                stations' accessible names instead */}
+            {/* group labels / row headers — decorative chrome; the label is folded
+                into member stations' accessible names instead */}
             <div className="tcl-milestone-track__chrome" aria-hidden="true">
-              {groups.map((g) => (
-                <span
-                  key={g.key}
-                  className="tcl-milestone-track__band-label"
-                  style={vars({ left: `${(g.x0 + g.x1) / 2}px`, top: `${GROUP_LINE_Y}px` })}
-                >
-                  {g.group.glyph && <Glyph name={g.group.glyph} />}
-                  {g.group.label}
-                </span>
-              ))}
+              {layout === 'rail'
+                ? groups.map((g) => (
+                    <span
+                      key={g.key}
+                      className="tcl-milestone-track__band-label"
+                      style={vars({ left: `${(g.x0 + g.x1) / 2}px`, top: `${GROUP_LINE_Y}px` })}
+                    >
+                      {g.group.glyph && <Glyph name={g.group.glyph} />}
+                      {g.group.label}
+                    </span>
+                  ))
+                : geometry.rowHeaders.map((h) => (
+                    <span
+                      key={h.key}
+                      className={cx(
+                        'tcl-milestone-track__band-label',
+                        'tcl-milestone-track__row-label',
+                        h.end && 'is-end',
+                      )}
+                      style={vars({ left: `${h.x}px`, top: `${h.y}px` })}
+                    >
+                      {h.glyph && <Glyph name={h.glyph} />}
+                      {h.label}
+                    </span>
+                  ))}
             </div>
 
             <div
@@ -537,7 +924,7 @@ export function MilestoneTrack({
                       data-status={p.status}
                       style={vars({
                         left: `${p.x - STATION_HALF}px`,
-                        top: `${STATION_TOP}px`,
+                        top: `${p.top}px`,
                         width: `${STATION_HALF * 2}px`,
                         height: `${STATION_H}px`,
                       })}
@@ -573,7 +960,9 @@ export function MilestoneTrack({
                         <span className="tcl-milestone-track__station-sub">{p.station.sub}</span>
                       )}
                       {p.station.badge && (
-                        <span className="tcl-milestone-track__station-badge">{p.station.badge}</span>
+                        <span className="tcl-milestone-track__station-badge">
+                          {p.station.badge}
+                        </span>
                       )}
                     </button>
 
@@ -584,13 +973,14 @@ export function MilestoneTrack({
                           'tcl-milestone-track__bubble',
                           bubble.key === selectedId && 'is-selected',
                         )}
+                        data-size={bubble.half < COMPACT_HALF ? 'compact' : undefined}
                         style={vars({
                           '--bubble-tone': toneVar(bubble.tone),
                           '--bubble-ink': toneInk(bubble.tone),
                           left: `${bubble.xL + PINCH}px`,
-                          top: `${RAIL_Y - BUBBLE_HALF}px`,
+                          top: `${bubble.railY - bubble.half}px`,
                           width: `${bubble.xR - bubble.xL - 2 * PINCH}px`,
-                          height: `${BUBBLE_HALF * 2}px`,
+                          height: `${bubble.half * 2}px`,
                         })}
                         aria-pressed={bubble.key === selectedId}
                         aria-label={`${bubble.label}: ${bubble.valueText}${bubble.metric.count ? `, ${bubble.metric.count}` : ''}`}
@@ -618,24 +1008,35 @@ export function MilestoneTrack({
                           <line
                             className="tcl-milestone-track__bubble-edge"
                             x1={0}
-                            y1={BUBBLE_HALF * 2}
+                            y1={bubble.half * 2}
                             x2="100%"
-                            y2={BUBBLE_HALF * 2}
+                            y2={bubble.half * 2}
                           />
                         </svg>
-                        <span className="tcl-milestone-track__bubble-value">{bubble.valueText}</span>
+                        <span className="tcl-milestone-track__bubble-value">
+                          {bubble.valueText}
+                        </span>
                         <span className="tcl-milestone-track__bubble-label">{bubble.label}</span>
-                        {bubble.metric.count && (
-                          <span className="tcl-milestone-track__bubble-count">
-                            {bubble.metric.count}
-                          </span>
-                        )}
-                        {bubble.share !== undefined && (
-                          <span className="tcl-milestone-track__bubble-meter" aria-hidden="true">
-                            <span
-                              className="tcl-milestone-track__bubble-meter-fill"
-                              style={vars({ width: `${Math.round(bubble.share * 100)}%` })}
-                            />
+                        {(bubble.metric.count || bubble.share !== undefined) && (
+                          // display:contents inside the capsule — the wrapper only
+                          // becomes a box when the foot moves below it.
+                          <span className="tcl-milestone-track__bubble-foot">
+                            {bubble.metric.count && (
+                              <span className="tcl-milestone-track__bubble-count">
+                                {bubble.metric.count}
+                              </span>
+                            )}
+                            {bubble.share !== undefined && (
+                              <span
+                                className="tcl-milestone-track__bubble-meter"
+                                aria-hidden="true"
+                              >
+                                <span
+                                  className="tcl-milestone-track__bubble-meter-fill"
+                                  style={vars({ width: `${Math.round(bubble.share * 100)}%` })}
+                                />
+                              </span>
+                            )}
                           </span>
                         )}
                       </button>

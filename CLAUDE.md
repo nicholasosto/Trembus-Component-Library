@@ -297,6 +297,18 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   transition on the box around them fires a ResizeObserver relayout per animation frame.
   Snap between sizes instead — Dialog's `expandable` toggles `size` ↔ `full` with no
   transition for exactly this reason (ui 0.11.0).
+- **Text floated OUTSIDE its box needs `width: max-content`.** An absolutely-positioned
+  child anchored `left: 50%` (+ `translateX(-50%)`) shrink-to-fits against the REMAINING
+  half of its containing block — 72px of a 144px capsule — so `max-width` never gets a
+  say and the label silently truncates to "Ticket →…". Set `width: max-content` and cap
+  it with `max-width` (MilestoneTrack's `labelPlacement="outside"`, ui 0.12.0). The same
+  trick keeps a count/meter stack from wrapping under the box it annotates.
+- **Wrapping a laid-out sequence into ROWS?** Make the single row the one-row case of the
+  general model rather than branching — MilestoneTrack's serpentine derives every rail y,
+  x, and connector from a `PlacedRow[]`, so the pre-existing single-rail output stays
+  pixel-identical by construction (ui 0.12.0). Two things bite: per-row React keys (a key
+  built from an x coordinate collides across same-direction rows) and mirrored rows, where
+  every `x1 < x2` assumption in edges, whiskers, and attach points needs a `min`/`max`.
 
 ## Visualizations
 
