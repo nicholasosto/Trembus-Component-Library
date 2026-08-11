@@ -694,4 +694,105 @@ describe('MilestoneTrack', () => {
     );
     expect(await a11yViolations(container)).toEqual([]);
   });
+  // ── layout="wrap": carriage-return rows ──
+
+  it('wrap keeps every row left-to-right, unlike serpentine mirroring', () => {
+    render(<MilestoneTrack data={snake} layout="wrap" />);
+    const opp = screen.getByRole('button', { name: /^Opportunity/ });
+    const ticket = screen.getByRole('button', { name: /^Ticket created/ });
+    const role = screen.getByRole('button', { name: /^First role/ });
+    // Three groups → three rows, each starting at the SAME left inset.
+    expect(topOf(opp)).toBeLessThan(topOf(ticket));
+    expect(topOf(ticket)).toBeLessThan(topOf(role));
+    expect(leftOf(opp)).toBe(leftOf(ticket));
+    expect(leftOf(ticket)).toBe(leftOf(role));
+  });
+
+  it('wrap draws one return connector per row break and no mirrored-row cues', () => {
+    const { container } = render(<MilestoneTrack data={snake} layout="wrap" />);
+    expect(container.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(2);
+    // Serpentine adds a per-segment chevron to every right→left row; wrap has no
+    // mirrored rows, so the only chevrons belong to the return runs.
+    const stray = container.querySelectorAll(
+      '.tcl-milestone-track__canvas > .tcl-milestone-track__flow-cue',
+    );
+    expect(stray).toHaveLength(0);
+    expect(container.querySelectorAll('.tcl-milestone-track__flow-cue').length).toBeGreaterThanOrEqual(2);
+    expect(container.querySelectorAll('.tcl-milestone-track__arrow')).toHaveLength(1);
+  });
+
+  it('leaves a return band between rows so the return run clears both rails', () => {
+    const { container } = render(<MilestoneTrack data={snake} layout="wrap" />);
+    const [first] = [...container.querySelectorAll('.tcl-milestone-track__connector')].map(
+      (p2) => p2.getAttribute('d') ?? '',
+    );
+    // Path shape: H right, arc down, V, arc left, H back, arc down, V, arc, H in.
+    const verticals = [...first.matchAll(/V (\d+(?:\.\d+)?)/g)].map((m) => Number(m[1]));
+    expect(verticals).toHaveLength(2);
+    // Both vertical runs must descend (a negative run means the band is too thin
+    // and the connector would double back on itself).
+    const railYs = [...container.querySelectorAll('.tcl-milestone-track__segment')].map((l) =>
+      Number(l.getAttribute('y1')),
+    );
+    expect(verticals[0]).toBeGreaterThan(Math.min(...railYs));
+    expect(verticals[1]).toBeGreaterThan(verticals[0]);
+  });
+
+  it('rowLength wraps a track with no groups at all', () => {
+    const plain: MilestoneTrackContract = { title: 'Ungrouped', stations: snake.stations };
+    const { container } = render(<MilestoneTrack data={plain} layout="wrap" rowLength={2} />);
+    // 5 stations / 2 per row → 3 rows → 2 returns.
+    expect(container.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(2);
+    const a = screen.getByRole('button', { name: /^Opportunity/ });
+    const c = screen.getByRole('button', { name: /^Project created/ });
+    expect(topOf(c)).toBeGreaterThan(topOf(a));
+    expect(leftOf(c)).toBe(leftOf(a));
+  });
+
+  it('keeps the group header on the FIRST chunk only when rowLength splits a group', () => {
+    const { container } = render(<MilestoneTrack data={snake} layout="wrap" rowLength={1} />);
+    const headers = [...container.querySelectorAll('.tcl-milestone-track__row-label')].map(
+      (el) => el.textContent,
+    );
+    // 'Jira Service Desk' covers two stations; split into two rows it must not
+    // print its chip twice — a repeated chip reads as a second group.
+    expect(headers.filter((h) => h === 'Jira Service Desk')).toHaveLength(1);
+  });
+
+  it('ignores a non-integer or sub-1 rowLength, and rowLength outside a wrapping layout', () => {
+    const plain: MilestoneTrackContract = { title: 'Ungrouped', stations: snake.stations };
+    for (const bad of [0, -3, 1.5, Number.NaN]) {
+      const { container, unmount } = render(
+        <MilestoneTrack data={plain} layout="wrap" rowLength={bad} />,
+      );
+      expect(container.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(0);
+      unmount();
+    }
+    const { container } = render(<MilestoneTrack data={plain} rowLength={2} />);
+    expect(container.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(0);
+  });
+
+  it('prints a huge measured value rather than the word Infinity', () => {
+    render(
+      <MilestoneTrack
+        data={{
+          title: 'Overflow',
+          stations: [
+            { id: 'a', label: 'A' },
+            { id: 'b', label: 'B' },
+          ],
+          metrics: [{ id: 'm', from: 'a', to: 'b', value: 1e308, label: 'Huge' }],
+        }}
+      />,
+    );
+    expect(screen.queryByRole('button', { name: /Infinity/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Huge: 1e\+308 d/ })).toBeInTheDocument();
+  });
+
+  it('has no axe violations in wrap rows', async () => {
+    const { container } = render(
+      <MilestoneTrack data={snake} layout="wrap" rowLength={2} defaultSelectedId="ticket-project" />,
+    );
+    expect(await a11yViolations(container)).toEqual([]);
+  });
 });

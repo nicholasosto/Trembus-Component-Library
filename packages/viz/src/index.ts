@@ -54,3 +54,12 @@ export type {
   TalentRequirement,
   TalentStatus,
 } from './components/TalentTree/TalentTree';
+export { Nebula } from './components/Nebula/Nebula';
+export type {
+  NebulaProps,
+  NebulaContract,
+  NebulaItem,
+  NebulaLink,
+  NebulaGroupMeta,
+  NebulaTone,
+} from './components/Nebula/Nebula';

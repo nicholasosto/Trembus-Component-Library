@@ -1,0 +1,235 @@
+@layer tcl.components {
+  .tcl-nebula {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the Tier-2 viz spine) ── */
+  .tcl-nebula__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-nebula__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-nebula__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-nebula__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-nebula__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── the rotatable stage ── */
+  .tcl-nebula__stage {
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-lg);
+    background: var(--tcl-surface-sunken);
+    overflow: hidden;
+    cursor: grab;
+    /* pointer drag owns panning — without this, touch scroll wins the gesture */
+    touch-action: none;
+    /* node depth z-indexes (100–400) must never escape into the page's stacking context */
+    isolation: isolate;
+  }
+  .tcl-nebula__stage.is-dragging {
+    cursor: grabbing;
+  }
+
+  /* ── nodes: HTML buttons positioned by % over the decorative SVG scene.
+     Depth cues ride two inline custom properties:
+       --nebula-depth  0 (far) … 1 (near) → scale + fade
+       --nebula-size   per-item emphasis multiplier (from item.weight)      ── */
+  .tcl-nebula__node {
+    position: absolute;
+    transform: translate(-50%, -50%)
+      scale(calc((0.72 + 0.36 * var(--nebula-depth, 0.5)) * var(--nebula-size, 1)));
+    /* far nodes recede but stay legible — floor tuned for AA on the sunken surface */
+    opacity: calc(0.62 + 0.38 * var(--nebula-depth, 0.5));
+    appearance: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 150px;
+    margin: 0;
+    padding: 4px 10px;
+    border: 0.5px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    box-shadow: var(--tcl-elevation-1);
+    font-family: inherit;
+    font-size: var(--tcl-text-sm);
+    line-height: 1.2;
+    text-align: left;
+    transition: box-shadow var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  .tcl-nebula__node-dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--node, var(--tcl-accent));
+    /* a faint halo so the tone reads as a glow, not a flat chip */
+    box-shadow: 0 0 6px 1px color-mix(in oklab, var(--node, var(--tcl-accent)) 55%, transparent);
+  }
+  .tcl-nebula__node-label {
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .tcl-nebula__node:hover {
+    box-shadow: var(--tcl-elevation-2);
+  }
+  /* selection reads in-key (the node's OWN tone) and jumps above the depth fade;
+     the scale floor keeps a far selected/focused node readable */
+  .tcl-nebula__node.is-selected,
+  .tcl-nebula__node:focus-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%)
+      scale(max(calc((0.72 + 0.36 * var(--nebula-depth, 0.5)) * var(--nebula-size, 1)), 0.9));
+  }
+  .tcl-nebula__node.is-selected {
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--node, var(--tcl-accent)),
+      var(--tcl-elevation-1);
+  }
+  .tcl-nebula__node:focus-visible {
+    outline: none;
+    /* the focus ring must never be buried under nearer nodes (which carry inline z) */
+    z-index: 400 !important;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring),
+      var(--tcl-elevation-1);
+  }
+
+  /* ── decorative scene (the SVG is aria-hidden) ── */
+  .tcl-nebula__edge {
+    stroke: var(--tcl-border-strong);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .tcl-nebula__edge.is-selected {
+    stroke: var(--tcl-accent);
+    stroke-width: 1.5;
+  }
+
+  /* ── controls + hint ── */
+  .tcl-nebula__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-nebula__control {
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 3px 10px;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-full);
+    background: var(--tcl-surface-raised);
+    color: var(--tcl-text);
+    font-family: inherit;
+    font-size: var(--tcl-text-xs);
+  }
+  .tcl-nebula__control:hover {
+    border-color: var(--tcl-border-strong);
+  }
+  .tcl-nebula__control[aria-pressed='true'] {
+    background: var(--tcl-surface-sunken);
+    border-color: var(--tcl-border-strong);
+  }
+  .tcl-nebula__control:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  .tcl-nebula__hint {
+    margin: 0;
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  /* ── legend: tone always paired with a word ── */
+  .tcl-nebula__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-3);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-nebula__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tcl-nebula__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+    background: var(--node, var(--tcl-accent));
+  }
+
+  /* ── aria-live inspector ── */
+  .tcl-nebula__inspector {
+    min-height: 3.5rem;
+    padding: var(--tcl-space-2) var(--tcl-space-3);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-md);
+    background: var(--tcl-surface);
+  }
+  .tcl-nebula__inspector-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .tcl-nebula__inspector-sub {
+    color: var(--tcl-text-dim);
+    font-weight: 400;
+  }
+  .tcl-nebula__inspector-note {
+    margin: 2px 0 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-nebula__inspector-neighbors {
+    margin: 4px 0 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-nebula__inspector-hint {
+    margin: 0;
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-nebula__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-nebula__node {
+      transition: none;
+    }
+  }
+}

@@ -11,6 +11,69 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.13.0] — 2026-08
+
+### Added
+
+- **`Assay` (`@trembus/ui`)** — `Visualizations/Assay`, a weighted-rubric evaluation: the
+  component for any decision where the SCORE matters less than *why* it came out that way.
+  Each criterion's track is sized by its **weight** and filled by its **score**, so inked
+  length is literal contribution and the weighted maths is visible geometry rather than a
+  footnote; penalties claw points back in `danger`; the total lands on a banded verdict
+  scale (skip / inline / trace / engram, or any bands you define); and the card footer
+  prints the equation, scale base included, so it actually sums. One candidate renders the
+  detail card, several render a ranked board where selecting a row assays it — the
+  inspector IS the card, so the n=1 layout is the general model's one-candidate case.
+
+  Standard Tier-1 spine: every board row is a focusable button with a roving tabindex
+  (Arrow/Home/End, selection follows focus), controlled/uncontrolled `selectedId`, and an
+  aria-live line announcing label, total, verdict and any penalties with their reasons.
+  Verdict tone is always paired with the verdict word; relative weights are normalized to
+  Σ 1 and a non-unit authored sum is disclosed as `(normalized)`, never silently rescaled.
+  Junk degrades rather than misleads — ids dedup first-wins, scores and penalties clamp,
+  an all-invalid weight set falls back to an equal split, and tones are laundered through
+  the shared `Object.hasOwn`-guarded fillbar registry so an authored `"constructor"` can
+  never paint an invisible fill. New exported types: `AssayContract`, `AssayCriterion`,
+  `AssayCandidate`, `AssayPenalty`, `AssayBand`, `AssayScale`, `AssayTone`.
+- **`MilestoneTrack` learns to read like text** — `layout="wrap"` wraps the same one
+  pipeline into **carriage-return rows**: every row reads left→right and a single return
+  connector carries the rail out to the right margin, back across the full width in its own
+  return band, and down into the next row's lead-in, marked with left-pointing chevrons so it
+  can't be misread as forward flow. It is the mode to reach for when the track has to READ
+  like text — and because no row is mirrored, none of serpentine's right→left direction cues
+  appear. Rows still come from `groups`; the new **`rowLength`** prop subdivides each group run
+  into chunks of N stations (only the first chunk keeps the group header) and is the only way
+  to wrap a track with no groups at all. Both default to the 0.12.0 behavior, so an existing
+  track renders pixel-for-pixel unchanged. `MilestoneTrackLayout` gains `'wrap'`.
+
+### Fixed
+
+- **`MilestoneTrack`** — a measured value above ~1.8e306 overflowed the two-decimal rounding
+  and printed the word "Infinity" in the capsule readout, the header total, and the capsule's
+  accessible name; the raw value is now printed instead.
+
+## [@trembus/viz 0.6.0] — 2026-08
+
+### Added
+
+- **`Nebula` (`@trembus/viz`)** — `Visualizations/Nebula`, the first viz in the roster that
+  encodes relatedness as **distance** rather than as an edge: items sit at real 3D
+  coordinates, project to 2D, and rotate under the pointer or the keyboard, so "how close
+  are these two ideas?" is answered by where they land instead of by tracing lines. Layout
+  is deterministic — a shortest-path completion of the authored link weights feeds a
+  hand-rolled classical MDS (`src/internal/nebulaMath.ts`), so the same contract always
+  produces the same map — or supply your own `position` triples from an offline embedding
+  and set `layout='given'`. No WebGL and no new dependency: depth reads through scale,
+  `color-mix` fade and per-node `zIndex`, and group clouds tint with the shared tone
+  ontology.
+
+  Accessible spine intact despite the 3D: nodes stay real focusable HTML `<button>`s over
+  an `aria-hidden` scene, with the controlled/uncontrolled `selectedId` trio and an
+  aria-live inspector that reads out the selected item's **ranked nearest neighbours with
+  weights** — the textual equivalent of the proximity the sighted reader gets for free.
+  Rotation is drag + arrow keys with a reset; the opt-in `autoOrbit` is double-gated behind
+  `prefers-reduced-motion` and a real pause control (the `Effigy` precedent).
+
 ## [@trembus/ui 0.12.0] — 2026-07
 
 ### Added

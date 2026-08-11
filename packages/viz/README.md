@@ -12,8 +12,11 @@ first-principles strata — bedrock axioms innermost, principles layer outward b
 dependency; dangling `restsOn` references auto-materialize dashed **gap** arcs,
 undiscovered supports surfaced as discovery opportunities), and `TalentTree` (a
 game skill-tree — a prerequisite DAG of multi-rank talents with tier gates and a
-full points-budget allocation engine; lead job **afford-action**). The same "3 UI
-jobs" contract spine as `@trembus/ui`'s Tier-1 viz, with a layout engine.
+full points-budget allocation engine; lead job **afford-action**), and `Nebula` (a 3D
+concept map — items placed by RELATEDNESS rather than joined by edges, laid out
+deterministically with classical MDS over the link weights, rotatable by drag or
+keyboard, with the selected item's nearest neighbours read out for screen readers).
+The same "3 UI jobs" contract spine as `@trembus/ui`'s Tier-1 viz, with a layout engine.
 Depends on `@trembus/tokens` only — never on `@trembus/ui`.
 
 **🔭 [Browse the Tier-2 gallery in the live Storybook →](https://nicholasosto.github.io/Trembus-Component-Library/)**

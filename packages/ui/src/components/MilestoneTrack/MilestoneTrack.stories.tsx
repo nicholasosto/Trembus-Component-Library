@@ -116,17 +116,17 @@ const serpentineLeadTime: MilestoneTrackContract = {
  * metric — value, sample count, and a share-of-total meter so a 26 d interval
  * reads bigger than a 2.6 d one. Source-system bands sit above the rail, handoff
  * dividers mark the seams between them, and pending stations dash their segments.
- * `layout='serpentine'` wraps the SAME single pipeline into boustrophedon rows —
- * one row per group (sub-system), joined by U-turn connectors — and
- * `bubbleSizing='scaled'` grows each capsule with its share so the worst
- * bottleneck literally swells the pipe.
+ * Long tracks wrap into rows — `layout='wrap'` keeps every row reading LEFT-TO-RIGHT
+ * and returns along one carriage-return connector, `layout='serpentine'` alternates
+ * direction with U-turns — and `bubbleSizing='scaled'` grows each capsule with its
+ * share so the worst bottleneck literally swells the pipe.
  *
  * ### When to use it
  * - Stage-to-stage lead/cycle time along ONE pipeline — opportunity → invoice,
  *   commit → deploy — where the durations BETWEEN milestones are the story.
- * - Serpentine is still that one pipeline, wrapped for long tracks — not for
- *   branching pipelines (`@trembus/viz` `Lineage`), actor handoffs (`Swimlane`),
- *   dated event chronicles (`Timeline`), or stage-count conversion (`Funnel`).
+ * - Still ONE pipeline, just wrapped for long tracks — not for branching or merging
+ *   pipelines (`@trembus/viz` `Lineage`), actor handoffs (`Swimlane`), dated event
+ *   chronicles (`Timeline`), or stage-count conversion (`Funnel`).
  *
  * ### Data & key props
  * - `data.stations` — `{ id?, label, sub?, status?, badge?, note? }[]` in flow order;
@@ -137,11 +137,15 @@ const serpentineLeadTime: MilestoneTrackContract = {
  *   full measured span. One bubble per gap; invalid or negative metrics are skipped.
  * - `data.groups` — `{ label, glyph?, from, to }[]` source-system bands; glyph names
  *   come from the `@trembus/icons` registry.
- * - `layout` — `'rail'` (default) or `'serpentine'`: each group becomes one
- *   alternating-direction row (row headers replace the band chrome); stations outside
- *   any group form unlabeled rows, overlapping groups keep only their names, and with
- *   no groups the track stays a single row. A metric on the row break renders as the
+ * - `layout` — `'rail'` (default), `'wrap'`, or `'serpentine'`. Both wrapping modes cut
+ *   one row per group (row headers replace the band chrome); stations outside any group
+ *   form unlabeled rows and overlapping groups keep only their names. `'wrap'` keeps every
+ *   row left→right, returning to the left margin along a single carriage-return connector
+ *   — pick it when the track must READ like text; `'serpentine'` alternates row direction
+ *   and adds left-chevrons to mirrored rows. A metric on the row break renders as the
  *   handoff-wait capsule on the next row's lead-in.
+ * - `rowLength` — max stations per row when wrapping, applied within each group run; the
+ *   only way to wrap a track with no groups.
  * - `bubbleSizing` — `'uniform'` (default) or `'scaled'`: capsule height tracks each
  *   interval's share of the measured total (the worst bottleneck reaches the max
  *   height; equal shares all read max). When shares are uncomputable (mixed units or
@@ -158,7 +162,7 @@ const serpentineLeadTime: MilestoneTrackContract = {
  * ### Accessibility
  * - Every station and bubble is a real `<button>` (`aria-pressed`) — stations are
  *   named "label — sub — status — badge — group", bubbles "label: value, count".
- *   Reading and tab order remain flow order across serpentine rows; connectors,
+ *   Reading and tab order remain flow order across wrapped rows; connectors,
  *   direction chevrons, and row headers are decorative (the group name stays in
  *   member stations' accessible names).
  * - Selection announces via the `aria-live` inspector (which also carries the
@@ -166,7 +170,7 @@ const serpentineLeadTime: MilestoneTrackContract = {
  *   (`aria-hidden`), and status is always paired with a word, never color alone.
  *
  * ### Theming & setup
- * - `--tcl-milestonetrack-accent` skins the rail chrome — including U-turn
+ * - `--tcl-milestonetrack-accent` skins the rail chrome — including row-break
  *   connectors and direction cues (read via fallback, never declared on the root);
  *   bubble tones use the status palette (default `warning`); accent painted as TEXT
  *   falls back to `--tcl-text` for AA. Works in light · dark · reliquary via `[data-theme]`.
@@ -241,6 +245,43 @@ export const Serpentine: Story = {
     await expect(big.style.height).toBe('128px');
     await expect(canvasElement.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(2);
     await expect(canvasElement.querySelectorAll('.tcl-milestone-track__arrow')).toHaveLength(1);
+  },
+};
+
+/**
+ * Job: Reveal State — the same pipeline wrapped so every row READS LEFT-TO-RIGHT:
+ * instead of a serpentine U-turn, a single carriage-return connector runs out to
+ * the right margin, back across the full width, and down into the next row's
+ * lead-in (left-chevrons mark it as a return, not forward flow).
+ */
+export const Wrap: Story = {
+  args: { data: serpentineLeadTime, layout: 'wrap', bubbleSizing: 'scaled' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Three groups → three rows → two returns.
+    await expect(canvasElement.querySelectorAll('.tcl-milestone-track__connector')).toHaveLength(2);
+    // The point of `wrap`: EVERY row flows rightward. Under serpentine this row
+    // would be mirrored and the comparison would invert.
+    const left = (name: RegExp) =>
+      Number.parseFloat(canvas.getByRole('button', { name }).style.left);
+    await expect(left(/^Ticket created/)).toBeLessThan(left(/^Project created/));
+    await expect(left(/^First role/)).toBeLessThan(left(/^First invoice/));
+  },
+};
+
+/**
+ * Job: Reveal State — `rowLength` wraps a track that has NO groups: the only way
+ * to break an ungrouped pipeline into rows, applied within each group run.
+ */
+export const WrapByRowLength: Story = {
+  args: {
+    data: {
+      ...release,
+      title: 'Release pipeline, two stations per row',
+      caption: 'rowLength={2} — carriage-return rows without any groups',
+    },
+    layout: 'wrap',
+    rowLength: 2,
   },
 };
 

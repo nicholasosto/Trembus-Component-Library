@@ -6,7 +6,7 @@ export const milestoneTrackContract: ComponentContract = {
   jobs: {
     revealState: {
       satisfiedBy:
-        'Tone-coded rail segments (solid live / dashed pending), station statuses paired with words, swelling interval bubbles with measured values, share-of-total meters, and the computed header total reveal pipeline progress and lead-time magnitude at a glance — with opt-in serpentine rows per sub-system group and capsule heights scaled to each interval share, so the worst bottleneck reads biggest.',
+        'Tone-coded rail segments (solid live / dashed pending), station statuses paired with words, swelling interval bubbles with measured values, share-of-total meters, and the computed header total reveal pipeline progress and lead-time magnitude at a glance — with capsule heights scaled to each interval share so the worst bottleneck reads biggest, and opt-in row wrapping per sub-system group — carriage-return rows that all read left→right, or serpentine rows that alternate direction.',
       story: 'States',
     },
     affordAction: {

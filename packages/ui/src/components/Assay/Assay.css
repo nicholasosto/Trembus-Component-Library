@@ -1,0 +1,369 @@
+@layer tcl.components {
+  .tcl-assay {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    font-family: var(--tcl-font-sans);
+    color: var(--tcl-text);
+  }
+
+  /* ── header chrome (mirrors the viz spine) ── */
+  .tcl-assay__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-assay__brand {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__code {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-accent);
+  }
+  .tcl-assay__title {
+    font-size: var(--tcl-text-lg);
+    font-weight: 600;
+  }
+  .tcl-assay__caption {
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* series/tone painting is inline via the shared fillbar toneVar() — the same
+     Object.hasOwn-guarded registry Funnel/Treemap use for authored-JSON tones */
+
+  /* ── the detail card ── */
+  .tcl-assay__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-3);
+    padding: var(--tcl-space-3) var(--tcl-space-4);
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-lg);
+    background: var(--tcl-surface-raised);
+    box-shadow: var(--tcl-elevation-1);
+  }
+  .tcl-assay__card-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--tcl-space-2);
+    flex-wrap: wrap;
+  }
+  .tcl-assay__card-label {
+    font-weight: 600;
+  }
+  .tcl-assay__card-sub {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__card-head .tcl-assay__chip {
+    margin-left: auto;
+  }
+  .tcl-assay__card-summary {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── criteria rows: track length = weight, fill = score, ink = contribution ── */
+  .tcl-assay__rows {
+    display: grid;
+    grid-template-columns: minmax(140px, 220px) minmax(0, 1fr) 56px;
+    gap: var(--tcl-space-2) var(--tcl-space-3);
+    align-items: center;
+  }
+  .tcl-assay__row {
+    display: contents;
+  }
+  .tcl-assay__row-label {
+    font-size: var(--tcl-text-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tcl-assay__weight {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__track-lane {
+    display: block;
+    min-width: 0;
+  }
+  .tcl-assay__track {
+    position: relative;
+    display: block;
+    height: 12px;
+    border: 1px solid var(--tcl-border);
+    border-radius: 3px;
+    background: var(--tcl-surface-sunken);
+    overflow: hidden;
+  }
+  .tcl-assay__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 2px;
+  }
+  .tcl-assay__pts {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    text-align: right;
+  }
+  .tcl-assay__row--penalty .tcl-assay__row-label,
+  .tcl-assay__row--penalty .tcl-assay__pts {
+    color: var(--tcl-status-danger);
+  }
+  .tcl-assay__penalty-mark {
+    display: block;
+    height: 0;
+    border-top: 2px dashed var(--tcl-status-danger);
+    opacity: 0.6;
+  }
+
+  /* ── the banded verdict scale ── */
+  .tcl-assay__scale-bar {
+    position: relative;
+    display: flex;
+    height: 22px;
+    border: 1px solid var(--tcl-border);
+    border-radius: var(--tcl-radius-sm);
+    overflow: hidden;
+  }
+  .tcl-assay__zone {
+    display: flex;
+    align-items: center;
+    padding-left: var(--tcl-space-2);
+    font-size: var(--tcl-text-xs);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  /* zone tints use the AA-tuned status -bg tokens (the Badge precedent) — the
+     16% color-mix tints measured 3.7–4.0:1 against the raw tones in light theme */
+  .tcl-assay__zone--accent {
+    background: color-mix(in oklab, var(--tcl-accent) 14%, var(--tcl-surface));
+    color: var(--tcl-text);
+  }
+  .tcl-assay__zone--info {
+    background: var(--tcl-status-info-bg);
+    color: var(--tcl-status-info);
+  }
+  .tcl-assay__zone--success {
+    background: var(--tcl-status-success-bg);
+    color: var(--tcl-status-success);
+  }
+  .tcl-assay__zone--warning {
+    background: var(--tcl-status-warning-bg);
+    color: var(--tcl-status-warning);
+  }
+  .tcl-assay__zone--danger {
+    background: var(--tcl-status-danger-bg);
+    color: var(--tcl-status-danger);
+  }
+  .tcl-assay__zone--neutral {
+    background: var(--tcl-surface-sunken);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--tcl-text);
+  }
+
+  .tcl-assay__foot {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── legend: tone always paired with a word ── */
+  .tcl-assay__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tcl-space-2) var(--tcl-space-3);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tcl-assay__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+  }
+  .tcl-assay__legend-dot--penalty {
+    border-radius: 2px;
+    background: var(--tcl-status-danger);
+  }
+
+  /* ── the ranked board ── */
+  .tcl-assay__board {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tcl-assay__brow {
+    appearance: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 20px minmax(120px, 200px) minmax(0, 1fr) 52px 88px;
+    gap: var(--tcl-space-2);
+    align-items: center;
+    margin: 0;
+    padding: 6px var(--tcl-space-2);
+    border: 1px solid transparent;
+    border-radius: var(--tcl-radius-md);
+    background: transparent;
+    color: var(--tcl-text);
+    font-family: inherit;
+    font-size: var(--tcl-text-sm);
+    text-align: left;
+    transition: background var(--tcl-dur-fast) var(--tcl-ease-calm);
+  }
+  /* a band-less board has no verdict chips — drop the dead trailing column */
+  .tcl-assay__brow--no-verdict {
+    grid-template-columns: 20px minmax(120px, 200px) minmax(0, 1fr) 52px;
+  }
+  .tcl-assay__brow:hover {
+    background: var(--tcl-surface-raised);
+  }
+  .tcl-assay__brow.is-selected {
+    border-color: var(--tcl-border-strong);
+    background: var(--tcl-surface-raised);
+    box-shadow: var(--tcl-elevation-1);
+  }
+  .tcl-assay__brow:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--tcl-bg),
+      0 0 0 4px var(--tcl-focus-ring);
+  }
+  .tcl-assay__rank {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__brow-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tcl-assay__bar {
+    position: relative;
+    display: block;
+    height: 16px;
+    border: 1px solid var(--tcl-border);
+    border-radius: 3px;
+    background: var(--tcl-surface-sunken);
+    overflow: hidden;
+  }
+  .tcl-assay__seg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  }
+  .tcl-assay__seg--penalty {
+    background: var(--tcl-status-danger);
+    opacity: 0.85;
+    border-radius: 0 3px 3px 0;
+  }
+  .tcl-assay__gate {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px dashed var(--tcl-border-strong);
+  }
+  .tcl-assay__total {
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    text-align: right;
+  }
+
+  /* ── verdict chips: soft status tint + the tone-as-text legibility map ── */
+  .tcl-assay__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    border-radius: var(--tcl-radius-full);
+    font-size: var(--tcl-text-xs);
+    font-weight: 600;
+    background: var(--tcl-surface-sunken);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__chip--accent {
+    background: color-mix(in oklab, var(--tcl-accent) 14%, var(--tcl-surface));
+    color: var(--tcl-text);
+  }
+  .tcl-assay__chip--info {
+    background: var(--tcl-status-info-bg);
+    color: var(--tcl-status-info);
+  }
+  .tcl-assay__chip--success {
+    background: var(--tcl-status-success-bg);
+    color: var(--tcl-status-success);
+  }
+  .tcl-assay__chip--warning {
+    background: var(--tcl-status-warning-bg);
+    color: var(--tcl-status-warning);
+  }
+  .tcl-assay__chip--danger {
+    background: var(--tcl-status-danger-bg);
+    color: var(--tcl-status-danger);
+  }
+  .tcl-assay__chip--neutral {
+    background: var(--tcl-surface-sunken);
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── inspector (a one-line live region + the selected candidate's card) ── */
+  .tcl-assay__inspector {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tcl-space-2);
+  }
+  .tcl-assay__inspector-live {
+    min-height: 1.4rem;
+  }
+  .tcl-assay__inspector-line {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-dim);
+  }
+  .tcl-assay__inspector-hint {
+    margin: 0;
+    font-size: var(--tcl-text-sm);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-assay__rubric-note {
+    margin: 0;
+    font-family: var(--tcl-font-mono);
+    font-size: var(--tcl-text-xs);
+    color: var(--tcl-text-faint);
+  }
+
+  .tcl-assay__empty {
+    padding: var(--tcl-space-4);
+    text-align: center;
+    color: var(--tcl-text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tcl-assay__brow {
+      transition: none;
+    }
+  }
+}

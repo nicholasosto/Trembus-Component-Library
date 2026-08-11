@@ -1,6 +1,6 @@
 # @trembus/game-viz — component capsules
 
-> Stamp 2026-07-29 · tokens 0.2.2 · icons 0.3.0 · ui 0.12.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-08-11 · tokens 0.2.2 · icons 0.3.0 · ui 0.13.0 · viz 0.6.0 · game-viz 0.4.1
 
 Expressive game / cinematic UI in a liturgical-gothic idiom: HUD frames, character
 dossiers, episode decks, title plates, 3D relics. "Theatrical surface, accessible spine" —

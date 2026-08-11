@@ -8,8 +8,9 @@ import './MilestoneTrack.css';
 
 export type MilestoneTrackTone = FillBarTone;
 export type MilestoneStatus = 'done' | 'active' | 'pending';
-/** Row layout — `'serpentine'` wraps the ONE pipeline into boustrophedon rows, one per group. */
-export type MilestoneTrackLayout = 'rail' | 'serpentine';
+/** Row layout — `'serpentine'` wraps the ONE pipeline into boustrophedon rows, `'wrap'` into
+ *  carriage-return rows that all read left→right, joined by one return connector. */
+export type MilestoneTrackLayout = 'rail' | 'serpentine' | 'wrap';
 /** Capsule sizing — `'scaled'` maps an interval's share of the measured total to its height. */
 export type MilestoneBubbleSizing = 'uniform' | 'scaled';
 /** Capsule text — `'outside'` keeps only the value in the pillow (label above, count/meter below). */
@@ -89,17 +90,23 @@ export interface MilestoneTrackContract {
   /** Interval measurements between station pairs — each swells the rail into a bubble. */
   metrics?: MilestoneMetric[];
   /** Source-system bands above the rail; boundaries between bands draw handoff dividers.
-   *  In `layout='serpentine'` each group becomes one row of the snake instead. */
+   *  In `layout='serpentine'`/`'wrap'` each group becomes one row instead. */
   groups?: MilestoneGroup[];
 }
 
 export interface MilestoneTrackProps {
   /** The authored track contract (stations + metrics + groups) to lay out. */
   data: MilestoneTrackContract;
-  /** Row layout — `'serpentine'` wraps the pipeline into alternating-direction rows, one per
-   *  group (sub-system), joined by U-turn connectors. Rows derive from `data.groups`; with no
-   *  groups the track stays a single row (default `'rail'`). */
+  /** Row layout (default `'rail'` — one line). Both wrapping modes cut rows from `data.groups`
+   *  (and/or `rowLength`), keeping ONE pipeline: `'serpentine'` alternates row direction and
+   *  joins rows with U-turns; `'wrap'` keeps every row left→right and returns to the left margin
+   *  along a single carriage-return connector — the mode to pick when the track must READ like
+   *  text. With no groups and no `rowLength` the track stays a single row. */
   layout?: MilestoneTrackLayout;
+  /** Max stations per row when wrapping (`'serpentine'`/`'wrap'`). Applied WITHIN each group run,
+   *  so groups still start their own row; the only way to wrap an ungrouped track. Values below 1
+   *  or non-integers are ignored. */
+  rowLength?: number;
   /** Capsule sizing — `'scaled'` grows each bubble's height with its share of the measured
    *  total (the worst bottleneck reaches the max height), falling back to per-metric `weight`
    *  ratios when shares are uncomputable, then to the uniform height (default `'uniform'`). */
@@ -160,11 +167,18 @@ const GROUP_LINE_Y = 22; // group band hairline / row header line (below a row's
 const TURN_R = 24; // serpentine U-turn corner radius
 const TURN_MARGIN = 12; // U-turn vertical run inset from the track edge
 const ROW_TAIL = 44; // per-row end allowance past the last station
+const RETURN_LANE = 34; // wrap: vertical band between rows that hosts the return run
+const RETURN_CUE_PITCH = 260; // wrap: spacing between the return run's left-chevrons
 // Start inset of a row whose incoming inter-row gap hosts a bubble: turn corner,
 // attach run, full capsule, attach run — the handoff-wait bubble lives on the lead-in.
 const CROSS_START = TURN_MARGIN + TURN_R + ATTACH + (GAP_METRIC - 2 * ATTACH) + ATTACH; // 296
 
-const fmt = (v: number, unit: string): string => `${Math.round(v * 100) / 100} ${unit}`;
+/** `v * 100` overflows to Infinity above ~1.8e306 — print the raw value rather
+ *  than the word "Infinity" in a readout and an accessible name. */
+const fmt = (v: number, unit: string): string => {
+  const rounded = Math.round(v * 100) / 100;
+  return `${Number.isFinite(rounded) ? rounded : v} ${unit}`;
+};
 
 /** A rounded share percentage that never claims "0%" for a real nonzero measurement. */
 const pctText = (share: number): string => {
@@ -176,7 +190,7 @@ interface PlacedRow {
   index: number;
   start: number; // first station index (inclusive)
   end: number; // last station index (inclusive)
-  dir: 1 | -1; // flow direction — even rows read left→right, odd rows right→left
+  dir: 1 | -1; // flow direction — 'wrap' rows are all 1; serpentine alternates
   group?: { key: string; group: MilestoneGroup };
   top: number;
   railY: number;
@@ -237,7 +251,9 @@ interface Connector {
   key: string;
   d: string;
   pending: boolean;
-  cue: { x: number; y: number }; // down-chevron on the turn's vertical run
+  /** Direction chevrons along the turn — one on a U-turn's vertical run, several
+   *  down a wrap return run (a full-width line needs more than one to read). */
+  cues: FlowCue[];
 }
 
 interface RowHeader {
@@ -254,6 +270,8 @@ interface FlowCue {
   x: number;
   y: number;
   pending: boolean;
+  /** Chevron heading: 1 → right, -1 → left, 0 → down. */
+  dir: 1 | -1 | 0;
 }
 
 interface Layout {
@@ -278,9 +296,15 @@ function buildLayout(
   layout: MilestoneTrackLayout,
   bubbleSizing: MilestoneBubbleSizing,
   labelPlacement: MilestoneLabelPlacement,
+  rowLength: number | undefined,
 ): Layout {
   const rawStations = data.stations ?? [];
   const trackUnit = data.unit ?? 'd';
+  const wraps = layout === 'serpentine' || layout === 'wrap';
+  const chunk =
+    typeof rowLength === 'number' && Number.isInteger(rowLength) && rowLength >= 1 && wraps
+      ? rowLength
+      : undefined;
 
   // ── station keys: authored id first-wins; collisions/fallbacks uniquified so
   // duplicate ids can't select two stops at once (the DecisionMap precedent).
@@ -394,7 +418,7 @@ function buildLayout(
   const rows: PlacedRow[] = [];
   if (rawStations.length > 0) {
     const runs: Array<{ start: number; end: number; group?: (typeof modelGroups)[number] }> = [];
-    if (layout === 'serpentine') {
+    if (wraps) {
       const accepted: typeof modelGroups = [];
       let cursor = -1;
       for (const g of modelGroups) {
@@ -413,12 +437,28 @@ function buildLayout(
     } else {
       runs.push({ start: 0, end: rawStations.length - 1 });
     }
-    runs.forEach((run, index) => {
+    // `rowLength` subdivides each run — a group still starts its own row, and only
+    // the run's FIRST chunk wears the group header (a repeated chip reads as a
+    // second group). It is the only way to wrap a track that has no groups.
+    const chunked = chunk
+      ? runs.flatMap((run) => {
+          const out: typeof runs = [];
+          for (let s2 = run.start; s2 <= run.end; s2 += chunk) {
+            out.push({
+              start: s2,
+              end: Math.min(s2 + chunk - 1, run.end),
+              group: s2 === run.start ? run.group : undefined,
+            });
+          }
+          return out;
+        })
+      : runs;
+    chunked.forEach((run, index) => {
       rows.push({
         index,
         start: run.start,
         end: run.end,
-        dir: index % 2 === 0 ? 1 : -1,
+        dir: layout === 'wrap' ? 1 : index % 2 === 0 ? 1 : -1,
         group: run.group,
         top: 0,
         railY: 0,
@@ -475,7 +515,8 @@ function buildLayout(
     r.railY = r.top + GROUP_H + 10 + headroom + maxHalfByRow[r.index];
     r.stationTop = r.railY - 16;
     r.height = r.railY - r.top + ROW_BELOW_RAIL;
-    nextTop += r.height;
+    // 'wrap' reserves a band under each row (bar the last) for the return run.
+    nextTop += r.height + (layout === 'wrap' && r.index < rows.length - 1 ? RETURN_LANE : 0);
   });
   const height = rows.length > 0 ? nextTop : GROUP_H + 10 + BUBBLE_HALF + ROW_BELOW_RAIL;
 
@@ -592,8 +633,11 @@ function buildLayout(
     arrow = { x: ax, y: lastRow.railY, dir: lastRow.dir, pending: arrowPending };
   }
 
-  // ── U-turn connectors: rail thickness carried around the row break, dashed
-  // when either boundary station is pending (the segment rule).
+  // ── row-break connectors: rail thickness carried across the break, dashed when
+  // either boundary station is pending (the segment rule). 'serpentine' turns a
+  // U at the track edge; 'wrap' performs a CARRIAGE RETURN — out to the right
+  // margin, down into the return band, one straight run all the way back to the
+  // left margin, then down into the next row's lead-in, so every row reads L→R.
   const connectors: Connector[] = [];
   for (let r = 0; r + 1 < rows.length; r++) {
     const row = rows[r];
@@ -602,17 +646,36 @@ function buildLayout(
     const y1 = row.railY;
     const y2 = next.railY;
     let d: string;
-    let cueX: number;
-    if (row.dir === 1) {
+    let cues: FlowCue[];
+    if (layout === 'wrap') {
+      const rx = width - TURN_MARGIN;
+      const lx = TURN_MARGIN;
+      const ry = row.top + row.height + RETURN_LANE / 2;
+      const R = TURN_R;
+      d =
+        `M ${xs[row.end]} ${y1} H ${rx - R} A ${R} ${R} 0 0 1 ${rx} ${y1 + R} V ${ry - R}` +
+        ` A ${R} ${R} 0 0 1 ${rx - R} ${ry} H ${lx + R} A ${R} ${R} 0 0 0 ${lx} ${ry + R}` +
+        ` V ${y2 - R} A ${R} ${R} 0 0 0 ${lx + R} ${y2} H ${xs[next.start]}`;
+      // A full-width return needs more than one chevron to read as a return.
+      const runLen = Math.max(0, rx - R - (lx + R));
+      const count = Math.max(1, Math.round(runLen / RETURN_CUE_PITCH));
+      cues = Array.from({ length: count }, (_, k) => ({
+        key: `c${r}-cue${k}`,
+        x: lx + R + (runLen * (k + 0.5)) / count,
+        y: ry,
+        pending,
+        dir: -1 as const,
+      }));
+    } else if (row.dir === 1) {
       const tx = width - TURN_MARGIN;
       d = `M ${xs[row.end]} ${y1} H ${tx - TURN_R} A ${TURN_R} ${TURN_R} 0 0 1 ${tx} ${y1 + TURN_R} V ${y2 - TURN_R} A ${TURN_R} ${TURN_R} 0 0 1 ${tx - TURN_R} ${y2} H ${xs[next.start]}`;
-      cueX = tx;
+      cues = [{ key: `c${r}-cue0`, x: tx, y: (y1 + y2) / 2, pending, dir: 0 }];
     } else {
       const tm = TURN_MARGIN;
       d = `M ${xs[row.end]} ${y1} H ${tm + TURN_R} A ${TURN_R} ${TURN_R} 0 0 0 ${tm} ${y1 + TURN_R} V ${y2 - TURN_R} A ${TURN_R} ${TURN_R} 0 0 0 ${tm + TURN_R} ${y2} H ${xs[next.start]}`;
-      cueX = tm;
+      cues = [{ key: `c${r}-cue0`, x: tm, y: (y1 + y2) / 2, pending, dir: 0 }];
     }
-    connectors.push({ key: `c${r}`, d, pending, cue: { x: cueX, y: (y1 + y2) / 2 } });
+    connectors.push({ key: `c${r}`, d, pending, cues });
   }
 
   // ── direction cues on right→left rows: one left-chevron per bubble-less
@@ -627,27 +690,27 @@ function buildLayout(
         x: (xs[i] + xs[i + 1]) / 2,
         y: r.railY,
         pending: pendingAt(i) || pendingAt(i + 1),
+        dir: -1,
       });
     }
   });
 
-  const rowHeaders: RowHeader[] =
-    layout === 'serpentine'
-      ? rows.flatMap((r) =>
-          r.group
-            ? [
-                {
-                  key: `h-${r.group.key}`,
-                  x: r.dir === 1 ? PAD_X : width - PAD_X,
-                  y: r.top + GROUP_LINE_Y,
-                  end: r.dir === -1,
-                  glyph: r.group.group.glyph,
-                  label: r.group.group.label,
-                },
-              ]
-            : [],
-        )
-      : [];
+  const rowHeaders: RowHeader[] = wraps
+    ? rows.flatMap((r) =>
+        r.group
+          ? [
+              {
+                key: `h-${r.group.key}`,
+                x: r.dir === 1 ? PAD_X : width - PAD_X,
+                y: r.top + GROUP_LINE_Y,
+                end: r.dir === -1,
+                glyph: r.group.group.glyph,
+                label: r.group.group.label,
+              },
+            ]
+          : [],
+      )
+    : [];
 
   // ── whiskers: caps at the true span ends; one dotted run per row the span
   // covers with 2+ stations — the run never traverses a turn.
@@ -690,6 +753,12 @@ function buildLayout(
   };
 }
 
+/** A direction chevron: `dir` 0 points down (U-turns), ±1 along the flow. */
+const chevron = (c: FlowCue): string =>
+  c.dir === 0
+    ? `M ${c.x - 5} ${c.y - 3.5} L ${c.x} ${c.y + 3.5} L ${c.x + 5} ${c.y - 3.5}`
+    : `M ${c.x - 3.5 * c.dir} ${c.y - 5} L ${c.x + 3.5 * c.dir} ${c.y} L ${c.x - 3.5 * c.dir} ${c.y + 5}`;
+
 /** The swell taper: rail thickness at `x0`, full bubble height `PINCH` later. */
 function taperPath(
   x0: number,
@@ -710,6 +779,7 @@ export function MilestoneTrack({
   layout = 'rail',
   bubbleSizing = 'uniform',
   labelPlacement = 'inside',
+  rowLength,
   selectedId: selProp,
   defaultSelectedId,
   onSelect,
@@ -717,8 +787,8 @@ export function MilestoneTrack({
 }: MilestoneTrackProps) {
   const [selectedId, select] = useSelection(selProp, defaultSelectedId, onSelect);
   const geometry = useMemo(
-    () => buildLayout(data, layout, bubbleSizing, labelPlacement),
-    [data, layout, bubbleSizing, labelPlacement],
+    () => buildLayout(data, layout, bubbleSizing, labelPlacement, rowLength),
+    [data, layout, bubbleSizing, labelPlacement, rowLength],
   );
   const { stations, bubbles, groups, segments, dividers, whiskers, width, height } = geometry;
 
@@ -803,17 +873,20 @@ export function MilestoneTrack({
                     className={cx('tcl-milestone-track__connector', c.pending && 'is-pending')}
                     d={c.d}
                   />
-                  <path
-                    className={cx('tcl-milestone-track__flow-cue', c.pending && 'is-pending')}
-                    d={`M ${c.cue.x - 5} ${c.cue.y - 3.5} L ${c.cue.x} ${c.cue.y + 3.5} L ${c.cue.x + 5} ${c.cue.y - 3.5}`}
-                  />
+                  {c.cues.map((cue) => (
+                    <path
+                      key={cue.key}
+                      className={cx('tcl-milestone-track__flow-cue', cue.pending && 'is-pending')}
+                      d={chevron(cue)}
+                    />
+                  ))}
                 </g>
               ))}
               {geometry.flowCues.map((c) => (
                 <path
                   key={c.key}
                   className={cx('tcl-milestone-track__flow-cue', c.pending && 'is-pending')}
-                  d={`M ${c.x + 3.5} ${c.y - 5} L ${c.x - 3.5} ${c.y} L ${c.x + 3.5} ${c.y + 5}`}
+                  d={chevron(c)}
                 />
               ))}
               {geometry.arrow && (

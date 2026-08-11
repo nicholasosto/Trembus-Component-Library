@@ -1,6 +1,6 @@
 # @trembus/viz — component capsules
 
-> Stamp 2026-07-29 · tokens 0.2.2 · icons 0.3.0 · ui 0.12.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-08-11 · tokens 0.2.2 · icons 0.3.0 · ui 0.13.0 · viz 0.6.0 · game-viz 0.4.1
 
 Tier-2 node-link visualizations: real layout engines (d3-hierarchy, dagre) behind an
 accessible spine — the SVG is decorative (`aria-hidden`); every node is a real focusable
@@ -147,3 +147,32 @@ Gotchas: deallocation is guarded — it never orphans a dependent; don't re-impl
 budget math outside, the engine owns legality. Node statuses derive: locked → available → allocated → maxed.
 Gothic skin: game-viz `Constellation` (same contract, same props).
 Storybook: visualizations-talenttree--default
+
+### Nebula · concept map · reveal-state (viz ≥ 0.6.0)
+
+The one viz where relatedness is DISTANCE, not an edge. Items sit at 3D coordinates, project
+to 2D, and rotate by drag or arrow keys — so "how close are these two ideas?" is answered by
+where they land. Layout is deterministic: a shortest-path completion of the link weights
+feeds classical MDS. No WebGL, no extra dependency; depth reads as scale + `color-mix` fade.
+
+```tsx
+<Nebula
+  defaultSelectedId="glossary"
+  showEdges="selected" // 'selected' (default) | 'all' | 'none' — 'all' hairballs fast
+  data={{
+    title: 'Ontology vs the artificial brain',
+    items: [
+      { id: 'glossary', label: 'Glossary', group: 'type-layer', summary: 'The common language.' },
+      { id: 'brain', label: 'artificial-brain', group: 'instances' },
+    ],
+    links: [{ source: 'glossary', target: 'brain', weight: 0.55, kind: 'near-synonym' }],
+    groups: { 'type-layer': { label: 'Type layer', tone: 'info' } },
+  }}
+/>;
+```
+
+Key data: `items: {id, label, group?, summary?, weight?, tone?, position?: [x,y,z]}[]` (ids REQUIRED — no index/label fallback) · `links: {source, target, weight?: 0..1, kind?}[]` · `groups?: Record<key, {label?, tone?}>`.
+Key props: `layout` `auto|given` (`given` uses your own `position` triples — reduce embeddings offline) · `showEdges` · `autoOrbit` (opt-in; suppressed under `prefers-reduced-motion` and paired with a real pause button) · `initialRotation` · sel-trio.
+The aria-live inspector reads the selected item's RANKED NEAREST NEIGHBOURS with weights — that is how the proximity reaches a screen reader; don't rely on position alone to carry meaning.
+Not for: an explicit hierarchy → Tree · directed flow / DAG → Lineage · what-rests-on-what → Strata · nested containers → SystemMap · ≤6-satellite overview → ui Hub.
+Storybook: visualizations-nebula--default

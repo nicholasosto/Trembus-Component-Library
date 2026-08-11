@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-07-29 · tokens 0.2.2 · icons 0.3.0 · ui 0.12.0 · viz 0.5.1 · game-viz 0.4.1
+> Stamp 2026-08-11 · tokens 0.2.2 · icons 0.3.0 · ui 0.13.0 · viz 0.6.0 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -499,11 +499,14 @@ measured interval bubble (value · count · share-of-total meter) wherever a sta
 carries a metric. Source-system bands above, dashed pending segments, whisker under
 non-adjacent measured spans. For long pipelines, `layout="serpentine"` wraps the same
 pipeline into one row per group, and `bubbleSizing="scaled"` grows each capsule with its
-share so bottlenecks read by size (ui ≥ 0.12.0).
+share so bottlenecks read by size (ui ≥ 0.12.0). `layout="wrap"` wraps it so every row
+reads LEFT-TO-RIGHT, returning to the left margin along one carriage-return connector
+(ui ≥ 0.13.0).
 
 ```tsx
 <MilestoneTrack
-  layout="serpentine" // one row per group, U-turn connectors (default 'rail')
+  layout="wrap" // rows all read L→R, one return connector ('serpentine' = U-turns; default 'rail')
+  rowLength={4} // max stations per row — the only way to wrap a track with no groups
   bubbleSizing="scaled" // capsule height = share of total (default 'uniform')
   labelPlacement="outside" // value in the pillow, label above, count below (default 'inside')
   data={{
@@ -521,11 +524,11 @@ share so bottlenecks read by size (ui ≥ 0.12.0).
 ```
 
 Key data: `stations: {id?, label, sub?, status?: done|active|pending, badge?, note?}[]` · `metrics: {from, to, value, unit?, label?, count?, tone?, weight?, note?}[]` (from/to = station id or label; may span several stations — bubble lands in the last free gap before `to`, one bubble per gap) · `groups: {label, glyph?, from, to}[]` · `unit` (default `d`).
-Key props: sel-trio · `layout` `rail|serpentine` · `bubbleSizing` `uniform|scaled` · `labelPlacement` `inside|outside` (all ui ≥ 0.12.0, all defaulting to the pre-0.12 look).
-Serpentine rows come FROM `groups` — one row each, alternating direction; stations outside any group get their own row; no groups means no wrap. A metric spanning a row break renders as the cross-system handoff capsule on the next row.
+Key props: sel-trio · `layout` `rail|wrap|serpentine` (`wrap` ui ≥ 0.13.0) · `rowLength` (ui ≥ 0.13.0) · `bubbleSizing` `uniform|scaled` · `labelPlacement` `inside|outside` (ui ≥ 0.12.0, all defaulting to the pre-0.12 look).
+Rows come FROM `groups` — one row each; stations outside any group get their own row; no groups and no `rowLength` means no wrap. `wrap` keeps every row L→R (pick it when the track must READ like text); `serpentine` alternates direction and adds chevrons to mirrored rows. A metric spanning a row break renders as the cross-system handoff capsule on the next row.
 Scaled sizing uses each metric's share of the measured total; when shares are uncomputable (mixed units, single metric) it falls back to per-metric `weight` ratios, then to uniform.
-Header meta auto-computes the summed total when units are uniform. Skin hook: `--tcl-milestonetrack-accent` (also paints the U-turn connectors).
-Storybook: visualizations-milestonetrack--default · visualizations-milestonetrack--serpentine
+Header meta auto-computes the summed total when units are uniform. Skin hook: `--tcl-milestonetrack-accent` (also paints the row-break connectors).
+Storybook: visualizations-milestonetrack--default · visualizations-milestonetrack--wrap · visualizations-milestonetrack--serpentine
 
 ### Swimlane · process · reveal-state
 
@@ -667,3 +670,49 @@ composition grammar = kind glyph × provenance badge:
   CLAUDE.md/AGENTS.md→robot, MEMORY.md→brain, .env/.env.\*→key, package.json→box), then
   falls back to `extToGlyph` (which now also covers image/audio/video/3D — .rbxm/.blend —
   shell, YAML/TOML). Spec sheet: storybook foundations-icons--output-language.
+
+### Assay · decision · reveal-state (ui ≥ 0.13.0)
+
+A weighted rubric made visible. Each criterion's track is sized by its WEIGHT and filled by
+its SCORE, so inked length is literal contribution — the weighted maths is geometry, not a
+footnote. Penalties claw points back in `danger`; the total lands on a banded verdict scale;
+the footer prints the equation (scale base included) so it actually sums. One candidate →
+the detail card; several → a ranked board whose selected row's card IS the inspector.
+
+```tsx
+<Assay
+  defaultSelectedId="cand-a"
+  onSelect={(id) => setPicked(id)}
+  data={{
+    title: 'Engram capture value',
+    criteria: [
+      { id: 'density', label: 'reference density', weight: 0.3 },
+      { id: 'distinct', label: 'distinctness', weight: 0.25 },
+    ],
+    candidates: [
+      {
+        id: 'cand-a',
+        label: 'Colour ontology dream',
+        summary: 'Bridges UI and metaphysics.',
+        scores: { density: 0.95, distinct: 0.9 },
+        penalties: [{ label: 'duplicate of existing', value: 0.8 }],
+      },
+    ],
+    scale: {
+      min: -3,
+      max: 3,
+      bands: [
+        { upTo: 0, label: 'skip', tone: 'danger' },
+        { label: 'engram', tone: 'success' },
+      ],
+    },
+  }}
+/>;
+```
+
+Key data: `criteria: {id, label, weight, tone?}[]` (weights are RELATIVE — normalized to Σ 1 internally) · `candidates: {id, label, sub?, summary?, scores: Record<criterionId, 0..1>, penalties?: {label, value}[]}[]` · `scale?: {min, max, bands?: {upTo?, label, tone?}[]}` (omit for plain 0..1 totals, no verdict chips) · `brand?/code?/title?/caption?/rubricNote?`.
+Key props: sel-trio. Rows are focusable buttons with roving Arrow/Home/End; selection follows focus.
+A non-unit weight sum is disclosed as `(normalized)` in the footer, never silently rescaled. Ids dedup first-wins; scores/penalties clamp; an all-invalid weight set degrades to an equal split.
+`danger` is reserved for penalties and never spent as a criterion series colour; verdict tone is always paired with the verdict word.
+Not for: plain series magnitude → BarChart · one KPI → Stat/Gauge · stage drop-off → Funnel · spending a budget against prerequisites → viz TalentTree.
+Storybook: visualizations-assay--default · visualizations-assay--states

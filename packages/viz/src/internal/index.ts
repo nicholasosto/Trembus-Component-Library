@@ -21,6 +21,15 @@ export type {
 // `../../internal` unchanged.
 export { Glyph, GLYPHS, SYSTEM_KIND_GLYPH } from '@trembus/icons';
 export type { GlyphName } from '@trembus/icons';
+export {
+  layoutNebula,
+  completeDistances,
+  classicalMds3,
+  rotateYawPitch,
+  perspectiveScale,
+  NEBULA_CAMERA,
+} from './nebulaMath';
+export type { Point3, NebulaMathLink } from './nebulaMath';
 export { layoutNested, NESTED_VIEWBOX } from './nestedLayout';
 export type {
   NestedLayout,

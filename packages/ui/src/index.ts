@@ -296,3 +296,14 @@ export type {
   MilestoneBubbleSizing,
   MilestoneLabelPlacement,
 } from './components/MilestoneTrack/MilestoneTrack';
+export { Assay } from './components/Assay/Assay';
+export type {
+  AssayProps,
+  AssayContract,
+  AssayCriterion,
+  AssayCandidate,
+  AssayPenalty,
+  AssayBand,
+  AssayScale,
+  AssayTone,
+} from './components/Assay/Assay';

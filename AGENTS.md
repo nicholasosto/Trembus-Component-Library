@@ -27,7 +27,7 @@ member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ bel
 - **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; keeps
   re-export shims (`src/tokens`, `src/types/contract`, `src/test/a11y`) so its internal import
   paths and public API are unchanged.
-- **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, …). Depends on
+- **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, `Nebula`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
 - **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
   (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Chronicle`, `Effigy`, `MediaFrame`,
@@ -306,11 +306,14 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
   it with `max-width` (MilestoneTrack's `labelPlacement="outside"`, ui 0.12.0). The same
   trick keeps a count/meter stack from wrapping under the box it annotates.
 - **Wrapping a laid-out sequence into ROWS?** Make the single row the one-row case of the
-  general model rather than branching — MilestoneTrack's serpentine derives every rail y,
-  x, and connector from a `PlacedRow[]`, so the pre-existing single-rail output stays
+  general model rather than branching — MilestoneTrack derives every rail y, x, and
+  connector from a `PlacedRow[]`, so the pre-existing single-rail output stays
   pixel-identical by construction (ui 0.12.0). Two things bite: per-row React keys (a key
-  built from an x coordinate collides across same-direction rows) and mirrored rows, where
-  every `x1 < x2` assumption in edges, whiskers, and attach points needs a `min`/`max`.
+  built from an x coordinate collides across same-direction rows) and — in the
+  **`serpentine`** mode specifically — mirrored rows, where every `x1 < x2` assumption in
+  edges, whiskers, and attach points needs a `min`/`max`. The later **`wrap`** mode
+  (carriage-return rows, all `dir: 1`, one return connector back to the left margin) is
+  the cheaper wrap precisely because it has no mirrored rows to mirror-proof.
 
 ## Visualizations
 
@@ -328,8 +331,12 @@ errors; NO ring-thickness floor, rings compress so deep maps never escape the pl
 `TalentTree` (a game skill-tree: prerequisite DAG + multi-rank nodes + tier gates + a points-budget
 **allocation engine** with safe deallocation that never orphans a dependent; lead job
 **afford-action** — a viz first; the `--tcl-talenttree-accent` skin hook is read via fallback and
-never declared on the component root, so `game-viz`'s `Constellation` can remap it from an ancestor)
-all shipped. Tier-2 reuses the same viz
+never declared on the component root, so `game-viz`'s `Constellation` can remap it from an ancestor),
+and `Nebula` (a 3D concept map: the only viz where relatedness is DISTANCE, not an edge — a
+shortest-path completion of the authored link weights feeds a hand-rolled classical MDS in
+`internal/nebulaMath.ts`, so layout is deterministic; nodes stay real buttons over an
+aria-hidden scene and the inspector reads the ranked nearest neighbours, which is how the
+proximity reaches a screen reader) all shipped. Tier-2 reuses the same viz
 spine via `packages/viz/src/internal/` (`VizOverlay` = decorative aria-hidden `preserveAspectRatio`
 SVG edges + HTML `<button>` nodes positioned by `%`;
 `useControllableSelection`/`useControllableSet`/`useControllableMap` (the id→rank allocation map);

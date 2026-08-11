@@ -62,8 +62,10 @@ your own components.
 
 **Visualizations** (Tier-1, data-driven) — `Hub`, `BarChart`, `LineChart`,
 `DonutChart`, `Heatmap`, `Gauge`, `Sparkline`, `Funnel`, `Treemap`, `Timeline`,
-`MilestoneTrack` (lead-time rail — serpentine sub-system rows, bottleneck-scaled
-interval capsules), `Swimlane`, `RunHistory`, `Brief`
+`MilestoneTrack` (lead-time rail — carriage-return or serpentine sub-system rows,
+bottleneck-scaled interval capsules), `Assay` (weighted-rubric evaluation — criteria
+tracks sized by weight and filled by score, penalties, banded verdicts; card or ranked
+board), `Swimlane`, `RunHistory`, `Brief`
 (structured doc renderer; resizable), `DecisionMap`. (Node-link graphs live in
 [`@trembus/viz`](https://www.npmjs.com/package/@trembus/viz).)
 
