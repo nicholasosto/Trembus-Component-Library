@@ -54,7 +54,8 @@ your own components.
 (data-driven command dock: progressive disclosure into menus + overflow collapsing).
 
 **Reveal-State** — `Badge`, `Avatar`, `Spinner`, `Skeleton`, `Card`, `Callout`,
-`EmptyState`, `Stat`, `Table`, `Progress`, `Meter`, `AudioWaveform` (audio preview + player),
+`EmptyState`, `Stat`, `Table`, `Progress`, `Meter`, `Stepper` (ordered process steps —
+done / active / pending / error), `AudioWaveform` (audio preview + player),
 `VirtualAssetGrid` (windowed, sectioned single-select tile grid).
 
 **Acknowledge-Input** — `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`,

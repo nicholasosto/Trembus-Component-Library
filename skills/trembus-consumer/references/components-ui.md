@@ -1,6 +1,6 @@
 # @trembus/ui — component capsules
 
-> Stamp 2026-08-11 · tokens 0.2.2 · icons 0.3.0 · ui 0.13.0 · viz 0.6.0 · game-viz 0.4.1
+> Stamp 2026-08-24 · tokens 0.2.2 · icons 0.3.0 · ui 0.14.0 · viz 0.6.0 · game-viz 0.4.1
 
 Read protocol: scan the index, then `grep -n "^### <Name>"` and Read only that range.
 Universal conventions (sel-trio, ids, tones, compound dot-parts, Storybook URL scheme)
@@ -36,6 +36,7 @@ live in SKILL.md §4 — capsules don't repeat them. Exact types: `node_modules/
 | Skeleton         | feedback     | reveal-state      | loading placeholder shape                                           |
 | Progress         | feedback     | reveal-state      | task ADVANCING to completion (role=progressbar)                     |
 | Meter            | feedback     | reveal-state      | measurement vs capacity — linear (cf. Gauge = dial)                 |
+| Stepper          | feedback     | reveal-state      | ordered process steps — done/active/pending/error (ui ≥ 0.14.0)     |
 | Toast            | feedback     | acknowledge-input | transient event confirmations (`useToast`)                          |
 | DataStatusBar    | feedback     | reveal-state      | data-trust header (live/stale + metrics + filters)                  |
 | EmptyState       | feedback     | reveal-state      | deliberate "nothing here yet" + next step                           |
@@ -265,6 +266,19 @@ with the same `role=meter`, so SHAPE decides — a linear track fits a table row
 earns its space when the reading is the point. `variant="threshold"` recolours on crossing; it is
 NOT a small gauge.
 Storybook: components-meter--default
+
+### Stepper · feedback · reveal-state (ui ≥ 0.14.0)
+
+An ordered read-out of a multi-step operation: each step `done` / `active` / `pending` /
+`error` on a connector rail — where a process stands, not a control the user drives.
+Key props: `steps: { label, status?, description?, id?, icon? }[]` · `size` (md|sm) · `label`.
+Not a fill bar: one measurable quantity → `Progress` / `Meter`; events in time →
+`Timeline` / `MilestoneTrack`; an unknown-length wait → `Spinner`.
+a11y: renders `<ol role=list>` named by `label`, each step a `listitem`; the active step
+carries `aria-current="step"`, and status is also a visually-hidden word (never colour
+alone); the active pulse is off under `prefers-reduced-motion`. Ids derive from position
+when omitted (never the label — duplicate labels can't collide).
+Storybook: components-stepper--default
 
 ### Toast · feedback · acknowledge-input
 

@@ -11,12 +11,31 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
 
+## [@trembus/ui 0.14.0] — 2026-08
+
+### Added
+
+- **`Stepper` (`@trembus/ui`)** — `Components/Stepper`, an ordered read-out of a
+  multi-step operation: each step marked **done / active / pending / error** by a node
+  glyph and a connector rail. Lead job reveal-state — a read-out of where a process
+  stands (an import pipeline, an install, a review flow), never a control; reach for
+  `Progress` / `Meter` for a single measurable quantity, `Timeline` / `MilestoneTrack`
+  for events, `Spinner` for an unknown-length wait.
+
+  Accessible spine: renders an `<ol>` (`role="list"`) named by `label`, each step a
+  `listitem`; the active step carries `aria-current="step"`, and every step's status is
+  also a visually-hidden word ("Completed", "In progress", …) so status never rides on
+  colour alone. Node glyphs and connectors are `aria-hidden`; the active step's pulse is
+  suppressed under `prefers-reduced-motion`. Steps take `{ label, status?, description?,
+id?, icon? }`; ids derive from position when omitted (never the label, so duplicate
+  labels can't collide); `size` is `md | sm`. Tokens-only, axe-clean.
+
 ## [@trembus/ui 0.13.0] — 2026-08
 
 ### Added
 
 - **`Assay` (`@trembus/ui`)** — `Visualizations/Assay`, a weighted-rubric evaluation: the
-  component for any decision where the SCORE matters less than *why* it came out that way.
+  component for any decision where the SCORE matters less than _why_ it came out that way.
   Each criterion's track is sized by its **weight** and filled by its **score**, so inked
   length is literal contribution and the weighted maths is visible geometry rather than a
   footnote; penalties claw points back in `danger`; the total lands on a banded verdict
@@ -35,6 +54,7 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
   the shared `Object.hasOwn`-guarded fillbar registry so an authored `"constructor"` can
   never paint an invisible fill. New exported types: `AssayContract`, `AssayCriterion`,
   `AssayCandidate`, `AssayPenalty`, `AssayBand`, `AssayScale`, `AssayTone`.
+
 - **`MilestoneTrack` learns to read like text** — `layout="wrap"` wraps the same one
   pipeline into **carriage-return rows**: every row reads left→right and a single return
   connector carries the rail out to the right margin, back across the full width in its own
