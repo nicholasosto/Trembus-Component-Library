@@ -1,0 +1,26 @@
+{
+  "name": "@trembus-demo/foundry-room",
+  "version": "0.0.0",
+  "description": "Foundry Room · Maid — a demo SITE consuming @trembus/ui via its published API (workspace:* + ./styles.css). Composes the real components (FolderTree, Dialog, Table, Badge, Tooltip, and the new Stepper) into a governed file-room explorer. NOT a library: no 3-jobs contract, off the `pnpm validate` gate; scripts are named off the gated set (dev/build:site/preview/tc). Dog-food check: `pnpm demos:check` from the repo root.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build:site": "vite build",
+    "preview": "vite preview",
+    "tc": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@trembus/ui": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.0.0"
+  }
+}

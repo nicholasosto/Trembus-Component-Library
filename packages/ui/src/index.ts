@@ -307,3 +307,5 @@ export type {
   AssayScale,
   AssayTone,
 } from './components/Assay/Assay';
+export { Stepper } from './components/Stepper/Stepper';
+export type { StepperProps, StepperStep, StepStatus } from './components/Stepper/Stepper';

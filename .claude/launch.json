@@ -20,6 +20,19 @@
         "--strictPort"
       ],
       "port": 5174
+    },
+    {
+      "name": "foundry-room",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@trembus-demo/foundry-room",
+        "dev",
+        "--port",
+        "5175",
+        "--strictPort"
+      ],
+      "port": 5175
     }
   ]
 }

@@ -1,0 +1,144 @@
+@layer tcl.components {
+  .tcl-stepper {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    color: var(--tcl-text);
+    font-family: var(--tcl-font-sans);
+  }
+
+  /* visually-hidden status word (announced, never seen) */
+  .tcl-stepper__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .tcl-stepper__step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--tcl-space-4);
+  }
+
+  /* ── rail: node + connector ── */
+  .tcl-stepper__rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tcl-stepper__node {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    border-radius: var(--tcl-radius-full);
+    display: grid;
+    place-items: center;
+    background: var(--tcl-surface);
+    border: 2px solid var(--tcl-border-strong);
+    color: var(--tcl-text-faint);
+  }
+  .tcl-stepper[data-size='sm'] .tcl-stepper__node {
+    width: 22px;
+    height: 22px;
+  }
+  .tcl-stepper__glyph {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tcl-stepper[data-size='sm'] .tcl-stepper__glyph {
+    width: 12px;
+    height: 12px;
+  }
+  .tcl-stepper__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--tcl-radius-full);
+    background: currentColor;
+  }
+  .tcl-stepper__line {
+    width: 2px;
+    flex: 1 1 auto;
+    min-height: 16px;
+    margin: 4px 0;
+    border-radius: 2px;
+    background: var(--tcl-border);
+  }
+
+  /* ── body: label + description ── */
+  .tcl-stepper__body {
+    min-width: 0;
+    padding-top: 3px;
+    padding-bottom: var(--tcl-space-6);
+  }
+  .tcl-stepper__step:last-child .tcl-stepper__body {
+    padding-bottom: 0;
+  }
+  .tcl-stepper__label {
+    display: block;
+    font-size: var(--tcl-text-md);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .tcl-stepper[data-size='sm'] .tcl-stepper__label {
+    font-size: var(--tcl-text-sm);
+  }
+  .tcl-stepper__desc {
+    margin-top: 3px;
+    font-size: var(--tcl-text-sm);
+    line-height: 1.5;
+    color: var(--tcl-text-dim);
+  }
+
+  /* ── status treatments ── */
+  .tcl-stepper__step[data-status='done'] .tcl-stepper__node {
+    background: var(--tcl-status-success);
+    border-color: var(--tcl-status-success);
+    color: var(--tcl-status-success-fg);
+  }
+  .tcl-stepper__step[data-status='done'] .tcl-stepper__line {
+    background: var(--tcl-status-success);
+  }
+  .tcl-stepper__step[data-status='active'] .tcl-stepper__node {
+    background: color-mix(in oklab, var(--tcl-accent) 18%, var(--tcl-surface));
+    border-color: var(--tcl-accent);
+    color: var(--tcl-accent);
+  }
+  .tcl-stepper__step[data-status='error'] .tcl-stepper__node {
+    background: var(--tcl-status-danger);
+    border-color: var(--tcl-status-danger);
+    color: var(--tcl-status-danger-fg);
+  }
+  .tcl-stepper__step[data-status='pending'] .tcl-stepper__label {
+    color: var(--tcl-text-dim);
+    font-weight: 500;
+  }
+
+  /* active pulse — motion only, per the library reduced-motion discipline */
+  @media (prefers-reduced-motion: no-preference) {
+    .tcl-stepper__step[data-status='active'] .tcl-stepper__node {
+      animation: tcl-stepper-pulse 1.8s var(--tcl-ease-calm, ease-in-out) infinite;
+    }
+    @keyframes tcl-stepper-pulse {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 color-mix(in oklab, var(--tcl-accent) 40%, transparent);
+      }
+      50% {
+        box-shadow: 0 0 0 5px transparent;
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+/* ════════════════════════════════════════════════════════════
+   App-shell chrome for the Foundry Room demo. Tokens-only (var(--tcl-*))
+   so the page re-themes with the library. Deliberately UNLAYERED — app
+   chrome sits above the library's @layer cascade. The component look comes
+   entirely from @trembus/ui; this file only frames it (header, layout).
+   ════════════════════════════════════════════════════════════ */
+
+body {
+  margin: 0;
+  background: var(--tcl-bg);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.app__main {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+}
+
+.app__brand {
+  font-weight: 680;
+  letter-spacing: -0.01em;
+}
+
+/* Room layout: tree beside the Maid dock. */
+.room-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--tcl-space-6);
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .room-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Give the FolderTree room to breathe (it caps itself at 420px otherwise). */
+.room-tree .tcl-folder-tree {
+  max-width: none;
+}
