@@ -15,6 +15,7 @@ import { Home } from './routes/Home';
 import { Roster } from './routes/Roster';
 import { Episodes } from './routes/Episodes';
 import { Chronicle } from './routes/Chronicle';
+import { Motion } from './routes/Motion';
 import { NotFound } from './routes/NotFound';
 
 const router = createBrowserRouter([
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: 'roster', element: <Roster /> },
       { path: 'episodes', element: <Episodes /> },
       { path: 'chronicle', element: <Chronicle /> },
+      { path: 'motion', element: <Motion /> },
       { path: '*', element: <NotFound /> },
     ],
   },

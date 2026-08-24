@@ -24,4 +24,9 @@ export const NAV_ROUTES: NavRoute[] = [
     label: 'Chronicle',
     blurb: 'A dated-event timeline of the Iron Age, in its gothic chronicle skin.',
   },
+  {
+    path: '/motion',
+    label: 'Motion',
+    blurb: 'The motion-primitives spike — CSS baseline against Motion, head to head.',
+  },
 ];

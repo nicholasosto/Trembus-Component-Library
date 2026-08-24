@@ -1,6 +1,7 @@
 import { Box, Stack, Text } from '@trembus/ui';
 import { Effigy, Reliquary, SoulCard } from '@trembus/game-viz';
 import type { EffigyContract, SoulCardContract } from '@trembus/game-viz';
+import { Reveal, Stagger } from '../motion';
 
 const mara: SoulCardContract = {
   view: 'soul-card',
@@ -83,24 +84,34 @@ export function Roster() {
         </Text>
       </Stack>
 
-      <div className="soul-grid">
-        <SoulCard data={mara} />
-        <SoulCard data={knight} />
-        <Reliquary
-          label="RELIC · 008"
-          tag="THE KEPT COSMONAUT"
-          tone="accent"
-          aria-label="The Kept Cosmonaut reliquary"
-          status={[
-            { label: 'TETHER — NOMINAL', tone: 'success' },
-            { label: 'DRIFT DETECTED', tone: 'warning' },
-          ]}
-        >
-          <Box p={2}>
-            <Effigy data={effigy} ratio="1 / 1" />
-          </Box>
-        </Reliquary>
-      </div>
+      {/* The WRAPPER form, for contrast with Home's recipe form. `Stagger`
+          renders the grid itself — it has to be handed `soul-grid`, because a
+          `<div className="soul-grid"><Stagger>` would put the whole cascade in
+          a single grid cell. Each `Reveal` then becomes the grid item. */}
+      <Stagger className="soul-grid">
+        <Reveal>
+          <SoulCard data={mara} />
+        </Reveal>
+        <Reveal>
+          <SoulCard data={knight} />
+        </Reveal>
+        <Reveal>
+          <Reliquary
+            label="RELIC · 008"
+            tag="THE KEPT COSMONAUT"
+            tone="accent"
+            aria-label="The Kept Cosmonaut reliquary"
+            status={[
+              { label: 'TETHER — NOMINAL', tone: 'success' },
+              { label: 'DRIFT DETECTED', tone: 'warning' },
+            ]}
+          >
+            <Box p={2}>
+              <Effigy data={effigy} ratio="1 / 1" />
+            </Box>
+          </Reliquary>
+        </Reveal>
+      </Stagger>
     </Stack>
   );
 }

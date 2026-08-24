@@ -62,11 +62,58 @@ body {
   outline-offset: 3px;
 }
 
+/* Motion-driven variant of .card-link. Motion writes `transform` as an inline
+   style, and a CSS `transition: transform` applies to inline changes too — so
+   the element would run Motion's tween AND a 140ms CSS tween on every frame.
+   Drop transform from the transition list and let JS own it (`whileHover`). */
+.card-link--motion {
+  transition: border-color 140ms ease;
+}
+
+/* ── the CSS baseline, for the head-to-head on /motion ──────────────────
+   What a staggered reveal costs without a dependency: one keyframe, one
+   custom property for the per-item delay. This is the thing Motion has to
+   beat to justify 34 kB. */
+@keyframes css-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.css-reveal {
+  animation: css-reveal var(--tcl-dur-base) var(--tcl-ease-calm) backwards;
+  animation-delay: calc(var(--i, 0) * var(--tcl-dur-fast));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .css-reveal {
+    animation: none;
+  }
+}
+
 .soul-grid {
   display: grid;
   gap: var(--tcl-space-5);
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   align-items: start;
+}
+
+/* /motion lab layout — two comparable columns, stacking on narrow screens. */
+.lab-split {
+  display: grid;
+  gap: var(--tcl-space-6);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: start;
+}
+
+.lab-col {
+  display: grid;
+  gap: var(--tcl-space-4);
 }
 
 .page-title {

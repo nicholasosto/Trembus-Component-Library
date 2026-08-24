@@ -13,14 +13,28 @@ them.
 
 ## Pages
 
-| Route        | Composes                                                                                     |
-| ------------ | -------------------------------------------------------------------------------------------- |
-| `/`          | `CinematicHero` (game-viz) + nav cards (`Box as={Link}`, ui)                                  |
-| `/roster`    | `SoulCard` ×2 + a `Reliquary`-framed `Effigy` 3D model (game-viz)                             |
-| `/episodes`  | `EpisodeDeck` (game-viz) wired to page state, beside a `Lineage` (viz) of the arc            |
+| Route       | Composes                                                                          |
+| ----------- | --------------------------------------------------------------------------------- |
+| `/`         | `CinematicHero` (game-viz) + nav cards (`Box as={Link}`, ui)                       |
+| `/roster`   | `SoulCard` ×2 + a `Reliquary`-framed `Effigy` 3D model (game-viz)                  |
+| `/episodes` | `EpisodeDeck` (game-viz) wired to page state, beside a `Lineage` (viz) of the arc  |
+| `/chronicle`| `Chronicle` (game-viz) — a dated-event timeline in its gothic skin                 |
+| `/motion`   | The **motion spike** lab — a CSS baseline against `motion@12`, head to head        |
 
 The shell (`src/app/Shell.tsx`) is built from the `@trembus/ui` primitives
 (`Box` / `Inline` / `Text` / `Button`) and react-router `NavLink` / `Outlet`.
+
+## The motion spike
+
+This demo carries one dependency the libraries do not: **`motion@12`**, used by
+the prototype primitives in `src/motion/` and wired into the real routes (page
+transitions, the Home card cascade, the Roster grid, the Episodes inspector
+swap). It lives here precisely because `demos/*` is off the `validate` gate — a
+dependency can be tried on for size and thrown away without touching a library.
+
+**Read [`MOTION-SPIKE.md`](./MOTION-SPIKE.md)** for the measured cost, the
+findings, and the recommendation (short version: ship the variant recipes if
+anything, never the wrapper components — and not yet).
 
 ## Run it
 

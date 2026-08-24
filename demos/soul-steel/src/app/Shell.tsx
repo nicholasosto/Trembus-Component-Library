@@ -1,7 +1,8 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Box, Button, Inline, NavBar, SkipLink, Text } from '@trembus/ui';
 import { useTheme } from '../theme';
 import { NAV_ROUTES } from './nav';
+import { PageTransition } from '../motion';
 
 /**
  * The app shell: a sticky header (brand + primary nav + theme toggle), the
@@ -11,6 +12,7 @@ import { NAV_ROUTES } from './nav';
 export function Shell() {
   const { theme, toggle } = useTheme();
   const nextTheme = theme === 'dark' ? 'light' : 'dark';
+  const location = useLocation();
 
   return (
     <div className="tcl-root app">
@@ -48,8 +50,12 @@ export function Shell() {
         </Inline>
       </Box>
 
+      {/* The transition wrapper sits INSIDE <main> so the skip-link target and
+          its focus behaviour are untouched by the animation. */}
       <Box as="main" id="main" tabIndex={-1} px={6} py={7} className="app__main">
-        <Outlet />
+        <PageTransition routeKey={location.pathname}>
+          <Outlet />
+        </PageTransition>
       </Box>
 
       <Box as="footer" surface="sunken" border="soft" px={6} py={5}>

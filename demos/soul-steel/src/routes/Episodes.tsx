@@ -4,6 +4,7 @@ import { EpisodeDeck } from '@trembus/game-viz';
 import type { EpisodeDeckContract } from '@trembus/game-viz';
 import { Lineage } from '@trembus/viz';
 import type { GraphContract } from '@trembus/viz';
+import { Presence } from '../motion';
 
 const season: EpisodeDeckContract = {
   view: 'episode-deck',
@@ -96,22 +97,28 @@ export function Episodes() {
         </div>
 
         <Box surface="raised" border radius="lg" p={6} style={{ flex: '1 1 320px', minWidth: 280 }}>
-          <Stack gap={3}>
-            <Text size="xs" mono tone="faint">
-              NOW INSPECTING
-            </Text>
-            <Text as="h2" size="lg" weight="semibold">
-              {selected ? selected.title : 'Select an episode'}
-            </Text>
-            {selected?.code ? (
-              <Text size="sm" mono tone="dim">
-                {selected.code}
+          {/* Presence wraps the CONTENT, not the panel — the frame stays put
+              and only the text swaps, so the layout never jumps mid-exit. This
+              is the one effect on this page that CSS cannot do: the outgoing
+              copy has to outlive its own unmount. */}
+          <Presence contentKey={selectedId}>
+            <Stack gap={3}>
+              <Text size="xs" mono tone="faint">
+                NOW INSPECTING
               </Text>
-            ) : null}
-            <Text tone="dim">
-              {selected?.synopsis ?? 'This chapter keeps its secrets — no synopsis yet.'}
-            </Text>
-          </Stack>
+              <Text as="h2" size="lg" weight="semibold">
+                {selected ? selected.title : 'Select an episode'}
+              </Text>
+              {selected?.code ? (
+                <Text size="sm" mono tone="dim">
+                  {selected.code}
+                </Text>
+              ) : null}
+              <Text tone="dim">
+                {selected?.synopsis ?? 'This chapter keeps its secrets — no synopsis yet.'}
+              </Text>
+            </Stack>
+          </Presence>
         </Box>
       </Inline>
 
