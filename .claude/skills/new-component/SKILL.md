@@ -43,3 +43,17 @@ refuses to overwrite an existing component directory.
 - `contract.name` must equal the directory name — the scaffold sets this for you.
 - For a visualization (data-driven) component, title it `Visualizations/<Name>` and have it
   consume a Visual Grammar JSON contract (see the `Hub` component).
+
+## Storybook docs descriptions
+
+Moved here from the root `CLAUDE.md` (lines 216–224 of the 2026-08-11 revision) on 2026-09-09 — every new component ships all three layers.
+
+- **Storybook docs descriptions** (established 2026-07-20, all 64 surfaces carry them): a
+  JSDoc block directly above `const meta` renders as the docs-page intro — four sections:
+  `### When to use it` (incl. "not for X — use Y" near-neighbor guidance) · `### Data &
+key props` · `### Accessibility` (only source-verified claims) · `### Theming & setup`
+  (per-package byte-identical Setup line). A `/** Job: <UI job> — … */` line sits above
+  every story export; prop TSDoc feeds the ArgTypes table (and ships in the published
+  `.d.ts`). Keep backticked code spans on ONE comment line — a span wrapped across lines
+  renders as a code block with a Copy chip mid-bullet. New components must ship with all
+  three description layers.

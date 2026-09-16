@@ -131,7 +131,8 @@ const platform: HubContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Hub',
+  title: 'Visualizations/ui/Hub',
+  id: 'visualizations-hub',
   component: Hub,
   args: { data: platform },
   parameters: { layout: 'centered' },

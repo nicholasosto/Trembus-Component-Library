@@ -85,7 +85,8 @@ const deps: GraphContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/Lineage',
+  title: 'Visualizations/viz/Lineage',
+  id: 'visualizations-lineage',
   component: Lineage,
   args: { data: pipeline },
   parameters: { layout: 'padded' },

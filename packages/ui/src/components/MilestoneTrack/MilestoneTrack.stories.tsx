@@ -177,7 +177,8 @@ const serpentineLeadTime: MilestoneTrackContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/MilestoneTrack',
+  title: 'Visualizations/ui/MilestoneTrack',
+  id: 'visualizations-milestonetrack',
   component: MilestoneTrack,
   args: { data: leadTime },
 } satisfies Meta<typeof MilestoneTrack>;

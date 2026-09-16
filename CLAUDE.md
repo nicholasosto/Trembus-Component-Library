@@ -6,82 +6,39 @@ First-principles UX: tokens → primitives → components, each carrying a machi
 
 ## Workspace
 
-This repo is a **pnpm workspace** with five **library** packages under `packages/` (plus a sixth
-member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ below):
+pnpm workspace: `@trembus/tokens` · `icons` · `ui` · `viz` · `game-viz` under `packages/` (plus the
+non-gated `@trembus/video` Remotion app, `demos/*` and `templates/*` — see below). `ls packages/*` and
+each package's `package.json` / `README.md` are the roster; the rules that are NOT in the manifests:
 
-- **`@trembus/tokens`** (`packages/tokens/`) — the shared design-token foundation: the
-  `var(--tcl-*)` token CSS (`src/css/tokens.*.css` + `layers.css`), the type-safe token ontology,
-  the color-coded tone vocabulary, the `ComponentContract` type (`@trembus/tokens/contract`), and
-  the axe `a11yViolations` helper (`@trembus/tokens/testing`). React-free; exported from source.
-- **`@trembus/icons`** (`packages/icons/`) — the shared glyph set (50 glyphs: node-kind /
-  file-type marks + the workflow-output vocabulary + UI affordances) de-duplicated out of `ui` and
-  `viz`. A React-only foundation **leaf**: no `@trembus/tokens` dep, no CSS, `sideEffects:false`.
-  Ships tree-shakeable `*Icon` components + a `GLYPHS` / `<Glyph name>` registry + string-only
-  maps: `SYSTEM_KIND_GLYPH`, the 0.3.0 workflow-output trio `OUTPUT_CATEGORY_GLYPH` /
-  `OUTPUT_KIND_GLYPH` / `PROVENANCE_GLYPH` (kind glyph × provenance badge — human/user ·
-  ai/robot · conjoined/venn), and `extToGlyph` / `fileToGlyph` (well-known basenames beat
-  extensions: SKILL.md → book, CLAUDE.md/AGENTS.md → robot, MEMORY.md → brain, .env → key);
-  consumed by `ui`, `viz`, `game-viz`. Lives in `src/icons/` (not `src/components/`), so it sits
-  outside the contract gate. `viz` re-exports it from `src/internal/index.ts`; `ui`'s FolderTree
-  imports it directly (glyph inference via `fileToGlyph`).
-- **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; imports the
-  contract type + a11y helper straight from `@trembus/tokens`, and its barrel re-exports `tokens` and
-  the token types so the public API is unchanged.
+- **`@trembus/icons`** lives in `packages/icons/src/icons/` (not `src/components/`), so it sits outside
+  the contract gate — a React-only foundation **leaf**: no `@trembus/tokens` dep, no CSS, `sideEffects:false`.
 - **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, `Nebula`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
-- **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
-  (`Reliquary`, `SoulCard`, `EpisodeDeck`, `CinematicHero`, `Chronicle`, `Effigy`, `MediaFrame`,
-  `Constellation`), titled `Game/*`.
-  Liturgical-gothic idiom: HUD frames, character dossiers, episode decks, title plates, 3D model
-  thumbnails (`Effigy` wraps Google `<model-viewer>` — the repo's first 3D primitive). UNLIKE
-  `@trembus/viz`
-  (tokens-only), it **builds on `@trembus/ui`** (composes `Box`/`Stack`/`Inline`/`Text`/`Pressable`
-  - reuses materials) and now **`@trembus/viz`** too, so it depends on `@trembus/ui`, `@trembus/viz`,
-    `@trembus/icons`, and `@trembus/tokens` (the `@trembus/icons` dep arrived with `MediaFrame`'s
-    doc/fallback `Glyph` plate; the `@trembus/viz` dep arrived with `Constellation`, the gothic skin
-    over the viz `TalentTree` — the first `game-viz → viz` edge, needing a `/^@trembus\/viz$/` source
-    alias in `.storybook/main.ts` or the skinned component renders unstyled). **Not every
-    component composes the primitives** — `Chronicle`, `CinematicHero`, `MediaFrame`, `SoulCard`
-    and `Constellation` do; `Reliquary`, `Effigy` and `EpisodeDeck` are self-contained chrome
-    importing only game-viz's own `cx`/`vars` (audited 2026-07-25, see `COMPONENT-REVIEW.md`
-    §3.1 — rebuilding `Reliquary` on `Box` + `material` is a queued improvement, not a bug).
-    Same 3-jobs
-    contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
-    `aria-hidden`, interactive bits are real focusable controls, tone-coding always paired with a
-    word, motion behind `prefers-reduced-motion`). **Tone-as-text gotcha:** a tone painted as TEXT
-    needs a legibility-safe variant — map `accent → var(--tcl-text)` (gold-on-light fails AA ~1.8:1;
-    the Badge precedent) and keep the full tone only on borders/tints/strokes.
-
-Run gates at the **root** (`pnpm validate` orchestrates every package via `pnpm -r` + one
-Storybook build) or per package (`pnpm --filter @trembus/<pkg> validate`). One root `.storybook/`
-globs `packages/*`; shared compiler options in root `tsconfig.base.json`;
-`scripts/check-contracts.ts` is package-parameterized.
+- **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI, titled `Game/*`.
+  UNLIKE `@trembus/viz` (tokens-only), it **builds on `@trembus/ui`** (composes `Box`/`Stack`/`Inline`/
+  `Text`/`Pressable`) and on **`@trembus/viz`** — composing a viz component from game-viz needs the
+  `/^@trembus\/viz$/` source alias in `.storybook/main.ts` or the skinned component renders unstyled.
+  **Not every component composes the primitives** — `Reliquary`, `Effigy` and `EpisodeDeck` are
+  self-contained chrome importing only game-viz's own `cx`/`vars` (audited 2026-07-25, see
+  `COMPONENT-REVIEW.md` §3.1 — rebuilding `Reliquary` on `Box` + `material` is a queued improvement, not a bug).
+  Same 3-jobs
+  contract + axe discipline — "theatrical surface, accessible spine" (decorative chrome
+  `aria-hidden`, interactive bits are real focusable controls, tone-coding always paired with a
+  word, motion behind `prefers-reduced-motion`). **Tone-as-text gotcha:** a tone painted as TEXT
+  needs a legibility-safe variant — map `accent → var(--tcl-text)` (gold-on-light fails AA ~1.8:1;
+  the Badge precedent) and keep the full tone only on borders/tints/strokes.
 
 **Motion / video — `@trembus/video`** (`packages/video/`, private, **not a published library**) is a
-**Remotion** app that renders the real components to video: a composition `import`s the actual
-`@trembus/game-viz` component **and** the ui / viz / game-viz `styles.css` entries, so the whole
-`@layer`/`var(--tcl-*)`/`color-mix` token system renders in headless Chromium with zero re-authoring
-(verified — a `CinematicHero` promo renders at full fidelity). It sits **outside the `pnpm validate`
-gate** (no `*.contract.ts`, no axe): its scripts are named off the gated set
-(`studio`/`render`/`still`/`tc`) so `pnpm -r` skips it, and `packages/video` is excluded from the root
-`eslint`/`prettier` scope. **Remotion gotchas:** drive motion off `useCurrentFrame()` — it does NOT
-mock the wall clock, so the components' own CSS transitions / `model-viewer` rAF won't animate
-(reuse the look, own the motion in frame-space); load `--tcl-font-display` explicitly (the repo ships
-no Cinzel face — use `@remotion/google-fonts`); set `data-theme` per composition; pin all
-`@remotion/*` to ONE exact version. Remotion is **source-available** (free ≤3 people, paid Company
-License at 4+). See `packages/video/README.md`.
+**Remotion** app that renders the real components to video. It sits **outside the `pnpm validate` gate**
+on purpose (scripts named off the gated set so `pnpm -r` skips it; excluded from root `eslint`/`prettier`).
+Remotion gotchas and the license note: `packages/video/CLAUDE.md`.
 
 ## Commands
 
-- `pnpm run validate` — the full gate: build (FIRST, topological — every package's dist is
-  fresh before dependents typecheck) → lint → typecheck → check:contracts → test →
-  verify:exports → build:storybook. Run before declaring work done.
-  NOTE: it is `validate`, not `ci` (pnpm reserves the `ci` command).
-- `pnpm test` — unit tests (jsdom + axe), runs anywhere.
-  `pnpm test:stories` runs stories in a real browser and needs
-  `pnpm exec playwright install chromium` first.
-- `pnpm dev` — Storybook (docs + playground) on :6006.
-- `pnpm check:contracts` — enforce the 3-jobs contract per component.
+- `pnpm validate` is the full gate — run before declaring work done. It is `validate`, not `ci`
+  (pnpm reserves the `ci` command). Build runs FIRST and topologically so every package's dist is
+  fresh before dependents typecheck.
+- `pnpm test:stories` runs stories in a real browser and needs `pnpm exec playwright install chromium` first.
 - **One toolchain, declared once.** vite · vitest · testing-library · typescript · eslint · storybook
   live in the ROOT `package.json` only (pnpm puts the root `.bin` on every package's PATH; TS and
   Node resolve upward). Library manifests carry runtime deps + peers. Versions several projects
@@ -119,18 +76,12 @@ reads `.claude/launch.json` (`storybook dev -p 6006 --ci`) and serves on :6006; 
 - **Story ids** slugify the title — `components-button--states`, `visualizations-hub--default`.
 - **Responsive**: `preview_resize` mobile/tablet/desktop presets.
 
-## Adding a component — the canonical 5-file shape
+## Adding a component
 
-Fastest path: `node .claude/skills/new-component/scaffold.mjs <Name> [--pkg ui|viz|game-viz]` (the
-`/new-component` skill). `--pkg` defaults to `ui` (titled `Components/*`); `--pkg viz` titles
-`Visualizations/*` and `--pkg game-viz` titles `Game/*`, both wiring the shared `@trembus/tokens`
-imports. It scaffolds the shape below and wires the barrel.
+New component → `/new-component <Name> [--pkg ui|viz|game-viz]` (`--pkg` defaults to `ui`). The
+canonical five-file shape is in `CONTRIBUTING.md`; the scaffolder wires the barrel export, and
+`contract.name` must equal the directory name.
 
-Every component in `packages/<pkg>/src/components/<Name>/` has EXACTLY:
-`<Name>.tsx · <Name>.css · <Name>.contract.ts · <Name>.stories.tsx · <Name>.test.tsx`
-
-- Export it from `packages/<pkg>/src/index.ts` (the barrel); `contract.name` must equal the
-  directory name.
 - `scripts/check-contracts.ts` enforces the shape + that each of the three jobs names a real
   exported story. Use the story names `Default` / `States` / `Interaction`.
 
@@ -142,64 +93,26 @@ contract checker scans every `src/components/<Name>/` dir per package and would 
 demanding a contract). A plain `<Name>.stories.tsx` there is all you need — no contract / css /
 test files; Storybook still finds it via the `packages/*/src/**/*.stories.tsx` glob. Title them
 `Examples/*` and compose from the public barrel (`../index`) so the example exercises the real
-consumer API. **Placement rule**: ui-only pages live in `packages/ui/src/examples/` (Dashboard ·
-Package Dossier · Session Brief — the `sessionToBrief` work-log template over real `_project/`
-session records); a cross-package example that needs game-viz lives in
+consumer API. **Placement rule**: ui-only pages live in `packages/ui/src/examples/` (e.g.
+Dashboard); a cross-package example that needs game-viz lives in
 `packages/game-viz/src/examples/` (Game Design Document), importing game-viz from `'../../index'`
 and ui/viz via real bare specifiers — a ui-hosted copy would force ui's typecheck to resolve its
 own stale dist (self-reference), so it is disqualified.
 
-## Demo sites (multi-page apps)
+## Demo sites (`demos/*`)
 
-A **demo site** is a real consuming app — multiple **routed** pages, an app shell, navigation,
-root-level theme — exercising the components the way a downstream product does (which neither
-Storybook nor the `Examples/*` single-canvas stories cover). They live under the top-level
-**`demos/*`** workspace glob (NOT `packages/`), each a private Vite + react-router SPA. First one
-shipped: `demos/soul-steel/` (composes all three packages; see its `README.md`).
-
-- **Consume the PUBLISHED API only** — import the bare specifiers (`@trembus/ui`, `@trembus/viz`,
-  `@trembus/game-viz`) + each package's `./styles.css`, never deep/relative `packages/*/src` paths.
-  ui/viz styles.css bundle the full `@trembus/tokens` layer system; game-viz's (0.4.0+) carries
-  only its own component CSS — so ALL three style entries get imported, and the libs must be
-  **built** first (the demo resolves their `dist/`) — that's the point: it dog-foods the real
-  consumer surface.
-- **Off the `validate` gate**, like `packages/video`: living under `demos/` keeps it invisible to
-  `scripts/check-contracts.ts` (scoped to `packages/{ui,viz,game-viz}`); it's in the root
-  `eslint`/`prettier` ignores; and its scripts are named OFF the gated set (`dev` / `build:site` /
-  `preview` / `tc`, not `build` / `test` / `typecheck`) so `pnpm -r <gated>` skips it.
-- **Dog-food check** is deliberate + separate: `pnpm demos:check` (root) builds the three libs, then
-  `tc` + `build:site` every demo. Run it (or a dedicated CI job) to catch consumer-facing API breaks
-  without letting a WIP demo page block a library release.
-- Preview live via the Claude_Preview MCP — `.claude/launch.json` has a `soul-steel` config
-  (`preview_start({name:'soul-steel'})` → :5174). Same `data-theme` + `.tcl-root` wrapper as Storybook.
+Real consuming apps (routed pages, app shell, navigation, root-level theme) — private Vite + react-router
+SPAs under the top-level **`demos/*`** workspace glob (NOT `packages/`). **Consume the PUBLISHED API only** —
+bare specifiers (`@trembus/ui`, `@trembus/viz`, `@trembus/game-viz`) + each package's `./styles.css`, never
+deep/relative `packages/*/src` paths — and the libs must be **built** first. Off the `validate` gate;
+`pnpm demos:check` is the dog-food check. Details: `demos/CLAUDE.md`.
 
 ## Page templates (`templates/*`)
 
-**Copy-and-own reference PAGES** (AppShell · WorkflowBoard) — canonical, versioned page
-blueprints iterated HERE (Storybook `Templates/*`) and copied into consuming apps by the
-user-level **`trembus-template` skill** (canonical at `templates/skill/`, installed by
-`bash templates/skill/link-skill.sh` → `~/.claude/skills/trembus-template` and
-`~/.codex/skills/trembus-template`). NOT library
-components: no 3-jobs contract. One private workspace member `templates/pages`
-(`@trembus-templates/pages`); each template at `src/<Name>/` with a `template.json` manifest
-(semver · files[] · slots[] + `context` vars · dependencies · changelog).
-**`templates/REGISTRY.md` is the human index AND the canonical grammar reference.**
-
-- **Grammar**: line-1 stamp `/* @trembus-template <name> v<semver> … */` in every copyable
-  file; app-owned regions fenced by `@tcl-slot:<name> START/END` comment markers. Chrome
-  (outside slots) is template-owned and rewritten on update; slot bodies are preserved
-  byte-for-byte. Props carry serializable data; **slots carry framework-specific JSX**
-  (router links!) — AppShell ships plain `NavBar.Link href` defaults with the react-router
-  `asChild` recipe in the slot comment, so the copied file never hard-depends on a router.
-- **Gate placement**: off `validate` like demos (only script is `tc`; eslint-ignored) BUT the
-  stories join the root Storybook glob → they run in `build:storybook`, in `test:stories`
-  (the CI browser + axe gate), and ship to the Pages gallery — template stories must stay
-  compile- AND axe-clean. Deliberately prettier-VISIBLE (copy-ready code stays formatted).
-  Check: `pnpm templates:check` (dependency-closure lib build, then `tc`).
-- **In-repo filenames are the FINAL names** (`AppShell.tsx`, NOT `AppShell.template.tsx`) so
-  inter-file relative imports survive the copy unchanged; the stamp marks templatehood.
-- Releasing a template = bump manifest `version` + `changelog` + the REGISTRY row (renaming a
-  slot `context` var or removing a slot = MAJOR), then `pnpm templates:check`, commit.
+**Copy-and-own reference PAGES** (AppShell · WorkflowBoard) — NOT library components: no 3-jobs contract.
+**`templates/REGISTRY.md` is the human index AND the canonical grammar reference**; the user-level
+**`trembus-template`** skill (canonical at `templates/skill/`) copies them into consuming apps. Check with
+`pnpm templates:check`. Gate placement, filename and release rules: `templates/CLAUDE.md`.
 
 ## Conventions
 
@@ -221,15 +134,10 @@ components: no 3-jobs contract. One private workspace member `templates/pages`
   (`@trembus/viz` components compose NO primitives — raw HTML/SVG + `@trembus/tokens` only.)
 - Labeled controls (Input/Textarea/Select) share `packages/ui/src/internal/field` (FieldShell +
   useFieldIds) — one source of truth for label/description/error wiring.
-- **Storybook docs descriptions** (established 2026-07-20, all 64 surfaces carry them): a
-  JSDoc block directly above `const meta` renders as the docs-page intro — four sections:
-  `### When to use it` (incl. "not for X — use Y" near-neighbor guidance) · `### Data &
-key props` · `### Accessibility` (only source-verified claims) · `### Theming & setup`
-  (per-package byte-identical Setup line). A `/** Job: <UI job> — … */` line sits above
-  every story export; prop TSDoc feeds the ArgTypes table (and ships in the published
-  `.d.ts`). Keep backticked code spans on ONE comment line — a span wrapped across lines
-  renders as a code block with a Copy chip mid-bullet. New components must ship with all
-  three description layers.
+- **Storybook docs descriptions**: every component ships all three description layers — the JSDoc
+  docs intro above `const meta`, a `/** Job: <UI job> — … */` line above every story export, and prop
+  TSDoc (the recipe is in the `/new-component` skill). Keep backticked code spans on ONE comment
+  line — a span wrapped across lines renders as a code block with a Copy chip mid-bullet.
 
 ## Gotchas (learned the hard way — don't rediscover these)
 
@@ -324,29 +232,21 @@ like the sentinel can't make `d3.stratify` throw and blank the whole tree (Tree)
 ## Visualizations
 
 Data-driven viz components (e.g. `Hub`) consume the **Trembus Visual Grammar** JSON contracts
-(schemas at `…/Project-Spaces/LLM-Agent-Development/canonical/kits/visual-grammar/schema/`).
+(schemas: the Visual Grammar kit's `schema/` folder — the `LLM-Agent-Development/canonical/kits/visual-grammar/`
+path once named here no longer exists; the last copy on disk is `Repositories/_archive/Flow-Explorer/packages/visual-grammar/schema/`).
 Mirror the schema as a TS type so ONE contract renders in both the static HTML kit and React.
 Title these `Visualizations/*` in Storybook. Tier-1 (deterministic layout, no heavy deps) lives
 in `@trembus/ui`; **Tier-2** (node-link graphs needing a layout engine) lives in the sibling
-**`@trembus/viz`** package — `Tree` (strict hierarchy via `d3-hierarchy`; org-chart / file-tree /
-dendrogram), `Lineage` (directed-graph / DAG via `@dagrejs/dagre`; pipeline · data-lineage ·
-dependency · genealogy), `SystemMap` (nested drill-down C4 map), `ClassDiagram` (UML),
-`Strata` (concentric first-principles strata: radius = dependency depth via longest support
-chain; dangling `restsOn` refs auto-materialize dashed GAP arcs — discovery opportunities, never
-errors; NO ring-thickness floor, rings compress so deep maps never escape the plot box), and
-`TalentTree` (a game skill-tree: prerequisite DAG + multi-rank nodes + tier gates + a points-budget
-**allocation engine** with safe deallocation that never orphans a dependent; lead job
-**afford-action** — a viz first; the `--tcl-talenttree-accent` skin hook is read via fallback and
-never declared on the component root, so `game-viz`'s `Constellation` can remap it from an ancestor),
-and `Nebula` (a 3D concept map: the only viz where relatedness is DISTANCE, not an edge — a
-shortest-path completion of the authored link weights feeds a hand-rolled classical MDS in
-`internal/nebulaMath.ts`, so layout is deterministic; nodes stay real buttons over an
-aria-hidden scene and the inspector reads the ranked nearest neighbours, which is how the
-proximity reaches a screen reader) all shipped. Tier-2 reuses the same viz
-spine via `packages/viz/src/internal/` (`VizOverlay` = decorative aria-hidden `preserveAspectRatio`
-SVG edges + HTML `<button>` nodes positioned by `%`;
-`useControllableSelection`/`useControllableSet`/`useControllableMap` (the id→rank allocation map);
-the aria-live inspector). Mirror each Tier-2 contract as a VG schema too (`tree.schema.json`).
+**`@trembus/viz`** package — `ls packages/viz/src/components` is the roster and each component's docs
+block says when to use it. Tier-2 reuses one viz spine via `packages/viz/src/internal/` (`VizOverlay` =
+decorative aria-hidden `preserveAspectRatio` SVG edges + HTML `<button>` nodes positioned by `%`;
+`useControllableSelection`/`useControllableSet`/`useControllableMap`; the aria-live inspector). Mirror
+each Tier-2 contract as a VG schema too (`tree.schema.json`). Contracts that are rules, not roster:
+`Strata` — dangling `restsOn` refs auto-materialize dashed GAP arcs (discovery opportunities, never
+errors) and there is NO ring-thickness floor, rings compress so deep maps never escape the plot box;
+`TalentTree` — the allocation engine's safe deallocation never orphans a dependent, and the
+`--tcl-talenttree-accent` skin hook is read via fallback and never declared on the component root, so
+`game-viz`'s `Constellation` can remap it from an ancestor.
 
 **The Tier-1 viz spine** (Hub · BarChart · LineChart · DonutChart · Heatmap): lead job is
 _reveal-state_, but afford/acknowledge are real — each datum is a focusable **HTML `<button>`**

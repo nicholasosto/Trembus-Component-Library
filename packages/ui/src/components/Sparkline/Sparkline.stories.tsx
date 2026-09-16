@@ -35,7 +35,8 @@ const dirt = [2.1, 1.9, 2.0, 1.7, 1.5, 1.6, 1.3, 1.2, 1.4, 1.1, 0.9, 1.0];
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Sparkline',
+  title: 'Visualizations/ui/Sparkline',
+  id: 'visualizations-sparkline',
   component: Sparkline,
   args: { values: dirt, label: 'DIRT lag — last 12 weeks, latest 1.0 days' },
   parameters: { layout: 'centered' },

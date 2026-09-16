@@ -169,7 +169,8 @@ const PYROMANCY: TalentTreeContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/TalentTree',
+  title: 'Visualizations/viz/TalentTree',
+  id: 'visualizations-talenttree',
   component: TalentTree,
   // Storybook still demands `args` for a required prop even on render-only stories.
   args: { data: PYROMANCY },

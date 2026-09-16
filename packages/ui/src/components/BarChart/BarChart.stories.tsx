@@ -91,7 +91,8 @@ const coverage: BarChartContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/BarChart',
+  title: 'Visualizations/ui/BarChart',
+  id: 'visualizations-barchart',
   component: BarChart,
   args: { data: coverage },
   parameters: { layout: 'padded' },

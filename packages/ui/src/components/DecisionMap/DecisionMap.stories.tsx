@@ -273,7 +273,8 @@ const sessionStateDecided: DecisionMapContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/DecisionMap',
+  title: 'Visualizations/ui/DecisionMap',
+  id: 'visualizations-decisionmap',
   component: DecisionMap,
   args: { data: whereToLive },
   parameters: { layout: 'padded' },

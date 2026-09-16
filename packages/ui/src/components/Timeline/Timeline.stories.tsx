@@ -128,7 +128,8 @@ const ironAge: TimelineContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Timeline',
+  title: 'Visualizations/ui/Timeline',
+  id: 'visualizations-timeline',
   component: Timeline,
   args: { data: ironAge },
   parameters: { layout: 'padded' },

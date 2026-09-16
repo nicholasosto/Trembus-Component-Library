@@ -105,7 +105,8 @@ const saas: SystemMapContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/SystemMap',
+  title: 'Visualizations/viz/SystemMap',
+  id: 'visualizations-systemmap',
   component: SystemMap,
   args: { data: saas },
   parameters: { layout: 'padded' },

@@ -85,7 +85,8 @@ const fileTree: TreeContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/Tree',
+  title: 'Visualizations/viz/Tree',
+  id: 'visualizations-tree',
   component: Tree,
   args: { data: orgChart },
   parameters: { layout: 'padded' },

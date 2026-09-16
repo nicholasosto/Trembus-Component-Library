@@ -156,7 +156,8 @@ const toolPick: AssayContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Assay',
+  title: 'Visualizations/ui/Assay',
+  id: 'visualizations-assay',
   component: Assay,
   args: { data: curation, defaultSelectedId: 'primitives-color-ontology' },
   parameters: { layout: 'padded' },

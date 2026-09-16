@@ -116,7 +116,8 @@ const portfolio: TreemapContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Treemap',
+  title: 'Visualizations/ui/Treemap',
+  id: 'visualizations-treemap',
   component: Treemap,
   args: { data: portfolio },
   parameters: { layout: 'padded' },

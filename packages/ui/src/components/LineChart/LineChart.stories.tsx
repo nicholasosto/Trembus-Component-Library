@@ -90,7 +90,8 @@ const dirt: LineChartContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/LineChart',
+  title: 'Visualizations/ui/LineChart',
+  id: 'visualizations-linechart',
   component: LineChart,
   args: { data: dirt },
   parameters: { layout: 'padded' },

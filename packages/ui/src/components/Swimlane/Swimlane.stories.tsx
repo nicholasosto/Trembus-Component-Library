@@ -92,7 +92,8 @@ const shipFeature: SwimlaneContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Swimlane',
+  title: 'Visualizations/ui/Swimlane',
+  id: 'visualizations-swimlane',
   component: Swimlane,
   args: { data: shipFeature },
   parameters: { layout: 'padded' },

@@ -674,7 +674,8 @@ const openCloudPlan: BriefContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Brief',
+  title: 'Visualizations/ui/Brief',
+  id: 'visualizations-brief',
   component: Brief,
   args: { data: claudeMd },
   parameters: { layout: 'padded' },

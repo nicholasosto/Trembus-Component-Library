@@ -144,7 +144,8 @@ const combatDoctrine: StrataContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/Strata',
+  title: 'Visualizations/viz/Strata',
+  id: 'visualizations-strata',
   component: Strata,
   args: { data: interactionDesign },
   parameters: { layout: 'padded' },

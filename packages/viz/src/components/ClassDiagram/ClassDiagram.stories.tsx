@@ -125,7 +125,8 @@ const shop: ClassDiagramContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/ClassDiagram',
+  title: 'Visualizations/viz/ClassDiagram',
+  id: 'visualizations-classdiagram',
   component: ClassDiagram,
   args: { data: shop },
   parameters: { layout: 'padded' },

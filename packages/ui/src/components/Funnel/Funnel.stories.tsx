@@ -86,7 +86,8 @@ const pipeline: FunnelContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Funnel',
+  title: 'Visualizations/ui/Funnel',
+  id: 'visualizations-funnel',
   component: Funnel,
   args: { data: pipeline },
   parameters: { layout: 'padded' },

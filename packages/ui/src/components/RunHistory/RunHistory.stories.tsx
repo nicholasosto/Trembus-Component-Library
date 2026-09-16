@@ -131,7 +131,8 @@ const log: RunHistoryContract = {
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/RunHistory',
+  title: 'Visualizations/ui/RunHistory',
+  id: 'visualizations-runhistory',
   component: RunHistory,
   args: { data: log },
   parameters: { layout: 'padded' },

@@ -398,7 +398,8 @@ const givenSpace: NebulaContract = {
  *   tokens foundation). `@trembus/viz` depends only on `@trembus/tokens` — no ui needed.
  */
 const meta = {
-  title: 'Visualizations/Nebula',
+  title: 'Visualizations/viz/Nebula',
+  id: 'visualizations-nebula',
   component: Nebula,
   args: { data: knowledgeArchitecture, defaultSelectedId: 'artificial-brain' },
   parameters: { layout: 'padded' },

@@ -45,7 +45,8 @@ const dirtZones: GaugeProps['zones'] = [
  * - Setup: import `@trembus/ui/styles.css` once at the app root (it carries the full tokens foundation).
  */
 const meta = {
-  title: 'Visualizations/Gauge',
+  title: 'Visualizations/ui/Gauge',
+  id: 'visualizations-gauge',
   component: Gauge,
   args: {
     value: 1.2,
