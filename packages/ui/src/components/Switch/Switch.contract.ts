@@ -1,11 +1,12 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const switchContract: ComponentContract = {
   name: 'Switch',
   leadJob: 'acknowledge-input',
   jobs: {
     revealState: {
-      satisfiedBy: 'on/off is shown by the thumb position + track color (role=switch, aria-checked).',
+      satisfiedBy:
+        'on/off is shown by the thumb position + track color (role=switch, aria-checked).',
       story: 'States',
     },
     affordAction: {
@@ -13,7 +14,8 @@ export const switchContract: ComponentContract = {
       story: 'Default',
     },
     acknowledgeInput: {
-      satisfiedBy: 'Space/click toggles; the thumb slides and a focus ring appears on keyboard focus.',
+      satisfiedBy:
+        'Space/click toggles; the thumb slides and a focus ring appears on keyboard focus.',
       story: 'Interaction',
     },
   },

@@ -23,7 +23,8 @@ Before opening a PR, run the full gate from the repo root — CI runs the same s
 
 ```sh
 pnpm run validate
-# lint → typecheck → check:contracts → test → build → verify:exports → build:storybook
+# build → lint → typecheck → check:contracts → test → verify:exports → build:storybook
+# CI runs exactly this, then `pnpm test:stories` (stories in a real browser).
 ```
 
 You can scope individual steps to one package with

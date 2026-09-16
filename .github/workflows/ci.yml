@@ -4,9 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  ci:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,13 +24,36 @@ jobs:
       # Required by the Storybook (browser) test project.
       - run: pnpm exec playwright install --with-deps chromium
 
-      # Build first — @trembus/tokens ships a dist build, so typecheck / tests
-      # can't resolve it until the packages are built (mirrors `pnpm validate`).
-      - run: pnpm build
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm check:contracts
-      - run: pnpm test # unit (jsdom + axe) across all packages
-      - run: pnpm test:stories # stories-as-tests in a real browser
-      - run: pnpm verify:exports
-      - run: pnpm build:storybook
+      # THE gate — defined once, in the root package.json:
+      # build → lint → typecheck → check:contracts → test → verify:exports → build:storybook
+      - run: pnpm validate
+
+      # Stories-as-tests in a real browser (the axe gate). Kept out of `validate` so
+      # the local gate needs no browser download; CI always runs it.
+      - run: pnpm test:stories
+
+      # The Storybook that `validate` just built doubles as the GitHub Pages
+      # artifact — no second install + build in a separate workflow.
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: storybook-static
+
+  deploy-storybook:
+    # Publish the public gallery on every push to main (or a manual run) —
+    # only after the whole gate is green.
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

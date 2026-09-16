@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { HTMLAttributes } from 'react';
-import type { StatusTone } from '../../tokens/tokens.types';
+import type { StatusTone } from '@trembus/tokens';
 import { cx } from '../../utils/cx';
 import './Avatar.css';
 

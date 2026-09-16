@@ -10,3 +10,21 @@ packages:
   # Off the `validate` gate via off-gate script names (tc) + the eslint ignore;
   # their stories DO join the root Storybook globs (build:storybook + test:stories).
   - 'templates/*'
+
+# Single-sourced version ranges for deps that several workspace projects declare
+# (`"react": "catalog:"` in a manifest resolves to the range here). Everything a
+# project declares only once keeps a literal range in its own package.json.
+# Published packages keep LITERAL peerDependency ranges — those are the public
+# contract, not toolchain pinning.
+catalog:
+  '@storybook/react-vite': ^9.1.20
+  '@types/react': ^19.3.0
+  '@types/react-dom': ^19.3.0
+  '@vitejs/plugin-react': ^5.2.0
+  react: ^19.3.0
+  react-dom: ^19.3.0
+  # ≥7.18.2 closes GHSA CSRF advisory (react-router RSC mode).
+  react-router-dom: ^7.18.4
+  storybook: ^9.1.20
+  typescript: ^5.9.3
+  vite: ^7.3.6

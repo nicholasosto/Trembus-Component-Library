@@ -1,6 +1,6 @@
 import type { CSSProperties, ElementType } from 'react';
 import type { PolymorphicComponentPropsWithRef } from '../../types/polymorphic';
-import type { SpaceToken } from '../../tokens/tokens.types';
+import type { SpaceToken } from '@trembus/tokens';
 import { Box } from '../Box/Box';
 import type { BoxOwnProps, BoxProps } from '../Box/Box';
 
@@ -55,7 +55,9 @@ function renderFlex(direction: 'row' | 'column', props: StackOwnProps & Record<s
     ...(justify ? { justifyContent: JUSTIFY[justify] } : {}),
     ...(wrap ? { flexWrap: 'wrap' as const } : {}),
   };
-  return <Box {...(rest as BoxProps<'div'>)} style={{ ...flexStyle, ...(style as CSSProperties) }} />;
+  return (
+    <Box {...(rest as BoxProps<'div'>)} style={{ ...flexStyle, ...(style as CSSProperties) }} />
+  );
 }
 
 export function Stack<C extends ElementType = 'div'>(props: StackProps<C>) {

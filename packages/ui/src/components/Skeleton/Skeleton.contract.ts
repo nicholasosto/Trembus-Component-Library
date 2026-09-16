@@ -1,11 +1,12 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const skeletonContract: ComponentContract = {
   name: 'Skeleton',
   leadJob: 'reveal-state',
   jobs: {
     revealState: {
-      satisfiedBy: 'represents absent/loading content as a shimmering placeholder of the right shape.',
+      satisfiedBy:
+        'represents absent/loading content as a shimmering placeholder of the right shape.',
       story: 'Default',
     },
     affordAction: {

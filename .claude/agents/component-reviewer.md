@@ -24,7 +24,7 @@ Read CLAUDE.md for the full conventions, then check each item below against that
    colors except inside `color-mix`), and all rules live inside `@layer tcl.components`.
    Grep the file for hex codes and report any.
 5. **Accessibility** — `<Name>.test.tsx` asserts
-   `expect(await a11yViolations(container)).toEqual([])` (imported from `../../test/a11y`),
+   `expect(await a11yViolations(container)).toEqual([])` (imported from `@trembus/tokens/testing`),
    and interactive components expose the right role/name + keyboard behavior.
 6. **TypeScript discipline** — type-only imports use `import type`; no `any`; props extend the
    right element attributes; no empty interface (use a `type` alias instead).
@@ -40,6 +40,7 @@ Read CLAUDE.md for the full conventions, then check each item below against that
 ## Output
 
 A short report:
+
 - ✅ / ⚠️ / ✗ per checklist item, each with a one-line reason.
 - A "Fixes" list with the specific change for each ✗/⚠️ (file + what to change).
 - A final verdict: READY (all pass) or NEEDS WORK (with the blocking items named).

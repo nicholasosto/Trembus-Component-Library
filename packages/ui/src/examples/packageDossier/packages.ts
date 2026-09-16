@@ -93,9 +93,18 @@ const logger: PackageDossier = {
     { name: 'soul-steel-official', kind: 'game' },
   ],
   setup: [
-    { command: 'pnpm add @trembus/logger', note: 'Foundation package — the only peer is @rbxts/services.' },
-    { command: 'import { createLogger } from "@trembus/logger"', note: 'Tree-shakeable named exports.' },
-    { command: 'const log = createLogger({ tag: "combat" })', note: 'One logger per system; child() for sub-tags.' },
+    {
+      command: 'pnpm add @trembus/logger',
+      note: 'Foundation package — the only peer is @rbxts/services.',
+    },
+    {
+      command: 'import { createLogger } from "@trembus/logger"',
+      note: 'Tree-shakeable named exports.',
+    },
+    {
+      command: 'const log = createLogger({ tag: "combat" })',
+      note: 'One logger per system; child() for sub-tags.',
+    },
   ],
   types: [
     {
@@ -193,7 +202,10 @@ const audio: PackageDossier = {
   setup: [
     { command: 'pnpm add @trembus/audio', note: 'Pulls @trembus/logger transitively.' },
     { command: 'import { createBus } from "@trembus/audio"' },
-    { command: 'const sfx = createBus({ duck: "sfx" })', note: 'One bus per category, not one per sound.' },
+    {
+      command: 'const sfx = createBus({ duck: "sfx" })',
+      note: 'One bus per category, not one per sound.',
+    },
   ],
   types: [
     {
@@ -322,7 +334,12 @@ const pets: PackageDossier = {
       signature: '(player: Player, mount: PetId) => MountController',
       stability: 'beta',
     },
-    { name: 'dismount', gloss: 'Return a player to foot.', signature: '(player: Player) => void', stability: 'stable' },
+    {
+      name: 'dismount',
+      gloss: 'Return a player to foot.',
+      signature: '(player: Player) => void',
+      stability: 'stable',
+    },
   ],
   conventions: [
     {

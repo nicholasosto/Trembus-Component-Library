@@ -3,23 +3,13 @@
     "PreToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node '/Users/nicholasosto/Master-Managed/Repositories/Trembus-Component-Library/.codex/hooks/guard.mjs'"
-          }
-        ]
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/guard.mjs" }]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node '/Users/nicholasosto/Master-Managed/Repositories/Trembus-Component-Library/.codex/hooks/format.mjs'"
-          }
-        ]
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/format.mjs" }]
       }
     ]
   }

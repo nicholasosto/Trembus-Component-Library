@@ -9,7 +9,7 @@ import type { Caption } from '@remotion/captions';
  * overlay converts their ms timing back to frames at render fps.
  */
 
-export const FPS = 30;
+const FPS = 30;
 
 /** Author a caption from LOCAL scene frames (cleaner than hand-writing ms). */
 const cap = (text: string, fromFrame: number, toFrame: number): Caption => ({
@@ -71,7 +71,7 @@ const CSS = `@layer tcl.components {
 }
 `;
 
-const CONTRACT = `import type { ComponentContract } from '../../types/contract';
+const CONTRACT = `import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const tagContract: ComponentContract = {
   name: 'Tag',

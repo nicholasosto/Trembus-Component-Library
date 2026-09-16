@@ -42,7 +42,6 @@ export const T = {
   total: 700,
 } as const;
 
-export const EXEC_END = T.execStart + STEP_COUNT * T.perStep; // 368 + 180 = 548
 
 export interface ExecState {
   started: boolean;

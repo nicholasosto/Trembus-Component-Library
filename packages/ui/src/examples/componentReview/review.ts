@@ -301,7 +301,8 @@ export const INSPECTOR_DECISION: DecisionMapContract = {
       confidence: 85,
       consequences: [
         {
-          label: 'New components with a genuinely repeatable action still get the fix, via the documented gotcha.',
+          label:
+            'New components with a genuinely repeatable action still get the fix, via the documented gotcha.',
           likelihood: 'likely',
         },
         {
@@ -320,7 +321,8 @@ export const INSPECTOR_DECISION: DecisionMapContract = {
       confidence: 70,
       consequences: [
         {
-          label: 'Adds a wrapper div to 11 components and remounts the inspector subtree on every selection.',
+          label:
+            'Adds a wrapper div to 11 components and remounts the inspector subtree on every selection.',
           likelihood: 'certain',
         },
         {

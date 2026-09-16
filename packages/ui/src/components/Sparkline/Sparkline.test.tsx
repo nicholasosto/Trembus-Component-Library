@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { Sparkline } from './Sparkline';
 
 const series = [2.1, 1.9, 1.5, 1.3, 1.1, 1.0];

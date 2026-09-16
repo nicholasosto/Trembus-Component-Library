@@ -1,11 +1,12 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const tooltipContract: ComponentContract = {
   name: 'Tooltip',
   leadJob: 'acknowledge-input',
   jobs: {
     revealState: {
-      satisfiedBy: 'reveals supplemental text bound to the trigger via aria-describedby (role=tooltip).',
+      satisfiedBy:
+        'reveals supplemental text bound to the trigger via aria-describedby (role=tooltip).',
       story: 'Default',
     },
     affordAction: {
@@ -13,7 +14,8 @@ export const tooltipContract: ComponentContract = {
       story: 'Sides',
     },
     acknowledgeInput: {
-      satisfiedBy: 'opens on hover (delay) and on keyboard focus; Esc / blur / pointer-leave dismiss it.',
+      satisfiedBy:
+        'opens on hover (delay) and on keyboard focus; Esc / blur / pointer-leave dismiss it.',
       story: 'Interaction',
     },
   },

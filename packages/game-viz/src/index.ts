@@ -16,6 +16,7 @@ export type {
   SoulCardProps,
   SoulCardContract,
   SoulStat,
+  SoulCardBack,
   SoulCardTone,
 } from './components/SoulCard/SoulCard';
 

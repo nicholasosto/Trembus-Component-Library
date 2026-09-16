@@ -442,11 +442,3 @@ Move the heartbeat emit path under previews/ (or add the copy step) and re-run t
 <what the next session needs to know>
 `,
 };
-
-export const SESSION_RECORDS: SessionRecord[] = [
-  rdsActiveSession,
-  psCompletedSession,
-  asCompletedSession,
-  psShelvedSession,
-  syntheticBlockedSession,
-];

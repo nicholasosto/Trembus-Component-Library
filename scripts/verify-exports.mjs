@@ -47,7 +47,9 @@ try {
       filename = (out.match(/"filename"\s*:\s*"([^"]+\.tgz)"/) ?? [])[1];
     }
     if (!filename) {
-      console.error('verify-exports: could not determine packed tarball from `pnpm pack --json`:\n' + out);
+      console.error(
+        'verify-exports: could not determine packed tarball from `pnpm pack --json`:\n' + out,
+      );
       code = 1;
     } else {
       tarball = filename;

@@ -1,6 +1,6 @@
 import type { ReactNode, Ref, SyntheticEvent } from 'react';
 import { Pressable } from '../../primitives/Pressable/Pressable';
-import type { StatusTone } from '../../tokens/tokens.types';
+import type { StatusTone } from '@trembus/tokens';
 import { cx } from '../../utils/cx';
 import './Button.css';
 

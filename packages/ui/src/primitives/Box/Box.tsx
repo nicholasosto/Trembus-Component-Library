@@ -1,12 +1,6 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 import type { PolymorphicComponentPropsWithRef } from '../../types/polymorphic';
-import type {
-  MaterialTone,
-  RadiusToken,
-  SpaceToken,
-  SurfaceTone,
-  ZToken,
-} from '../../tokens/tokens.types';
+import type { MaterialTone, RadiusToken, SpaceToken, SurfaceTone, ZToken } from '@trembus/tokens';
 import { cx } from '../../utils/cx';
 import './Box.css';
 

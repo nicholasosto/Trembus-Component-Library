@@ -1,4 +1,4 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const spinnerContract: ComponentContract = {
   name: 'Spinner',
@@ -9,7 +9,8 @@ export const spinnerContract: ComponentContract = {
       story: 'Default',
     },
     affordAction: {
-      satisfiedBy: 'presentational — pairs with a disabled/loading affordance (e.g. Button loading).',
+      satisfiedBy:
+        'presentational — pairs with a disabled/loading affordance (e.g. Button loading).',
       story: 'Sizes',
     },
     acknowledgeInput: {

@@ -1,11 +1,12 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const selectContract: ComponentContract = {
   name: 'Select',
   leadJob: 'acknowledge-input',
   jobs: {
     revealState: {
-      satisfiedBy: 'shows the selected option; reflects disabled and invalid (aria-invalid + error).',
+      satisfiedBy:
+        'shows the selected option; reflects disabled and invalid (aria-invalid + error).',
       story: 'States',
     },
     affordAction: {
@@ -13,7 +14,8 @@ export const selectContract: ComponentContract = {
       story: 'Default',
     },
     acknowledgeInput: {
-      satisfiedBy: 'selection updates the value; focus-within ring; the error is announced via role="alert".',
+      satisfiedBy:
+        'selection updates the value; focus-within ring; the error is announced via role="alert".',
       story: 'Interaction',
     },
   },

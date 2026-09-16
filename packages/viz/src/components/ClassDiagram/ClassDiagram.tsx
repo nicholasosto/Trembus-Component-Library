@@ -45,12 +45,7 @@ export interface ClassNode {
  * - `dependency`: open arrow at the `to`, dashed line.
  */
 export type RelationKind =
-  | 'inheritance'
-  | 'realization'
-  | 'composition'
-  | 'aggregation'
-  | 'association'
-  | 'dependency';
+  'inheritance' | 'realization' | 'composition' | 'aggregation' | 'association' | 'dependency';
 
 export interface ClassRelation {
   from: string;

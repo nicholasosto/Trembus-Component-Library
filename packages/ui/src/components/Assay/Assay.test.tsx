@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { Assay } from './Assay';
 import type { AssayContract } from './Assay';
 

@@ -24,9 +24,9 @@ member — the non-gated `@trembus/video` Remotion app, see _Motion / video_ bel
   consumed by `ui`, `viz`, `game-viz`. Lives in `src/icons/` (not `src/components/`), so it sits
   outside the contract gate. `viz` re-exports it from `src/internal/index.ts`; `ui`'s FolderTree
   imports it directly (glyph inference via `fileToGlyph`).
-- **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; keeps
-  re-export shims (`src/tokens`, `src/types/contract`, `src/test/a11y`) so its internal import
-  paths and public API are unchanged.
+- **`@trembus/ui`** (`packages/ui/`) — this component library. Depends on `@trembus/tokens`; imports the
+  contract type + a11y helper straight from `@trembus/tokens`, and its barrel re-exports `tokens` and
+  the token types so the public API is unchanged.
 - **`@trembus/viz`** (`packages/viz/`) — Tier-2 node-link visualizations (`Tree`, `Nebula`, …). Depends on
   `@trembus/tokens` **only**, never on `@trembus/ui`.
 - **`@trembus/game-viz`** (`packages/game-viz/`) — expressive **game / cinematic** UI
@@ -82,6 +82,15 @@ License at 4+). See `packages/video/README.md`.
   `pnpm exec playwright install chromium` first.
 - `pnpm dev` — Storybook (docs + playground) on :6006.
 - `pnpm check:contracts` — enforce the 3-jobs contract per component.
+- **One toolchain, declared once.** vite · vitest · testing-library · typescript · eslint · storybook
+  live in the ROOT `package.json` only (pnpm puts the root `.bin` on every package's PATH; TS and
+  Node resolve upward). Library manifests carry runtime deps + peers. Versions several projects
+  share come from the `catalog:` in `pnpm-workspace.yaml`. Every package builds through
+  `config/vite-lib.ts` (React, every `@trembus/*`, and the listed `external` stay external — a
+  declared dependency that gets bundled ships twice) and tests through `config/vitest-unit.ts` +
+  `config/vitest.setup.ts`; the per-package `vite.config.ts` / `vitest.config.ts` are one-liners.
+- `AGENTS.md` is a symlink to this file and `.agents/skills/new-component` to
+  `.claude/skills/new-component` (Codex reads the same guide + scaffolder). Edit the `.claude` side.
 
 **Workflow skills** (`.claude/skills/`, readable by any agent): `/new-component` scaffolds;
 **`/finish-component <Name>`** runs the quality loop (visual verify both themes → parallel
@@ -201,8 +210,7 @@ components: no 3-jobs contract. One private workspace member `templates/pages`
   imports (shared compiler options in root `tsconfig.base.json`). `noUncheckedSideEffectImports`
   is on → CSS imports rely on each package's `src/global.d.ts`.
 - **Accessibility**: every component test asserts
-  `expect(await a11yViolations(container)).toEqual([])` from `@trembus/tokens/testing` (`@trembus/ui`
-  keeps a re-export shim at `packages/ui/src/test/a11y.ts`) — it disables page-level axe rules
+  `expect(await a11yViolations(container)).toEqual([])` from `@trembus/tokens/testing` — it disables page-level axe rules
   (region / landmark / page-has-heading-one) that false-positive on isolated fragments and portals,
   and passes `preload: false` so axe doesn't hang ~10s trying to load `<audio>`/`<video>` media in
   jsdom (the async media rules never apply to a fragment anyway). `.storybook/preview.tsx` disables

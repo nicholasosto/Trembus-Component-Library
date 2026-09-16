@@ -168,7 +168,7 @@ feeds classical MDS. No WebGL, no extra dependency; depth reads as scale + `colo
     links: [{ source: 'glossary', target: 'brain', weight: 0.55, kind: 'near-synonym' }],
     groups: { 'type-layer': { label: 'Type layer', tone: 'info' } },
   }}
-/>;
+/>
 ```
 
 Key data: `items: {id, label, group?, summary?, weight?, tone?, position?: [x,y,z]}[]` (ids REQUIRED — no index/label fallback) · `links: {source, target, weight?: 0..1, kind?}[]` · `groups?: Record<key, {label?, tone?}>`.

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { MilestoneTrack } from './MilestoneTrack';
 import type { MilestoneTrackContract } from './MilestoneTrack';
 
@@ -717,7 +717,9 @@ describe('MilestoneTrack', () => {
       '.tcl-milestone-track__canvas > .tcl-milestone-track__flow-cue',
     );
     expect(stray).toHaveLength(0);
-    expect(container.querySelectorAll('.tcl-milestone-track__flow-cue').length).toBeGreaterThanOrEqual(2);
+    expect(
+      container.querySelectorAll('.tcl-milestone-track__flow-cue').length,
+    ).toBeGreaterThanOrEqual(2);
     expect(container.querySelectorAll('.tcl-milestone-track__arrow')).toHaveLength(1);
   });
 
@@ -791,7 +793,12 @@ describe('MilestoneTrack', () => {
 
   it('has no axe violations in wrap rows', async () => {
     const { container } = render(
-      <MilestoneTrack data={snake} layout="wrap" rowLength={2} defaultSelectedId="ticket-project" />,
+      <MilestoneTrack
+        data={snake}
+        layout="wrap"
+        rowLength={2}
+        defaultSelectedId="ticket-project"
+      />,
     );
     expect(await a11yViolations(container)).toEqual([]);
   });

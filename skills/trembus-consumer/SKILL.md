@@ -7,7 +7,7 @@ description: Build UI in any app that consumes the Trembus Component Library (@t
 
 TCL is five published ESM npm packages (React `^19` peer, Node ≥ 20): `@trembus/tokens`
 (`var(--tcl-*)` tokens, themes, materials) · `@trembus/icons` (glyphs) · `@trembus/ui`
-(5 primitives + ~46 components) · `@trembus/viz` (node-link diagrams) ·
+(5 primitives + 50 components) · `@trembus/viz` (node-link diagrams) ·
 `@trembus/game-viz` (cinematic skins over ui + viz). Built tokens → primitives →
 components; every component carries a machine-checked "3 UI jobs" contract and ships
 axe-clean. Live gallery: <https://nicholasosto.github.io/Trembus-Component-Library/>
@@ -100,37 +100,37 @@ Anti-patterns (each has bitten a real consumer):
 
 By what you have (details: the capsule files in `references/`):
 
-| You have                                    | Reach for                                                                 |
-| ------------------------------------------- | ------------------------------------------------------------------------- |
-| One number, now (KPI)                       | **Stat** (+ inline **Sparkline** trend)                                   |
-| One number with bounds                      | **Meter** (capacity) / **Gauge** (zones) / **Progress** (completion)      |
-| Categories compared by magnitude            | **BarChart**                                                              |
-| Parts of a meaningful whole                 | **DonutChart** (≤ ~6 slices) / **Treemap** (many, or size-compare)        |
-| Ordered stages of one flow (drop-off)       | **Funnel**                                                                |
-| Numbers over time (continuous)              | **LineChart**                                                             |
-| Discrete dated events                       | **Timeline** (gothic skin: **Chronicle**)                                 |
+| You have                                    | Reach for                                                                    |
+| ------------------------------------------- | ---------------------------------------------------------------------------- |
+| One number, now (KPI)                       | **Stat** (+ inline **Sparkline** trend)                                      |
+| One number with bounds                      | **Meter** (capacity) / **Gauge** (zones) / **Progress** (completion)         |
+| Categories compared by magnitude            | **BarChart**                                                                 |
+| Parts of a meaningful whole                 | **DonutChart** (≤ ~6 slices) / **Treemap** (many, or size-compare)           |
+| Ordered stages of one flow (drop-off)       | **Funnel**                                                                   |
+| Numbers over time (continuous)              | **LineChart**                                                                |
+| Discrete dated events                       | **Timeline** (gothic skin: **Chronicle**)                                    |
 | Lead time between pipeline milestones       | **MilestoneTrack** (`wrap`/`serpentine` rows + `scaled` bottleneck capsules) |
-| Weighted-criteria decision (why this score) | **Assay** (criteria tracks + penalties + banded verdict)                  |
-| Closeness / relatedness of many concepts    | viz **Nebula** (3D concept map — distance IS the message)                 |
-| Executed runs w/ status + duration          | **RunHistory** (replay a run onto **Swimlane** via `applyRun`)            |
-| Work flowing across actors/lanes            | **Swimlane**                                                              |
-| Two categorical axes × intensity            | **Heatmap** (cell- or row-select)                                         |
-| Hierarchy to _navigate_ (select a node)     | **FolderTree**                                                            |
-| Hierarchy to _read_ (org chart, dendrogram) | viz **Tree**                                                              |
-| Hierarchy where _size_ matters              | **Treemap**                                                               |
-| Nested systems to drill into (C4)           | viz **SystemMap**                                                         |
-| "What rests on what" foundations            | viz **Strata**                                                            |
-| DAG / pipeline / dependency edges           | viz **Lineage**                                                           |
-| UML classes + typed relationships           | viz **ClassDiagram**                                                      |
-| Skill tree with point allocation            | viz **TalentTree** (gothic skin: **Constellation**)                       |
-| One center + status satellites              | **Hub**                                                                   |
-| Records to scan/sort by fields              | **Table**                                                                 |
-| Many visual assets (~50+)                   | **VirtualAssetGrid**                                                      |
-| A few rich curated items with actions       | **Card** grid (Card + Stack/Inline)                                       |
-| Options, consequences, a decision to make   | **DecisionMap**                                                           |
-| A structured doc rendered as data           | **Brief** (`fromMarkdown` converts markdown)                              |
-| Audio / framed media / 3D model             | **AudioWaveform** / game-viz **MediaFrame** / **Effigy**                  |
-| Status or message, not data                 | Badge · Callout · Toast · DataStatusBar · EmptyState · Skeleton · Spinner |
+| Weighted-criteria decision (why this score) | **Assay** (criteria tracks + penalties + banded verdict)                     |
+| Closeness / relatedness of many concepts    | viz **Nebula** (3D concept map — distance IS the message)                    |
+| Executed runs w/ status + duration          | **RunHistory** (replay a run onto **Swimlane** via `applyRun`)               |
+| Work flowing across actors/lanes            | **Swimlane**                                                                 |
+| Two categorical axes × intensity            | **Heatmap** (cell- or row-select)                                            |
+| Hierarchy to _navigate_ (select a node)     | **FolderTree**                                                               |
+| Hierarchy to _read_ (org chart, dendrogram) | viz **Tree**                                                                 |
+| Hierarchy where _size_ matters              | **Treemap**                                                                  |
+| Nested systems to drill into (C4)           | viz **SystemMap**                                                            |
+| "What rests on what" foundations            | viz **Strata**                                                               |
+| DAG / pipeline / dependency edges           | viz **Lineage**                                                              |
+| UML classes + typed relationships           | viz **ClassDiagram**                                                         |
+| Skill tree with point allocation            | viz **TalentTree** (gothic skin: **Constellation**)                          |
+| One center + status satellites              | **Hub**                                                                      |
+| Records to scan/sort by fields              | **Table**                                                                    |
+| Many visual assets (~50+)                   | **VirtualAssetGrid**                                                         |
+| A few rich curated items with actions       | **Card** grid (Card + Stack/Inline)                                          |
+| Options, consequences, a decision to make   | **DecisionMap**                                                              |
+| A structured doc rendered as data           | **Brief** (`fromMarkdown` converts markdown)                                 |
+| Audio / framed media / 3D model             | **AudioWaveform** / game-viz **MediaFrame** / **Effigy**                     |
+| Status or message, not data                 | Badge · Callout · Toast · DataStatusBar · EmptyState · Skeleton · Spinner    |
 
 Near-neighbor litmus rules (where agents actually err):
 

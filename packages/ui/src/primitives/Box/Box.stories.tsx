@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { MaterialTone } from '../../tokens/tokens.types';
+import type { MaterialTone } from '@trembus/tokens';
 import { Box } from './Box';
 
 /**

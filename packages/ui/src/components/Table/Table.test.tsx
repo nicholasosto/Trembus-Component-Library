@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { Table } from './Table';
 import type { SortDescriptor, TableProps } from './Table';
 

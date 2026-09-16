@@ -57,7 +57,7 @@ before (the Tier-2 roster once lagged two releases behind):
 1. `packages/<pkg>/package.json` — `description` + `keywords` (the npm search surface).
 2. `packages/<pkg>/README.md` — the component roster paragraph + Storybook browse line.
 3. Root `README.md` — the package table row.
-4. `CLAUDE.md` **and** `AGENTS.md` — near-twin files, update **both**: the workspace
+4. `CLAUDE.md` — `AGENTS.md` is a symlink to it, so one edit serves Claude and Codex: the workspace
    package list, the relevant roster (Tier-2 / Game / command-bar…), and any new gotchas.
 5. `skills/trembus-consumer/` — the user-level consumer skill: restamp the `> Stamp` line
    in SKILL.md + all four `references/*.md` (byte-identical), sync the reference files

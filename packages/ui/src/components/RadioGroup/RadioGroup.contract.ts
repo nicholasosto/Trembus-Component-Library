@@ -1,11 +1,12 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const radioGroupContract: ComponentContract = {
   name: 'RadioGroup',
   leadJob: 'acknowledge-input',
   jobs: {
     revealState: {
-      satisfiedBy: 'the selected option is filled; disabled options are dimmed; group labelled via aria-labelledby.',
+      satisfiedBy:
+        'the selected option is filled; disabled options are dimmed; group labelled via aria-labelledby.',
       story: 'States',
     },
     affordAction: {
@@ -13,11 +14,16 @@ export const radioGroupContract: ComponentContract = {
       story: 'Default',
     },
     acknowledgeInput: {
-      satisfiedBy: 'click or Arrow keys (native radios) select an option and move focus; focus ring on the dot.',
+      satisfiedBy:
+        'click or Arrow keys (native radios) select an option and move focus; focus ring on the dot.',
       story: 'Interaction',
     },
   },
-  a11y: { role: 'radiogroup', keyboard: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'], focusRing: true },
+  a11y: {
+    role: 'radiogroup',
+    keyboard: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'],
+    focusRing: true,
+  },
   tokensUsed: ['--tcl-accent', '--tcl-border-strong'],
 };
 

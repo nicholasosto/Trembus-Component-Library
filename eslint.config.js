@@ -52,7 +52,14 @@ export default tseslint.config(
     // agent hook/scaffold *.mjs scripts under .codex/ & .agents/ all run under
     // Node, so give them the Node globals (otherwise `console` & friends trip
     // `no-undef`). .claude/ is fully ignored above.
-    files: ['**/*.config.{ts,js}', 'scripts/**', '.storybook/**', '.codex/**', '.agents/**'],
+    files: [
+      '**/*.config.{ts,js}',
+      'config/**',
+      'scripts/**',
+      '.storybook/**',
+      '.codex/**',
+      '.agents/**',
+    ],
     languageOptions: { globals: { ...globals.node } },
   },
 );

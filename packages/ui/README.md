@@ -51,12 +51,14 @@ any `--tcl-*` token to re-skin, or flip `[data-theme]` (`light` · `dark` ·
 your own components.
 
 **Afford-Action** — `Button`, `IconButton`, `Tabs`, `Menu`, `Toolbar`, `CommandBar`
-(data-driven command dock: progressive disclosure into menus + overflow collapsing).
+(data-driven command dock: progressive disclosure into menus + overflow collapsing),
+`NavBar`, `SkipLink`.
 
 **Reveal-State** — `Badge`, `Avatar`, `Spinner`, `Skeleton`, `Card`, `Callout`,
 `EmptyState`, `Stat`, `Table`, `Progress`, `Meter`, `Stepper` (ordered process steps —
 done / active / pending / error), `AudioWaveform` (audio preview + player),
-`VirtualAssetGrid` (windowed, sectioned single-select tile grid).
+`VirtualAssetGrid` (windowed, sectioned single-select tile grid), `Breadcrumb`,
+`FolderTree`, `DataStatusBar`.
 
 **Acknowledge-Input** — `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`,
 `Switch`, `Tooltip`, `Dialog`, `Toast`.

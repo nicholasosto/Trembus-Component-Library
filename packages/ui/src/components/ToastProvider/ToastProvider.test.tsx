@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { ToastProvider, useToast } from './ToastProvider';
 import type { ToastTone } from './ToastProvider';
 
 function Harness({ tone = 'success' as ToastTone }: { tone?: ToastTone }) {
   const { toast } = useToast();
   return (
-    <button onClick={() => toast({ title: 'Saved', description: 'All good.', tone })}>notify</button>
+    <button onClick={() => toast({ title: 'Saved', description: 'All good.', tone })}>
+      notify
+    </button>
   );
 }
 

@@ -9,14 +9,7 @@ export type TypeToken = 'xs' | 'sm' | 'base' | 'md' | 'lg' | 'xl';
 export type FontWeightToken = 'regular' | 'medium' | 'semibold' | 'bold';
 export type ElevationToken = 0 | 1 | 2 | 3;
 export type ZToken =
-  | 'base'
-  | 'dropdown'
-  | 'sticky'
-  | 'overlay'
-  | 'modal'
-  | 'popover'
-  | 'toast'
-  | 'tooltip';
+  'base' | 'dropdown' | 'sticky' | 'overlay' | 'modal' | 'popover' | 'toast' | 'tooltip';
 
 /** The color-coded ontology: the five reusable status/intent hues. */
 export type StatusTone = 'success' | 'info' | 'warning' | 'danger' | 'neutral';

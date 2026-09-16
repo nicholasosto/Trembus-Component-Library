@@ -1,19 +1,22 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const toastProviderContract: ComponentContract = {
   name: 'ToastProvider',
   leadJob: 'acknowledge-input',
   jobs: {
     revealState: {
-      satisfiedBy: 'each toast shows a tone-coded result (success/info/warning/danger/neutral) in a portal viewport.',
+      satisfiedBy:
+        'each toast shows a tone-coded result (success/info/warning/danger/neutral) in a portal viewport.',
       story: 'States',
     },
     affordAction: {
-      satisfiedBy: 'exposes useToast(); a dismiss button affords closing; auto-dismiss with pause-on-hover.',
+      satisfiedBy:
+        'exposes useToast(); a dismiss button affords closing; auto-dismiss with pause-on-hover.',
       story: 'Default',
     },
     acknowledgeInput: {
-      satisfiedBy: 'a triggered action is acknowledged by an announced toast (role=status/alert + aria-live).',
+      satisfiedBy:
+        'a triggered action is acknowledged by an announced toast (role=status/alert + aria-live).',
       story: 'Interaction',
     },
   },

@@ -721,7 +721,7 @@ the detail card; several → a ranked board whose selected row's card IS the ins
       ],
     },
   }}
-/>;
+/>
 ```
 
 Key data: `criteria: {id, label, weight, tone?}[]` (weights are RELATIVE — normalized to Σ 1 internally) · `candidates: {id, label, sub?, summary?, scores: Record<criterionId, 0..1>, penalties?: {label, value}[]}[]` · `scale?: {min, max, bands?: {upTo?, label, tone?}[]}` (omit for plain 0..1 totals, no verdict chips) · `brand?/code?/title?/caption?/rubricNote?`.

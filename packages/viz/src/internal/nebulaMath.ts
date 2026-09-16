@@ -35,7 +35,7 @@ const clamp01 = (v: number): number => Math.min(1, Math.max(0, v));
  * contract by a constant pull. Symmetric, finite, zero diagonal — always.
  * O(n³) in the item count; callers memoize.
  */
-export function completeDistances(
+function completeDistances(
   count: number,
   links: readonly NebulaMathLink[],
   groupOf?: readonly number[],
@@ -121,7 +121,7 @@ function norm(v: readonly number[]): number {
  * eigenvector by √λ, then normalize so the farthest point sits on the unit
  * sphere. Degenerate inputs collapse axes to 0 rather than throwing.
  */
-export function classicalMds3(dist: readonly (readonly number[])[]): Point3[] {
+function classicalMds3(dist: readonly (readonly number[])[]): Point3[] {
   const n = dist.length;
   if (n === 0) return [];
   if (n === 1) return [[0, 0, 0]];

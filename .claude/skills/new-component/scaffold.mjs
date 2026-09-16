@@ -24,8 +24,8 @@ const LEADS = ['reveal-state', 'afford-action', 'acknowledge-input'];
 const PKG = {
   ui: {
     cx: '../../utils/cx',
-    contract: '../../types/contract',
-    a11y: '../../test/a11y',
+    contract: '@trembus/tokens/contract',
+    a11y: '@trembus/tokens/testing',
     title: 'Components',
   },
   viz: {
@@ -50,7 +50,8 @@ function fail(msg) {
 }
 
 if (!name) fail('Provide a PascalCase component name, e.g. `Tag`.');
-if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) fail(`Name "${name}" must be PascalCase (e.g. Tag, AvatarGroup).`);
+if (!/^[A-Z][A-Za-z0-9]*$/.test(name))
+  fail(`Name "${name}" must be PascalCase (e.g. Tag, AvatarGroup).`);
 if (!LEADS.includes(lead)) fail(`--lead must be one of: ${LEADS.join(', ')}`);
 const cfg = PKG[pkg];
 if (!cfg) fail(`--pkg must be one of: ${Object.keys(PKG).join(', ')}`);
@@ -157,5 +158,9 @@ if (!index.includes(`/components/${name}/${name}'`)) {
   writeFileSync(indexPath, index);
 }
 
-console.log(`✓ Scaffolded packages/${pkg}/src/components/${name}/ (${Object.keys(files).length} files) and wired its barrel`);
-console.log(`  Next: implement the component, fill the contract satisfiedBy + stories, then \`pnpm --filter @trembus/${pkg} validate\`.`);
+console.log(
+  `✓ Scaffolded packages/${pkg}/src/components/${name}/ (${Object.keys(files).length} files) and wired its barrel`,
+);
+console.log(
+  `  Next: implement the component, fill the contract satisfiedBy + stories, then \`pnpm --filter @trembus/${pkg} validate\`.`,
+);

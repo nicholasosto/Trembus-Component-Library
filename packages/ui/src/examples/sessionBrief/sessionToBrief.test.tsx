@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { sessionToBrief } from './sessionToBrief';
 import { Brief } from '../../index';
 import type { BriefItem, BriefSection } from '../../index';

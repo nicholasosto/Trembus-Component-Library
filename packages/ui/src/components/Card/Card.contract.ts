@@ -1,15 +1,17 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const cardContract: ComponentContract = {
   name: 'Card',
   leadJob: 'reveal-state',
   jobs: {
     revealState: {
-      satisfiedBy: 'groups related content into a single perceivable raised surface (header/body/footer).',
+      satisfiedBy:
+        'groups related content into a single perceivable raised surface (header/body/footer).',
       story: 'Default',
     },
     affordAction: {
-      satisfiedBy: 'hosts action affordances (e.g. footer buttons); an optional interactive hover state.',
+      satisfiedBy:
+        'hosts action affordances (e.g. footer buttons); an optional interactive hover state.',
       story: 'Interactive',
     },
     acknowledgeInput: {

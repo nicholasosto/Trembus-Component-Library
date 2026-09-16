@@ -1,6 +1,6 @@
 ---
 name: release
-description: Cut and publish a release of one or more @trembus/* packages (tokens · icons · ui · viz · game-viz) — version bump, enforced CHANGELOG entry, roster docs sync (READMEs + CLAUDE/AGENTS twins), gate, scoped commit, pnpm publish, npm verify, git tag + GitHub Release with the changelog as notes. Use when asked to "release", "publish", "bump and publish", or "cut a version" of a package. RELEASING.md is the canonical checklist; this skill executes it.
+description: Cut and publish a release of one or more @trembus/* packages (tokens · icons · ui · viz · game-viz) — version bump, enforced CHANGELOG entry, roster docs sync (READMEs + CLAUDE.md), gate, scoped commit, pnpm publish, npm verify, git tag + GitHub Release with the changelog as notes. Use when asked to "release", "publish", "bump and publish", or "cut a version" of a package. RELEASING.md is the canonical checklist; this skill executes it.
 ---
 
 # release — execute RELEASING.md end to end
@@ -45,7 +45,7 @@ All five surfaces — they have gone stale before:
 
 1. `packages/<pkg>/README.md` — the component roster paragraph + browse line.
 2. Root `README.md` — the package table row.
-3. `CLAUDE.md` **and** `AGENTS.md` — near-twin files; update BOTH (workspace package list
+3. `CLAUDE.md` — `AGENTS.md` is a symlink to it, so one edit serves Claude and Codex (workspace package list
    - the relevant section: Tier-2 roster, game-viz roster, gotchas learned).
 4. New canonical Visual Grammar schema? Mirror it (Tier-2 contract convention).
 5. `skills/trembus-consumer/` — the user-level consumer skill: restamp the `> Stamp` line

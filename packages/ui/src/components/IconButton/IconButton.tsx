@@ -5,8 +5,10 @@ import { cx } from '../../utils/cx';
 import { isDev } from '../../utils/env';
 import './IconButton.css';
 
-export interface IconButtonProps
-  extends Omit<ButtonProps, 'children' | 'startSlot' | 'endSlot' | 'fullWidth'> {
+export interface IconButtonProps extends Omit<
+  ButtonProps,
+  'children' | 'startSlot' | 'endSlot' | 'fullWidth'
+> {
   /** Required — an icon-only control must carry its own accessible name. */
   'aria-label': string;
   /** The icon (or any single glyph node). */

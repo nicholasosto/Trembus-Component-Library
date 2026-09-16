@@ -8,10 +8,5 @@
     "types": []
   },
   "include": ["src"],
-  "exclude": [
-    "src/**/*.stories.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/test/**"
-  ]
+  "exclude": ["src/**/*.stories.tsx", "src/**/*.test.ts", "src/**/*.test.tsx", "src/test/**"]
 }

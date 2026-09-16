@@ -1,4 +1,4 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const commandBarContract: ComponentContract = {
   name: 'CommandBar',

@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { AudioWaveform } from './AudioWaveform';
 
 const PEAKS = Array.from({ length: 32 }, (_, i) => 0.3 + 0.5 * Math.abs(Math.sin(i)));

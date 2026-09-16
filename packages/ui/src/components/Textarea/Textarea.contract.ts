@@ -1,4 +1,4 @@
-import type { ComponentContract } from '../../types/contract';
+import type { ComponentContract } from '@trembus/tokens/contract';
 
 export const textareaContract: ComponentContract = {
   name: 'Textarea',
@@ -13,7 +13,8 @@ export const textareaContract: ComponentContract = {
       story: 'Default',
     },
     acknowledgeInput: {
-      satisfiedBy: 'focus ring on focus; typed input is echoed; the live error is announced via role="alert".',
+      satisfiedBy:
+        'focus ring on focus; typed input is echoed; the live error is announced via role="alert".',
       story: 'Interaction',
     },
   },

@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
-import type { StatusTone } from '../../tokens/tokens.types';
+import type { StatusTone } from '@trembus/tokens';
 import { cx } from '../../utils/cx';
 import './Badge.css';
 

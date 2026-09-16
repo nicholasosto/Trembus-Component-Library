@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { a11yViolations } from '../../test/a11y';
+import { a11yViolations } from '@trembus/tokens/testing';
 import { Checkbox } from './Checkbox';
 
 describe('Checkbox', () => {
@@ -28,9 +28,7 @@ describe('Checkbox', () => {
   });
 
   it('has no axe violations', async () => {
-    const { container } = render(
-      <Checkbox label="Subscribe" description="One email per week." />,
-    );
+    const { container } = render(<Checkbox label="Subscribe" description="One email per week." />);
     expect(await a11yViolations(container)).toEqual([]);
   });
 });

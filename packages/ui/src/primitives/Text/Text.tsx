@@ -1,6 +1,6 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 import type { PolymorphicComponentPropsWithRef } from '../../types/polymorphic';
-import type { FontWeightToken, TextTone, TypeToken } from '../../tokens/tokens.types';
+import type { FontWeightToken, TextTone, TypeToken } from '@trembus/tokens';
 import { cx } from '../../utils/cx';
 import './Text.css';
 

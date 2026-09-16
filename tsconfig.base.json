@@ -20,6 +20,8 @@
     "skipLibCheck": true,
     "noEmit": true,
 
-    "types": ["node"]
+    // jest-dom/vitest puts the DOM matcher types (toBeInTheDocument, …) in scope for
+    // every package's tests; the runtime setup is config/vitest.setup.ts.
+    "types": ["node", "@testing-library/jest-dom/vitest"]
   }
 }

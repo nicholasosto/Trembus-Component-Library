@@ -29,9 +29,10 @@ export type PressableProps<C extends ElementType = 'button'> = PolymorphicCompon
 >;
 
 export function Pressable<C extends ElementType = 'button'>(props: PressableProps<C>) {
-  const { as, asChild, disabled, loading, onPress, className, ...rest } = props as PressableOwnProps & {
-    as?: ElementType;
-  } & Record<string, unknown>;
+  const { as, asChild, disabled, loading, onPress, className, ...rest } =
+    props as PressableOwnProps & {
+      as?: ElementType;
+    } & Record<string, unknown>;
 
   const { handlers, dataAttrs } = useAffordanceState({ disabled, loading, onPress });
 

@@ -10,6 +10,23 @@ packages aim to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 - Documentation pass: monorepo landing README, per-package npm READMEs with badges,
   package `keywords`, a published Storybook gallery on GitHub Pages, and contributor docs.
+- **`@trembus/game-viz`** — `@google/model-viewer` is no longer bundled into `dist`
+  (1.6 MB + a 4.8 MB source map). It was already a declared dependency; `Effigy`'s lazy
+  `import()` now resolves the consumer's single copy of model-viewer / three.js.
+- **`@trembus/ui` · `@trembus/viz`** — `dist/index.js` no longer inlines `@trembus/tokens`
+  and `@trembus/icons`; both were already declared dependencies and now resolve to the
+  one copy in the consumer's tree (as `game-viz` always did). No API change.
+- Workspace: the build / test / lint toolchain is declared once at the root (library
+  manifests carry runtime deps + peers only), every package builds through one shared
+  `config/vite-lib.ts` + `config/vitest-unit.ts`, and `@trembus/ui` imports the contract
+  type and the a11y helper straight from `@trembus/tokens` like `viz` / `game-viz` do.
+
+### Added
+
+- **`@trembus/ui`** — `ButtonTone`, `BadgeTone` and `AudioWaveformTone` are exported from
+  the package barrel like every other `*Tone` type.
+- **`@trembus/game-viz`** — `SoulCardBack` (the shape of `SoulCard`'s `back` prop) is
+  exported from the barrel.
 
 ## [@trembus/ui 0.14.0] — 2026-08
 

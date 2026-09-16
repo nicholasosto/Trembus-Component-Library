@@ -2,14 +2,26 @@
 // component CSS. Consumers using the prebuilt bundle import '@trembus/ui/styles.css'.
 import './styles/index.css';
 
-// ── tokens ──
-export { tokens } from './tokens/tokens';
-export type { Tokens } from './tokens/tokens';
-export type * from './tokens/tokens.types';
+// ── tokens (re-exported from @trembus/tokens so `import { tokens } from '@trembus/ui'` keeps working) ──
+export { tokens } from '@trembus/tokens';
+export type {
+  Tokens,
+  SpaceToken,
+  RadiusToken,
+  TypeToken,
+  FontWeightToken,
+  ElevationToken,
+  ZToken,
+  StatusTone,
+  TextTone,
+  SurfaceTone,
+  MaterialTone,
+  ThemeName,
+} from '@trembus/tokens';
 
 // ── types ──
 export type * from './types/polymorphic';
-export type { ComponentContract, JobSatisfaction, UIJob } from './types/contract';
+export type { ComponentContract, JobSatisfaction, UIJob } from '@trembus/tokens/contract';
 
 // ── utils ──
 export { cx } from './utils/cx';
@@ -47,9 +59,9 @@ export type { PressableProps, PressableOwnProps } from './primitives/Pressable/P
 
 // ── components ──
 export { Button } from './components/Button/Button';
-export type { ButtonProps } from './components/Button/Button';
+export type { ButtonProps, ButtonTone } from './components/Button/Button';
 export { Badge } from './components/Badge/Badge';
-export type { BadgeProps } from './components/Badge/Badge';
+export type { BadgeProps, BadgeTone } from './components/Badge/Badge';
 export { Input } from './components/Input/Input';
 export type { InputProps } from './components/Input/Input';
 export { Dialog } from './components/Dialog/Dialog';
@@ -251,7 +263,10 @@ export type { NavBarProps, NavBarLinkProps } from './components/NavBar/NavBar';
 export { SkipLink } from './components/SkipLink/SkipLink';
 export type { SkipLinkProps } from './components/SkipLink/SkipLink';
 export { AudioWaveform } from './components/AudioWaveform/AudioWaveform';
-export type { AudioWaveformProps } from './components/AudioWaveform/AudioWaveform';
+export type {
+  AudioWaveformProps,
+  AudioWaveformTone,
+} from './components/AudioWaveform/AudioWaveform';
 export { VirtualAssetGrid } from './components/VirtualAssetGrid/VirtualAssetGrid';
 export type { VirtualAssetGridProps } from './components/VirtualAssetGrid/VirtualAssetGrid';
 export { Toolbar } from './components/Toolbar/Toolbar';

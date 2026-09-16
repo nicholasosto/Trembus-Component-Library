@@ -9,10 +9,7 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 function CardRoot({ interactive = false, className, children, ...rest }: CardProps) {
   return (
-    <div
-      className={cx('tcl-card', interactive && 'tcl-card--interactive', className)}
-      {...rest}
-    >
+    <div className={cx('tcl-card', interactive && 'tcl-card--interactive', className)} {...rest}>
       {children}
     </div>
   );

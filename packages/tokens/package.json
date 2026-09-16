@@ -66,11 +66,7 @@
     }
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.0",
     "@types/jest-axe": "^3.5.9",
-    "jest-axe": "^9.0.0",
-    "publint": "^0.3.0",
-    "vite": "^7.0.0",
-    "vite-plugin-dts": "^4.3.0"
+    "jest-axe": "^9.0.0"
   }
 }

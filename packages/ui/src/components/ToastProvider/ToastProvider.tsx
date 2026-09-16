@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { ReactNode } from 'react';
 import { Portal } from '../../utils/Portal';
 import { cx } from '../../utils/cx';
-import type { StatusTone } from '../../tokens/tokens.types';
+import type { StatusTone } from '@trembus/tokens';
 import './ToastProvider.css';
 
 export type ToastTone = 'neutral' | StatusTone;
